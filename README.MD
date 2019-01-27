@@ -21,7 +21,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 - 5、支持责任链模式  
  环境要求  
   JDK 1.8  
-  Spring FrameWork 4.3.22.RELEASE +
+  Spring FrameWork 4.3.22.RELEASE +  
   Servlet 3.0+(因为需要使用Servlet的异步功能)  
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
