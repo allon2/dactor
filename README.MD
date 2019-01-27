@@ -37,6 +37,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
    chaintest1演示的是使用只使用责任链的情况  
    chaintest2演示的是同时使用责任链和继承的情况  
    exceptionTest演示的是子交易抛出错误后代码运行情况  
+   httptest演示的是通过httpclient异步方式访问百度网站
    启动后，可在控制台看到内部调用结果  
    ![Image text](1.png)
    
@@ -47,13 +48,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.0'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.1'
 
 ```
 

@@ -29,4 +29,15 @@
     <actor id="exceptionTest" parent="actorhttpcore" beginBeanId="exceptionTestActor">
     </actor>
     <beans:bean id="exceptionTestActor" class="cn.ymotel.example.imgcode.exceptionTestActor"></beans:bean>
+
+    <actor id="httptest" parent="actorhttpcore" beginBeanId="HttpClientActor">
+        <steps>
+            <step fromBeanId="HttpClientActor" toBeanId="httptestActor" conditon=""/>
+         </steps>
+        <results>
+            <result name="success">htmlstream:</result>
+        </results>
+    </actor>
+    <beans:bean id="httptestActor" class="cn.ymotel.example.imgcode.httpClientActor"></beans:bean>
+
 </beans:beans>
