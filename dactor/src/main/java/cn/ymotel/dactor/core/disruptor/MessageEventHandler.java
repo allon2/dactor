@@ -105,13 +105,20 @@ public class MessageEventHandler implements EventHandler<MessageEvent>,WorkHandl
 
 			try {
 				 Object obj=	actor.HandleMessage(message);
+				if(struc.getActorTransactionCfg().getBeginBeanId().equals(struc.getFromBeanId())){
+					struc.setBeginExecute(true);
+				}
+				if(struc.getActorTransactionCfg().getEndBeanId().equals(struc.getFromBeanId())){
+					struc.setEndExecute(true);
+				}
+//				WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
 
+				if(obj!=null&&obj instanceof  Message){
+					dispatcher.sendMessage(message);
+				}
 				} catch (Throwable exception) {
 
 					message.setException(exception);
-//				dispatcher.sendMessage(message);
-
-			}finally{
 				if(struc.getActorTransactionCfg().getBeginBeanId().equals(struc.getFromBeanId())){
 					struc.setBeginExecute(true);
 				}
@@ -119,11 +126,14 @@ public class MessageEventHandler implements EventHandler<MessageEvent>,WorkHandl
 					struc.setEndExecute(true);
 				}
 				//已经执行的FromBeanId
- 				WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
+//				WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
 
- 				dispatcher.sendMessage(message);
+				dispatcher.sendMessage(message);
+//				dispatcher.sendMessage(message);
 
-				}
+			}finally{
+
+			}
 
 		
 

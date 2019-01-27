@@ -10,6 +10,7 @@ import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.workflow.ActorProcessStructure;
 import cn.ymotel.dactor.workflow.WorkFlowProcess;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -27,7 +28,7 @@ import java.util.Deque;
  * @version 1.0
  * @since 1.0
  */
-public class PlaceholderActor implements Actor, ApplicationContextAware {
+public class PlaceholderActor implements Actor, ApplicationContextAware, BeanNameAware {
 
 	/* (non-Javadoc)
 	 * @see com.ymotel.util.actor.Actor#HandleMessage(com.ymotel.util.actor.Message)
@@ -36,19 +37,23 @@ public class PlaceholderActor implements Actor, ApplicationContextAware {
 	public Object HandleMessage(Message message) throws Exception {
 		Deque<ActorProcessStructure>  deque=message.getControlMessage().getActorsStack();
 		Deque<ActorProcessStructure>  downque=message.getControlMessage().getDownStack();
-		WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
-
+		deque.peek().setFromBeanId(beanName);
 		try {
 			downque.push(deque.pop());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return message;
 	}
 	private ApplicationContext appcontext=null;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.appcontext=applicationContext;
+	}
+	private String beanName;
+	@Override
+	public void setBeanName(String name) {
+		this.beanName=name;
 	}
 }

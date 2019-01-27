@@ -28,10 +28,9 @@ public class BeginActor implements Actor {
 	 */
 	@Override
 	public Object HandleMessage(Message message) throws Exception {
-
+		return message;
 //		message.getControlMessage().getMessageDispatcher().sendMessage(message);
 		
-		return null;
 	}
 
 }

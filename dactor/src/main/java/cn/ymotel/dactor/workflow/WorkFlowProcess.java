@@ -81,6 +81,7 @@ public class WorkFlowProcess {
 		if(actorStack.isEmpty()&&downStack.isEmpty()){
 			return ;
 		}
+		ActorProcessStructure struc=actorStack.peek();
 
 
 		FireNextMessage(actorStack,downStack,message,appcontext);
@@ -136,7 +137,9 @@ public class WorkFlowProcess {
 		}
  			logger.info("beanId--"+strunc.getFromBeanId()+"--Id--"+strunc.getActorTransactionCfg().getId());
 
-
+//		if(strunc.getActorTransactionCfg().getBeginBeanId().equals(strunc.getFromBeanId())){
+//			return ;
+//		}
  		if(!strunc.isBeginExecute()){
 			strunc.setFromBeanId( strunc.getActorTransactionCfg().getBeginBeanId());
 			return ;
@@ -149,17 +152,25 @@ public class WorkFlowProcess {
 			if(!downdeque.isEmpty()){
 				deque.pop();
 				deque.push(downdeque.pop());
-//				FireNextMessage(deque,downdeque,message,appcontext);
+				FireNextMessage(deque,downdeque,message,appcontext);
 				return ;
 			}
 
-			deque.pop();
-			if(deque.isEmpty()){
 				if(!downdeque.isEmpty()){
+					deque.pop();
+					if(deque.isEmpty()){
 					deque.push(downdeque.pop());
 				}
+					FireNextMessage(deque,downdeque,message,appcontext);
+					return ;
+			}
+			if(!deque.isEmpty()){
+				deque.pop();
+				FireNextMessage(deque,downdeque,message,appcontext);
 				return ;
 			}
+
+
 //			FireNextMessage(deque,downdeque,message,appcontext);
 			return ;
 		}
@@ -169,7 +180,7 @@ public class WorkFlowProcess {
 			if(!strunc.getActorTransactionCfg().isHandleException()){
 				//处理异常;
 				strunc.setFromBeanId(message.getControlMessage().getProcessStructure().getActorTransactionCfg().getEndBeanId());
-//				 FireNextMessage(deque,downdeque,message,appcontext);
+				 FireNextMessage(deque,downdeque,message,appcontext);
 				return;
 			}
 		}
@@ -179,7 +190,7 @@ public class WorkFlowProcess {
 
 		if(appcontext.getBean(beanId) instanceof ActorTransactionCfg){
 			AppendCfg2Deque((ActorTransactionCfg)appcontext.getBean(beanId),deque);
-//			 FireNextMessage(deque,downdeque,message,appcontext);
+			 FireNextMessage(deque,downdeque,message,appcontext);
 			return;
 		}
 		return  ;

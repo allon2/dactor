@@ -14,10 +14,7 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
@@ -49,18 +46,6 @@ public class ActorHttpClientResponse implements ActorHttpClientResponseHandler {
 	@Override
 	public void handleResponse(HttpResponse response,HttpClientContext httpclientcontext, String charset,Message message) throws Exception {
 		String result= handleInner(response, charset);
-// 		Header headers[] = response.getAllHeaders();
-//        int ii = 0;
-//        while (ii < headers.length) {
-//            System.out.println(headers[ii].getName() + ": " + headers[ii].getValue()+"----"+headers[ii].getValue());
-//            ++ii;
-//        }
-//
-//        
-//        List<Cookie> cookies = httpclientcontext.getCookieStore().getCookies();
-//        for (int i = 0; i < cookies.size(); i++) {
-//            System.out.println("Local cookie: " + cookies.get(i));
-//        }
         
         message.getContext().put(HttpClientActor.RESPONSE, result);
 		message.getControlMessage().getMessageDispatcher().sendMessage(message);
@@ -83,7 +68,8 @@ public class ActorHttpClientResponse implements ActorHttpClientResponseHandler {
 		HttpEntity entity = response.getEntity();
 		try {
 			if (statusLine.getStatusCode() >= 300) {
-				 EntityUtils.consume(entity);
+
+				EntityUtils.consume(entity);
 				throw new HttpResponseException(statusLine.getStatusCode(),
 						statusLine.getReasonPhrase());
 			}

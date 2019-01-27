@@ -73,6 +73,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher,App
 			return ;
 
 		}
+		WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
 
 
 		this.putMessageInDispatcher(message,true);

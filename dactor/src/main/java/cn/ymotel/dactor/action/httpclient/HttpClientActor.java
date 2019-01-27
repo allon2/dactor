@@ -187,13 +187,7 @@ public class HttpClientActor implements Actor  {
 		request.addHeader("Referer", referer);	
 		}
 		
-	 
-		
-//		if(charset==null){
-//			tmpcharset=(String)context.get(CHARSET);
-//		}else{
-//			tmpcharset=charset;
-//		}
+
 		/**
 		 * 通过此处可共用会话，进行类似登录后交易
 		 */

@@ -43,8 +43,10 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
 		if(message.getControlMessage().getActorsStack().isEmpty()){
 			return true;
 		}
-
-			logger.debug("putMessageInDispatcher---beanId--"+message.getControlMessage().getProcessStructure().getFromBeanId()+"--Id--"+message.getControlMessage().getProcessStructure().getActorTransactionCfg().getId()+"-thread-"+Thread.currentThread());
+		if(message.getControlMessage().getProcessStructure().getFromBeanId()==null){
+			return true ;
+		}
+			logger.info("beanId--"+message.getControlMessage().getProcessStructure().getFromBeanId()+"--Id--"+message.getControlMessage().getProcessStructure().getActorTransactionCfg().getId());
 
 
 		return ringbufferManager.putMessage(message,blocked);

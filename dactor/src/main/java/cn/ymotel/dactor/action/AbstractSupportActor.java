@@ -26,24 +26,6 @@ public abstract class AbstractSupportActor implements Actor {
 	 */
 	private static final Log logger = LogFactory.getLog(AbstractSupportActor.class);
 
-	private org.mybatis.spring.SqlSessionTemplate sqlSession;
-
-	/**
-	 * @return the sqlSession
-	 */
-	public org.mybatis.spring.SqlSessionTemplate getSqlSession() {
-		return sqlSession;
-	}
-
-	/**
-	 * @param sqlSession
-	 *            the sqlSession to set
-	 */
-	public void setSqlSession(org.mybatis.spring.SqlSessionTemplate sqlSession) {
-		this.sqlSession = sqlSession;
-	}
-
-
 
 	/* (non-Javadoc)
 	 * @see Actor#HandleMessage(Message)
