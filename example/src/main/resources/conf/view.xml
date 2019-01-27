@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+
+    <bean id="DefaultUrlView" class="cn.ymotel.dactor.async.web.view.UrlView">
+        <property name="contentType" value="text/html; charset=utf-8"></property>
+        <property name="suffix" value=".jsp"></property>
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+    </bean>
+    <bean id="ForwardView" class="cn.ymotel.dactor.async.web.view.UrlView">
+        <property name="suffix" value=".do"></property>
+        <property name="prefix" value=""></property>
+    </bean>
+    <bean id="HtmlStreamView" class="cn.ymotel.dactor.async.web.view.StreamView">
+        <property name="contentType" value="text/html; charset=utf-8"></property>
+        <property name="content" value="_Content"></property>
+    </bean>
+    <bean id="XmlStreamView" class="cn.ymotel.dactor.async.web.view.StreamView">
+        <property name="contentType" value="text/xml; charset=utf-8"></property>
+        <property name="content" value="_Content"></property>
+    </bean>
+    <bean id="PdfStreamView" class="cn.ymotel.dactor.async.web.view.StreamView">
+        <property name="contentType" value="application/pdf; charset=utf-8"></property>
+        <property name="content" value="_Content"></property>
+    </bean>
+    <bean id="AjaxErrorUrlView" class="cn.ymotel.dactor.async.web.view.UrlView">
+        <property name="contentType" value="text/html; charset=utf-8"></property>
+        <property name="suffix" value=".jsp"></property>
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="path" value="AjaxError"></property>
+    </bean>
+    <bean id="jsonView" class="cn.ymotel.dactor.async.web.view.JsonView">
+        <property name="contentType" value="application/json;charset=UTF-8"></property>
+        <property name="content" value="_Content"></property>
+    </bean>
+
+    <bean id="downloadView" class="cn.ymotel.dactor.async.web.view.DownloadView">
+        <property name="content" value="_Content"></property>
+    </bean>
+    <bean id="StreamView" class="cn.ymotel.dactor.async.web.view.StreamView">
+        <property name="content" value="_Content"></property>
+    </bean>
+    <bean id="ImgStreamView" class="cn.ymotel.dactor.async.web.view.StreamView">
+        <property name="content" value="_Content"></property>
+        <property name="contentType" value="images/*"></property>
+
+    </bean>
+    <bean id="CsvView" class="cn.ymotel.dactor.async.web.view.CsvView">
+        <property name="content" value="_Content"></property>
+    </bean>
+
+</beans>

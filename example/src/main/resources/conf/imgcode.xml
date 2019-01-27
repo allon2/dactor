@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.ymotel.cn/schema/dactor"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd">
+
+    <actor id="imgcode" parent="actorhttpcore" beginBeanId="ImgCodeActor">
+        <results>
+            <result name="success">img:</result>
+        </results>
+
+    </actor>
+    <beans:bean id="ImgCodeActor" class="cn.ymotel.example.imgcode.ImgCodeGeneratorActor"></beans:bean>
+
+    <actor id="randomTxt" parent="actorhttpcore" beginBeanId="randomTxtActor">
+        <steps>
+            <step fromBeanId="randomTxtActor" toBeanId="placeholderActor" conditon=""/>
+            <step fromBeanId="placeholderActor" toBeanId="endActor" conditon=""/>
+        </steps>
+
+    </actor>
+    <beans:bean id="randomTxtActor" class="cn.ymotel.example.imgcode.RandomTxtActor"></beans:bean>
+
+    <actor id="randomTxt1" parent="randomTxt" beginBeanId="randomTxtActor">
+    </actor>
+    <actor id="randomTxt2" parent="actorhttpcore" beginBeanId="randomTxtActor">
+    </actor>
+    <actor id="exceptionTest" parent="actorhttpcore" beginBeanId="exceptionTestActor">
+    </actor>
+    <beans:bean id="exceptionTestActor" class="cn.ymotel.example.imgcode.exceptionTestActor"></beans:bean>
+</beans:beans>

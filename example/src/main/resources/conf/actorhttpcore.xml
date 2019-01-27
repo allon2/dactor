@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:actor="http://www.ymotel.cn/schema/dactor"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd
+	
+	">
+
+
+    <bean id="beginActor" class="cn.ymotel.dactor.action.BeginActor"></bean>
+    <bean id="FinishActor" class="cn.ymotel.dactor.action.FinishActor"></bean>
+
+    <bean id="endActor" class="cn.ymotel.dactor.action.EndActor"></bean>
+    <bean id="placeholderActor" class="cn.ymotel.dactor.action.PlaceholderActor"></bean>
+    <bean id="ViewResolveActor" class="cn.ymotel.dactor.action.ViewResolveActor">
+        <property name="viewMap">
+            <map>
+                <entry key="default" value-ref="DefaultUrlView"></entry>
+                <entry key="forward" value-ref="ForwardView"></entry>
+                <entry key="htmlstream" value-ref="HtmlStreamView"></entry>
+                <entry key="xmlstream" value-ref="XmlStreamView"></entry>
+                <entry key="pdfstream" value-ref="PdfStreamView"></entry>
+                <entry key="json" value-ref="jsonView"></entry>
+                <entry key="download" value-ref="downloadView"></entry>
+                <entry key="stream" value-ref="StreamView"></entry>
+                <entry key="csv" value-ref="CsvView"></entry>
+                <entry key="img" value-ref="ImgStreamView"></entry>
+
+            </map>
+        </property>
+    </bean>
+    <bean id="ErrorViewResolveActor" class="cn.ymotel.dactor.action.ViewResolveActor">
+        <property name="viewMap">
+            <map>
+                <entry key="default" value-ref="AjaxErrorUrlView"></entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="JsonViewResolverActor" class="cn.ymotel.dactor.action.JsonViewResolverActor">
+        <property name="viewMap">
+            <map>
+                <entry key="default" value-ref="jsonView"></entry>
+            </map>
+        </property>
+    </bean>
+
+
+    <actor:global id="actorglobal">
+        <actor:param name="beginBeanId" value="beginActor"/>
+        <actor:param name="endBeanId" value="endActor"/>
+    </actor:global>
+
+
+    <actor:chain id="unLoginChain">
+        <actor:before>
+            <actor:ref bean="actorhttpcore"></actor:ref>
+            <actor:ref bean="actorhttpcore"></actor:ref>
+        </actor:before>
+        <actor:after>
+            <actor:ref bean="actorhttpcore"></actor:ref>
+            <actor:ref bean="actorhttpcore"></actor:ref>
+
+        </actor:after>
+
+
+    </actor:chain>
+    <actor:actor id="actorhttpcore" handleException="true"  endBeanId="FinishActor" >
+
+        <actor:steps>
+            <actor:step xpoint="" ypont="" fromBeanId="beginActor"  conditon="" toBeanId="placeholderActor"/>
+            <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="context._SUFFIX=='json'"  toBeanId="JsonViewResolverActor"/>
+            <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="exception==null" toBeanId="ViewResolveActor"/>
+            <actor:step xpoint="" ypont=""   fromBeanId="placeholderActor" conditon="exception!=null"  toBeanId="ErrorViewResolveActor"/>
+        </actor:steps>
+
+    </actor:actor>
+
+</beans>

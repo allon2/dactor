@@ -1,0 +1,3 @@
+
+include ':cn.ymotel:dactor'
+project(':cn.ymotel:dactor').projectDir = "../dactor" as File

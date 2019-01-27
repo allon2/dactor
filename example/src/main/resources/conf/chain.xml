@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:actor="http://www.ymotel.cn/schema/dactor"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd
+	
+	">
+
+    <actor:chain id="unLoginChain">
+        <actor:before>
+            <actor:ref bean="beforechain"></actor:ref>
+        </actor:before>
+        <actor:after>
+            <actor:ref bean="afterchain"></actor:ref>
+        </actor:after>
+     </actor:chain>
+    <actor:actor id="beforechain" handleException="true"  endBeanId="FinishActor" >
+    </actor:actor>
+    <actor:actor id="afterchain" handleException="true"  endBeanId="FinishActor" >
+
+        <actor:steps>
+            <actor:step xpoint="" ypont=""  fromBeanId="beginActor" conditon="context._SUFFIX=='json'"  toBeanId="JsonViewResolverActor"/>
+            <actor:step xpoint="" ypont=""  fromBeanId="beginActor" conditon="exception==null" toBeanId="ViewResolveActor"/>
+            <actor:step xpoint="" ypont=""   fromBeanId="beginActor" conditon="exception!=null"  toBeanId="ErrorViewResolveActor"/>
+        </actor:steps>
+
+
+    </actor:actor>
+    <actor:actor id="chaintest1"  chain="unLoginChain" beginBeanId="randomTxtActor">
+    </actor:actor>
+
+    <actor:actor id="chainparent"   endBeanId="FinishActor" >
+    </actor:actor>
+
+    <actor:actor id="chaintest2"  parent="chainparent" chain="unLoginChain" beginBeanId="randomTxtActor">
+    </actor:actor>
+</beans>
