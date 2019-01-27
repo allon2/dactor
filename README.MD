@@ -35,11 +35,11 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
     默认使用.do提交相关交易，但如果是.json将会返回json数据
    启动后,在浏览器中输入http://localhost:8080/example/randomTxt2.json  
    输出的是json格式的字符串  
-   randomTxt2的演示的是只有一个父actor的代码  
-   randomTxt1演示的是除了自己有父，父还有父情况  
-   chaintest1演示的是使用只使用责任链的情况  
-   chaintest2演示的是同时使用责任链和继承的情况  
-   exceptionTest演示的是子交易抛出错误后代码运行情况  
+   randomTxt2:只有一级父子关系  
+   randomTxt1:有二级父子关系 
+   chaintest1:只使用责任链  
+   chaintest2:同时使用责任链和一级父子关系  
+   exceptionTest:子交易抛出错误,框架对错误的处理  
    httptest演示的是通过httpclient异步方式访问百度网站   
         访问URL:http://localhost:8080/example/ httptest.do  
    启动后，可在控制台看到内部调用结果  
