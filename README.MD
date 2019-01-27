@@ -26,15 +26,15 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  1.0.0版本
 - 初始化版本
 ## Getting Started
-  example是J2EE程序,下载后，可直接运行,其中集成了若干例子
-   启动后,在浏览器中输入http://localhost:8080/example/randomTxt2.json
-   输出的是json格式的字符串
-   randomTxt2的演示的是只有一个父actor的代码
-   randomTxt1演示的是除了自己有父，父还有父情况
-   chaintest1演示的是使用只使用责任链的情况
-   chaintest2演示的是同时使用责任链和继承的情况
-   exceptionTest演示的是子交易抛出错误后代码运行情况
-   启动后，可在控制台看到内部调用结果
+  example是J2EE程序,下载后，可直接运行,其中集成了若干例子  
+   启动后,在浏览器中输入http://localhost:8080/example/randomTxt2.json  
+   输出的是json格式的字符串  
+   randomTxt2的演示的是只有一个父actor的代码  
+   randomTxt1演示的是除了自己有父，父还有父情况  
+   chaintest1演示的是使用只使用责任链的情况  
+   chaintest2演示的是同时使用责任链和继承的情况  
+   exceptionTest演示的是子交易抛出错误后代码运行情况  
+   启动后，可在控制台看到内部调用结果  
    ![Image text](1.png)
    
 
