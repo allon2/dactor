@@ -19,6 +19,8 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 - 3、集成HttpServlet
 - 4、支持多层父子结构
 - 5、支持责任链模式  
+- 6、J2EE支持json,csv,pdf,xml,html格式输出
+- 7、J2EE支持数据流输出,动态文件下载、动态图片输出、跳转和可根据配置动态输出
  环境要求  
   JDK 1.8  
   Spring FrameWork 4.3.22.RELEASE +  
@@ -30,6 +32,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 - 初始化版本
 ## Getting Started
   example是J2EE程序,下载后，可直接运行,其中集成了若干例子  
+    默认使用.do提交相关交易，但如果是.json将会返回json数据
    启动后,在浏览器中输入http://localhost:8080/example/randomTxt2.json  
    输出的是json格式的字符串  
    randomTxt2的演示的是只有一个父actor的代码  
@@ -37,7 +40,8 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
    chaintest1演示的是使用只使用责任链的情况  
    chaintest2演示的是同时使用责任链和继承的情况  
    exceptionTest演示的是子交易抛出错误后代码运行情况  
-   httptest演示的是通过httpclient异步方式访问百度网站
+   httptest演示的是通过httpclient异步方式访问百度网站   
+        访问URL:http://localhost:8080/example/ httptest.do  
    启动后，可在控制台看到内部调用结果  
    ![Image text](1.png)
    
