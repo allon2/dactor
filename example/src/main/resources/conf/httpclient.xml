@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean id="HttpClientActor" class="cn.ymotel.dactor.action.httpclient.HttpClientActor">
+		<property name="url" value="http://www.baidu.com"></property>
+		<property name="method" value="GET"></property>
+		<property name="charset" value="UTF8"></property>
+
+		<property name="httpClientHelper" ref="httpClientHelper"></property>
+		<property name="actorHttpClientResponse" ref="actorHttpClientResponse"></property>
+	</bean>
+	<bean id="httpClientHelper" class="cn.ymotel.dactor.action.httpclient.HttpClientHelper" destroy-method="shutdown">
+		<property name="maxTotal" value="100"></property>
+	</bean>
+	<bean id="actorHttpClientResponse"
+		class="cn.ymotel.dactor.action.httpclient.ActorHttpClientResponse">
+
+	</bean>
+	<bean id="AbstractParserActor"  class="cn.ymotel.dactor.transformer.AbstractParserActor"  abstract="true">
+		<property name="fromKey" value="_HTTPCLIENT_RESPONSE"></property>
+			<property name="toKey" value="_Parser"></property>
+			<property name="cleanSource" value="true"></property>
+			<property name="putContext" value="true"></property>
+			<property name="errorKey" value="ret"></property>
+			<property name="errorMsg" value="err_msg"></property>
+			<property name="condtion" value="ret==0"></property>
+	
+	
+	</bean>
+	<bean id="JsonParserActor" class="cn.ymotel.dactor.transformer.JsonParserActor" parent="AbstractParserActor">
+			
+	</bean>
+
+</beans>
