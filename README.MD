@@ -63,19 +63,18 @@ compile group: 'cn.ymotel', name: 'dactor', version:'1.0.0'
 chain,grandfather,parent都可为空，不设置
 在grandfather和parent中的Steps中至少有一个为placeholderActor交易，以调用子逻辑
 
-整个过程中，需要先设置全局占位符
-    <actor:global id="actorglobal">
-        <actor:param name="beginBeanId" value="beginActor"/>
-        <actor:param name="endBeanId" value="endActor"/>
-    </actor:global>
-    交易中如果未填写beginBeanId或者endBeanId时，系统默认使用的交易码
- <actor id="randomTxt" parent="actorhttpcore" beginBeanId="randomTxtActor">
-        <steps>
-            <step fromBeanId="randomTxtActor" toBeanId="placeholderActor" conditon=""/>
-            <step fromBeanId="placeholderActor" toBeanId="endActor" conditon=""/>
-        </steps>
-
-    </actor>
+整个过程中，需要先设置全局占位符  
+    <actor:global id="actorglobal">  
+        <actor:param name="beginBeanId" value="beginActor"/>  
+        <actor:param name="endBeanId" value="endActor"/>  
+    </actor:global>  
+交易中如果未填写beginBeanId或者endBeanId时，系统默认使用的交易码  
+ <actor id="randomTxt" parent="actorhttpcore" beginBeanId="randomTxtActor">  
+        <steps>  
+            <step fromBeanId="randomTxtActor" toBeanId="placeholderActor" conditon=""/>  
+            <step fromBeanId="placeholderActor" toBeanId="endActor" conditon=""/>  
+        </steps>   
+    </actor>  
 condtion可为空，或者是ognl表达式  
 placeholderActor的作用是在暂存当前环境，并调用子交易，待子交易执行完毕后，再恢复当前环境继续执行  
 如果在Step中未找到toBeanIdActor，会直接调用endBeanId方法，认为自身交易已执行结束。  
