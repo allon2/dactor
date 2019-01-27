@@ -74,11 +74,11 @@ chain,grandfather,parent都可为空，不设置
         </steps>
 
     </actor>
-condtion可为空，或者是ognl表达式
-placeholderActor的作用是在暂存当前环境，并调用子交易，待子交易执行完毕后，再恢复当前环境继续执行
-如果在Step中未找到toBeanIdActor，会直接调用endBeanId方法，认为自身交易已执行结束。
-交易的请求和流转信息都保存在Message中
-如果指定handleException=false或者使用默认设置，直接返回父中执行，如果父中也未捕获，则继续返回上一级执行，  
+condtion可为空，或者是ognl表达式  
+placeholderActor的作用是在暂存当前环境，并调用子交易，待子交易执行完毕后，再恢复当前环境继续执行  
+如果在Step中未找到toBeanIdActor，会直接调用endBeanId方法，认为自身交易已执行结束。  
+交易的请求和流转信息都保存在Message中  
+如果指定handleException=false或者使用默认设置，直接返回父中执行，如果父中也未捕获，则继续返回上一级执行，    
 一般来说至少有要有一个actor中指定handleException=true
 <bean id="MessageRingBufferDispatcher" class="cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher">
 </bean>
