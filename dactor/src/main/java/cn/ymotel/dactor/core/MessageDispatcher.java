@@ -17,10 +17,6 @@ import cn.ymotel.dactor.message.Message;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */
@@ -31,9 +27,9 @@ public interface MessageDispatcher {
 	 * 如果无可用的，立即返回
 	 * {method specification, must edit}
 	 *
-	 * @param message
-	 * @param actorcfg
-	 * @throws Exception
+	 * @param message 需要处理的消息
+	 * @param actorcfg 消息对应的配置
+	 * @throws Exception 抛出异常
 	 *
 	 * @version 1.0
 	 * @since 1.0
@@ -43,10 +39,10 @@ public interface MessageDispatcher {
 	 * 阻塞是否立即返回，true等待可用,一般在内部调用时使用,false，一般在外部调用时使用
 	 * {method specification, must edit}
 	 *
-	 * @param message
-	 * @param actorcfg
-	 * @param blocked
-	 * @throws Exception
+	 * @param message 需要处理的消息
+	 * @param actorcfg 消息对应的配置
+	 * @param blocked  是否阻塞
+	 * @throws Exception 抛出异常
 	 *
 	 * @version 1.0
 	 * @since 1.0

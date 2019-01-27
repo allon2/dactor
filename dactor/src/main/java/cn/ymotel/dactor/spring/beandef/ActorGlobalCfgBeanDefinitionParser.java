@@ -26,10 +26,6 @@ import org.w3c.dom.Element;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */
@@ -44,21 +40,7 @@ public class ActorGlobalCfgBeanDefinitionParser extends
 		 
 		return ActorGlobalCfg.class;
 	}
-//	/* 
-//	 * 覆盖registerBeanDefinition方法，在注册的时候同时注册别名
-//	 */
-//	@Override
-//	protected void registerBeanDefinition(BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
-//		BeanDefinitionHolder newHolder = definition;
-////        	if ( definition.getAliases() == null || definition.getAliases().length == 0 ) {
-////            		String[] defaultAliases = this.getDefaultAlias();
-////            		if ( defaultAliases != null && defaultAliases.length > 0 ) {
-////            			//注册别名
-////            			newHolder = new BeanDefinitionHolder(definition.getBeanDefinition(), definition.getBeanName(),defaultAliases);
-////            		}
-////        	}
-//        	super.registerBeanDefinition(newHolder, registry);
-//	}
+
 	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 		
 //        RootBeanDefinition beanDef = new RootBeanDefinition();

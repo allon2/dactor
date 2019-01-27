@@ -19,10 +19,6 @@ import org.apache.http.nio.conn.NHttpClientConnectionManager;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */

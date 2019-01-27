@@ -23,10 +23,6 @@ import cn.ymotel.dactor.workflow.WorkFlowProcess;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */

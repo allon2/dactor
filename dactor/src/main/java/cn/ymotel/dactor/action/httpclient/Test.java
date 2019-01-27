@@ -22,10 +22,6 @@ import org.apache.http.concurrent.FutureCallback;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */
@@ -38,8 +34,8 @@ public class Test {
 	/**
 	 * {method specification, must edit}
 	 *
-	 * @param args
-	 *
+	 * @param args 参数
+	 * @throws Exception 抛出异常
 	 * @version 1.0
 	 * @since 1.0
 	 */

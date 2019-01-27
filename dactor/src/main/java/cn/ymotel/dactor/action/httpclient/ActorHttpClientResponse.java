@@ -34,10 +34,6 @@ import cn.ymotel.dactor.message.Message;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */
@@ -73,11 +69,11 @@ public class ActorHttpClientResponse implements ActorHttpClientResponseHandler {
 	/**
 	 * {method specification, must edit}
 	 *
-	 * @param response
-	 * @param charset
-	 * @throws IOException
-	 * @throws HttpResponseException
-	 *
+	 * @param response HttpClient的响应
+	 * @param charset 字符集
+	 * @throws IOException 抛出IO异常
+	 * @throws HttpResponseException 抛出HttpClient的错误响应
+	 * @return 返回经过处理的HTML
 	 * @version 1.0
 	 * @since 1.0
 	 */

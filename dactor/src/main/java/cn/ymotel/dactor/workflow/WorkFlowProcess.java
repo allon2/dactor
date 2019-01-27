@@ -33,10 +33,6 @@ import cn.ymotel.dactor.core.ActorChainCfg;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */
@@ -70,9 +66,9 @@ public class WorkFlowProcess {
 	 * HandleMessage 后调用
 	 * {method specification, must edit}
 	 *
-	 * @param control
-	 * @param message
-	 * @param appcontext
+	 * @param control 控制信息
+	 * @param message 传递的消息
+	 * @param appcontext Spring 上下文
 	 *
 	 * @version 1.0
 	 * @since 1.0
@@ -93,8 +89,8 @@ public class WorkFlowProcess {
 
 	/**
 	 * 优先执行Chain，再执行parent,再执行Actor
-	 * @param cfg
-	 * @param deque
+	 * @param cfg 配置
+	 * @param deque 队列
 	 */
 	public static  void AppendCfg2Deque(ActorTransactionCfg cfg,Deque<ActorProcessStructure> deque){
 		if(cfg.getChain()!=null){
@@ -122,10 +118,10 @@ public class WorkFlowProcess {
 
 	/**
 	 * 模式，调用子交易
-	 * @param deque
-	 * @param downdeque
-	 * @param message
-	 * @param appcontext
+	 * @param deque 队列
+	 * @param downdeque 暂存队列
+	 * @param message 需要处理的消息
+	 * @param appcontext Spring的上下文
 	 */
 	public  static void  FireNextMessage(Deque<ActorProcessStructure> deque,Deque<ActorProcessStructure> downdeque,Message message, ApplicationContext appcontext){
 //		if(deque.isEmpty()){

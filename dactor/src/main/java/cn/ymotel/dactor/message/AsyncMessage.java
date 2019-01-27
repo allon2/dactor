@@ -17,17 +17,13 @@ import java.util.Map;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */
 public class AsyncMessage extends DefaultMessage {
 //	private Map context=new HashMap();
 	/**
-	 * 
+	 * @param context 需要处理的上下文
 	 */
 	public AsyncMessage(Map context) {
 //		this.context.putAll(context);

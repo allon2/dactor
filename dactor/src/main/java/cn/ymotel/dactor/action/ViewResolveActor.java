@@ -26,10 +26,6 @@ import cn.ymotel.dactor.async.web.view.HttpView;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */

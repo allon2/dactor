@@ -21,10 +21,6 @@ import cn.ymotel.dactor.spring.beandef.ActorTransactionCfgBeanDefinitionParser;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */

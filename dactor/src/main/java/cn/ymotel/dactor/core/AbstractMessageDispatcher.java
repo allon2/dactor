@@ -25,10 +25,6 @@ import org.springframework.context.ApplicationContextAware;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */
@@ -54,9 +50,9 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher,App
 	 * 
 	 * 是否阻塞
 	 *
-	 * @param message
-	 * @param blocked
-	 * @return
+	 * @param message 需要处理的信息
+	 * @param blocked 是否阻塞
+	 * @return 是否阻塞
 	 *
 	 * @version 1.0
 	 * @since 1.0

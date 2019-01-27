@@ -14,7 +14,6 @@ import java.lang.reflect.Type;
  * <p>
  *
  * @author 宋汝波
- * @date 2014年11月24日
  * @version 1.0.0
  */
 public class JsonUtil {

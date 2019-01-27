@@ -20,28 +20,12 @@ import cn.ymotel.dactor.workflow.ActorProcessStructure;
  *         <p>
  *         Created on 2014年5月13日 Modification history {add your history}
  *         </p>
- *         <p>
- *
- *         </p>
  * @version 1.0
  * @since 1.0
  */
 public class ControlMessage {
 
-	/**
-	 * 
-	 *优先使用责任链进行初始化，如果无责任链，则使用parent属性
-	 *
-	 * @param id
-	 *
-	 * @version 1.0
-	 * @since 1.0
-	 */
-	
-	
-	public void init(String id) {
 
-	}
 
 	private String state="";
 	

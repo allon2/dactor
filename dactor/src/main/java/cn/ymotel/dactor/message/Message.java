@@ -19,32 +19,16 @@ import java.util.Map;
  *   Modification history	
  *   {add your history}
  * </p>
- * <p>
- *
- *
- * </p>
  * @version 1.0
  * @since 1.0
  */
 public interface Message {
-//	/**
-//	 * 
-//	 * 一个消息对应一个处理的Id号
-//	 *
-//	 * @return
-//	 *
-//	 * @version 1.0
-//	 * @since 1.0
-//	 */
-//	public String getActorId();
-//	
-//	
-//	public String setActorId(String actorId);
+
 	/**
 	 * 
 	 * 得到Message放入队列中的时间,用于判断整个交易是否处理超时,在将Message放入Actor之前判断
 	 *
-	 * @return
+	 * @return 返回生成消息的时间
 	 *
 	 * @version 1.0
 	 * @since 1.0
@@ -55,7 +39,7 @@ public interface Message {
 	 * 
 	 *  产生Message的原始对象，一般也会负责处理错误等结果,可以扩展WebActor
 	 *
-	 * @return
+	 * @return 返回原始对象
 	 *
 	 * @version 1.0
 	 * @since 1.0
@@ -68,7 +52,7 @@ public interface Message {
 	 * 
 	 * 保存上下文的内容
 	 *
-	 * @return
+	 * @return 返回请求信息
 	 *
 	 * @version 1.0
 	 * @since 1.0
@@ -76,8 +60,8 @@ public interface Message {
 	public Map getContext();
 	
 	/**
-	 * 得到忽略大小写的Map
-	 * @return
+	 *
+	 * @return 得到忽略大小写的Map
 	 */
 	public Map getCaseInsensitivegetContext();
 	
@@ -85,7 +69,7 @@ public interface Message {
 	 * 存储逻辑控制信息,程序员不能修改
 	 * 
 	 *
-	 * @return
+	 * @return 返回存储逻辑控制信息
 	 *
 	 * @version 1.0
 	 * @since 1.0
