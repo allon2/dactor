@@ -6,41 +6,39 @@
  */
 package cn.ymotel.dactor.spring;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
-
 import cn.ymotel.dactor.spring.beandef.ActorChainCfgBeanDefinitionParser;
 import cn.ymotel.dactor.spring.beandef.ActorGlobalCfgBeanDefinitionParser;
 import cn.ymotel.dactor.spring.beandef.ActorTransactionCfgBeanDefinitionParser;
+import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年5月16日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年5月16日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class ActorNamespaceHandler extends NamespaceHandlerSupport {
 
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.xml.NamespaceHandler#init()
-	 */
-	@Override
-	public void init() {
-		ActorsBeanDefinitionParser actors=new ActorsBeanDefinitionParser();
-		actors.setHandler(this);
-		registerBeanDefinitionParser("actor", new ActorTransactionCfgBeanDefinitionParser()); 
-		registerBeanDefinitionParser("chain", new ActorChainCfgBeanDefinitionParser()); 
-		
-		registerBeanDefinitionParser("global", new ActorGlobalCfgBeanDefinitionParser()); 
-		registerBeanDefinitionParser("actors", actors); 
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.xml.NamespaceHandler#init()
+     */
+    @Override
+    public void init() {
+        ActorsBeanDefinitionParser actors = new ActorsBeanDefinitionParser();
+        actors.setHandler(this);
+        registerBeanDefinitionParser("actor", new ActorTransactionCfgBeanDefinitionParser());
+        registerBeanDefinitionParser("chain", new ActorChainCfgBeanDefinitionParser());
+
+        registerBeanDefinitionParser("global", new ActorGlobalCfgBeanDefinitionParser());
+        registerBeanDefinitionParser("actors", actors);
 
 
-		
-	}
+    }
 
 }

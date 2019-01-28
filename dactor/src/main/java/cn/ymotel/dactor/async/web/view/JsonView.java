@@ -6,105 +6,104 @@
  */
 package cn.ymotel.dactor.async.web.view;
 
-import cn.ymotel.dactor.message.LocalServletMessage;
+import cn.ymotel.dactor.message.ServletMessage;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月19日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月19日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class JsonView extends StreamView {
-	/**
-	 * Logger for this class
-	 */
-	private static final Log logger = LogFactory.getLog(JsonView.class);
-	 
-	
-	private String content="_Content";
-	
-	/**
-	 * @return the content
-	 */
-	public String getContent() {
-		return content;
-	}
-	/**
-	 * @param content the content to set
-	 */
-	public void setContent(String content) {
-		this.content = content;
-	}
-	 
-	 private static SerializeConfig mapping = new SerializeConfig(); 
-//	 private static SerializerFeature[] features = {SerializerFeature.DisableCheckSpecialChar}; 
-	 static { 
-		 /**
-		  *  对序列化的Long类型进行特殊处理,避免位数过大导致和js精度的丢失,只用于向页面发送json数据时使用
-		  */
-		 mapping.put(Long.class, JsonUtil.longSerializer);
+    /**
+     * Logger for this class
+     */
+    private static final Log logger = LogFactory.getLog(JsonView.class);
+
+
+    private String content = "_Content";
+
+    /**
+     * @return the content
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * @param content the content to set
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    private static SerializeConfig mapping = new SerializeConfig();
+
+    //	 private static SerializerFeature[] features = {SerializerFeature.DisableCheckSpecialChar};
+    static {
+        /**
+         *  对序列化的Long类型进行特殊处理,避免位数过大导致和js精度的丢失,只用于向页面发送json数据时使用
+         */
+        mapping.put(Long.class, JsonUtil.longSerializer);
 //         mapping.put(Date.class, new SimpleDateFormatSerializer("yyyy-MM-dd")); 
 //         mapping.put(java.sql.Timestamp.class, new SimpleDateFormatSerializer("yyyy-MM-dd HH:mm:ss")); 
 
- } 
-	
-	/* (non-Javadoc)
-	 * @see AbstractView#render(LocalServletMessage, java.lang.String)
-	 */
-	@Override
-	public void renderInner(LocalServletMessage message, String viewName) {
+    }
 
-		Object jsonObject= message.getContext().get(content);
-		String jsonString=null;
-		if(jsonObject instanceof String){
-			jsonString=(String)jsonObject;
-		}else if(jsonObject instanceof byte[]){
-			try {
-				jsonString=new String((byte[])jsonObject,"UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				if (logger.isInfoEnabled()) {
-					logger.info("",e);
-				}
-			}
-		}
+    /* (non-Javadoc)
+     * @see AbstractView#render(LocalServletMessage, java.lang.String)
+     */
+    @Override
+    public void renderInner(ServletMessage message, String viewName) {
 
-		else{
-		 jsonString=JSON.toJSONString(jsonObject,mapping);
-		}
-		
-		if (logger.isInfoEnabled()) {
-			logger.info("jsonString" + jsonObject.getClass() + "-----" + jsonString + message.getContext()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
-		try {
-			
+        Object jsonObject = message.getContext().get(content);
+        String jsonString = null;
+        if (jsonObject instanceof String) {
+            jsonString = (String) jsonObject;
+        } else if (jsonObject instanceof byte[]) {
+            try {
+                jsonString = new String((byte[]) jsonObject, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("", e);
+                }
+            }
+        } else {
+            jsonString = JSON.toJSONString(jsonObject, mapping);
+        }
+
+        if (logger.isInfoEnabled()) {
+            logger.info("jsonString" + jsonObject.getClass() + "-----" + jsonString + message.getContext()); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+
+        try {
+
 //			message.getResponse().setHeader("Access-Control-Allow-Origin","*");
 //			message.getResponse().setHeader("Access-Control-Allow-Methods","POST");
 //			message.getResponse().setHeader("Access-Control-Allow-Headers","x-requested-with,content-type");
-			message.getAsyncContext().getResponse().getWriter().print(jsonString);
-			message.getAsyncContext().getResponse().getWriter().flush();
-			message.getAsyncContext().complete();
+            message.getAsyncContext().getResponse().getWriter().print(jsonString);
+            message.getAsyncContext().getResponse().getWriter().flush();
+            message.getAsyncContext().complete();
 //			message.getAsyncContext().getResponse().getWriter().close();
-		} catch (IOException e) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("renderInner(LocalServletMessage, String)"); //$NON-NLS-1$
-			}
-		}
-		
-	}
+        } catch (IOException e) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("renderInner(LocalServletMessage, String)"); //$NON-NLS-1$
+            }
+        }
+
+    }
 
 }

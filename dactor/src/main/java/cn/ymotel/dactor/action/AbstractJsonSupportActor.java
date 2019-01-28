@@ -7,46 +7,44 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.Map;
+public class AbstractJsonSupportActor implements Actor, ApplicationContextAware {
 
-public class AbstractJsonSupportActor implements Actor , ApplicationContextAware{
-
-	/**
-	 * Logger for this class
-	 */
-	private static final Log logger = LogFactory.getLog(AbstractJsonSupportActor.class);
+    /**
+     * Logger for this class
+     */
+    private static final Log logger = LogFactory.getLog(AbstractJsonSupportActor.class);
 
 
-	@Override
-	public Object HandleMessage(Message message) throws Exception {
-		 
-			try {
-				Object obj=Execute(message);
-				if(obj!=null){
-					message.getContext().put("_Content", obj);
-				}
-			} catch (Throwable e) {
-				if (logger.isErrorEnabled()) {
-					logger.error("错误信息",e); //$NON-NLS-1$
-				}
+    @Override
+    public Object HandleMessage(Message message) throws Exception {
 
- 				message.setException(e);
-			}
-		 return message;
-	}
+        try {
+            Object obj = Execute(message);
+            if (obj != null) {
+                message.getContext().put("_Content", obj);
+            }
+        } catch (Throwable e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("错误信息", e); //$NON-NLS-1$
+            }
 
-	
-	
-	public   Object Execute(Message message) throws Exception{
-		 return null;
-	}
+            message.setException(e);
+        }
+        return message;
+    }
 
-	private ApplicationContext appcontext;
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		appcontext=applicationContext;
-		
-	}
+
+    public Object Execute(Message message) throws Exception {
+        return null;
+    }
+
+    private ApplicationContext appcontext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        appcontext = applicationContext;
+
+    }
 
 
 }

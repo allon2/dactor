@@ -14,38 +14,40 @@ import org.apache.commons.logging.LogFactory;
  * {type specification, must edit}
  *
  * @author Administrator {must edit, use true name}
- *         <p>
- *         Created on 2014年9月16日 Modification history {add your history}
- *         </p>
+ * <p>
+ * Created on 2014年9月16日 Modification history {add your history}
+ * </p>
  * @version 1.0
  * @since 1.0
  */
 public abstract class AbstractSupportActor implements Actor {
-	/**
-	 * Logger for this class
-	 */
-	private static final Log logger = LogFactory.getLog(AbstractSupportActor.class);
+    /**
+     * Logger for this class
+     */
+    private static final Log logger = LogFactory.getLog(AbstractSupportActor.class);
 
 
-	/* (non-Javadoc)
-	 * @see Actor#HandleMessage(Message)
-	 */
-	@Override
-	public Object HandleMessage(Message message) throws Exception {
-		 
-			try {
-				Execute(message);
-			} catch (java.lang.Throwable e) {
-			if (logger.isErrorEnabled()) {
-				logger.error("错误信息",e);
-			}
- 				message.setException(e);
-			}
-		 return message;
-	}
-	
-	public   void Execute(Message message) throws Exception{
-		//子类可继承
-	};
+    /* (non-Javadoc)
+     * @see Actor#HandleMessage(Message)
+     */
+    @Override
+    public Object HandleMessage(Message message) throws Exception {
+
+        try {
+            Execute(message);
+        } catch (java.lang.Throwable e) {
+            if (logger.isErrorEnabled()) {
+                logger.error("错误信息", e);
+            }
+            message.setException(e);
+        }
+        return message;
+    }
+
+    public void Execute(Message message) throws Exception {
+        //子类可继承
+    }
+
+    ;
 
 }

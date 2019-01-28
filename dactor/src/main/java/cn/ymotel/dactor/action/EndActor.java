@@ -12,24 +12,24 @@ import cn.ymotel.dactor.message.Message;
  * {type specification, must edit}
  *
  * @author Administrator {must edit, use true name}
- *         <p>
- *         Created on 2014年5月13日 Modification history {add your history}
- *         </p>
+ * <p>
+ * Created on 2014年5月13日 Modification history {add your history}
+ * </p>
  * @version 1.0
  * @since 1.0
  */
-public class EndActor implements Actor  {
+public class EndActor implements Actor {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ymotel.util.actor.Actor#HandleMessage(com.ymotel.util.actor.Message)
-	 */
-	@Override
-	public Object HandleMessage(Message message) throws Exception {
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * com.ymotel.util.actor.Actor#HandleMessage(com.ymotel.util.actor.Message)
+     */
+    @Override
+    public Object HandleMessage(Message message) throws Exception {
 
-		return message;
-	}
+        return message;
+    }
 
 }

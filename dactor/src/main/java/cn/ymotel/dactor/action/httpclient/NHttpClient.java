@@ -28,11 +28,6 @@ package cn.ymotel.dactor.action.httpclient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.util.concurrent.CountDownLatch;
-
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.concurrent.FutureCallback;
@@ -47,14 +42,11 @@ import org.apache.http.nio.protocol.HttpAsyncRequestExecutor;
 import org.apache.http.nio.protocol.HttpAsyncRequester;
 import org.apache.http.nio.reactor.ConnectingIOReactor;
 import org.apache.http.nio.reactor.IOEventDispatch;
-import org.apache.http.protocol.HttpCoreContext;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.HttpProcessorBuilder;
-import org.apache.http.protocol.RequestConnControl;
-import org.apache.http.protocol.RequestContent;
-import org.apache.http.protocol.RequestExpectContinue;
-import org.apache.http.protocol.RequestTargetHost;
-import org.apache.http.protocol.RequestUserAgent;
+import org.apache.http.protocol.*;
+
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Minimal asynchronous HTTP/1.1 client.
@@ -62,17 +54,16 @@ import org.apache.http.protocol.RequestUserAgent;
  * It does not support HTTPS as is.
  * You either need to provide BasicNIOConnPool with a connection factory
  * that supports SSL or use a more complex HttpAsyncClient.
- *
  */
 public class NHttpClient {
-	/**
-	 * Logger for this class
-	 */
-	private static final Log logger = LogFactory.getLog(NHttpClient.class);
+    /**
+     * Logger for this class
+     */
+    private static final Log logger = LogFactory.getLog(NHttpClient.class);
 
     public static void main(String[] args) throws Exception {
-    	
-    	
+
+
         // Create HTTP protocol processing chain
         HttpProcessor httpproc = HttpProcessorBuilder.create()
                 // Use standard client-side protocol interceptors
@@ -101,17 +92,17 @@ public class NHttpClient {
                     // Ready to go!
                     ioReactor.execute(ioEventDispatch);
                 } catch (InterruptedIOException ex) {
-					if (logger.isTraceEnabled()) {
-						logger.trace("$Runnable.run() - Interrupted"); //$NON-NLS-1$
-					}
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("$Runnable.run() - Interrupted"); //$NON-NLS-1$
+                    }
                 } catch (IOException e) {
-					if (logger.isTraceEnabled()) {
-						logger.trace("$Runnable.run() - I/O error: " + e.getMessage()); //$NON-NLS-1$
-					}
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("$Runnable.run() - I/O error: " + e.getMessage()); //$NON-NLS-1$
+                    }
                 }
-				if (logger.isTraceEnabled()) {
-					logger.trace("$Runnable.run() - Shutdown"); //$NON-NLS-1$
-				}
+                if (logger.isTraceEnabled()) {
+                    logger.trace("$Runnable.run() - Shutdown"); //$NON-NLS-1$
+                }
             }
 
         });
@@ -120,13 +111,13 @@ public class NHttpClient {
         // Create HTTP requester
         HttpAsyncRequester requester = new HttpAsyncRequester(httpproc);
         // Execute HTTP GETs to the following hosts and
-        HttpHost[] targets = new HttpHost[] {
+        HttpHost[] targets = new HttpHost[]{
                 new HttpHost("www.apache.org", 80, "http"),
                 new HttpHost("www.verisign.com", 443, "https"),
                 new HttpHost("www.google.com", 80, "http")
         };
         final CountDownLatch latch = new CountDownLatch(targets.length);
-        for (final HttpHost target: targets) {
+        for (final HttpHost target : targets) {
             BasicHttpRequest request = new BasicHttpRequest("GET", "/");
             HttpCoreContext coreContext = HttpCoreContext.create();
             requester.execute(
@@ -137,37 +128,37 @@ public class NHttpClient {
                     // Handle HTTP response from a callback
                     new FutureCallback<HttpResponse>() {
 
-                public void completed(final HttpResponse response) {
-                    latch.countDown();
-							if (logger.isTraceEnabled()) {
-								logger.trace("$FutureCallback<HttpResponse>.completed(HttpResponse) - " + target + "->" + response.getStatusLine()); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-                }
+                        public void completed(final HttpResponse response) {
+                            latch.countDown();
+                            if (logger.isTraceEnabled()) {
+                                logger.trace("$FutureCallback<HttpResponse>.completed(HttpResponse) - " + target + "->" + response.getStatusLine()); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        }
 
-                public void failed(final Exception ex) {
-                    latch.countDown();
-							if (logger.isTraceEnabled()) {
-								logger.trace("$FutureCallback<HttpResponse>.failed(Exception) - " + target + "->" + ex); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-                }
+                        public void failed(final Exception ex) {
+                            latch.countDown();
+                            if (logger.isTraceEnabled()) {
+                                logger.trace("$FutureCallback<HttpResponse>.failed(Exception) - " + target + "->" + ex); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        }
 
-                public void cancelled() {
-                    latch.countDown();
-							if (logger.isTraceEnabled()) {
-								logger.trace("$FutureCallback<HttpResponse>.cancelled() - " + target + " cancelled"); //$NON-NLS-1$ //$NON-NLS-2$
-							}
-                }
+                        public void cancelled() {
+                            latch.countDown();
+                            if (logger.isTraceEnabled()) {
+                                logger.trace("$FutureCallback<HttpResponse>.cancelled() - " + target + " cancelled"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        }
 
-            });
+                    });
         }
         latch.await();
-		if (logger.isTraceEnabled()) {
-			logger.trace("main(String[]) - Shutting down I/O reactor"); //$NON-NLS-1$
-		}
+        if (logger.isTraceEnabled()) {
+            logger.trace("main(String[]) - Shutting down I/O reactor"); //$NON-NLS-1$
+        }
         ioReactor.shutdown();
-		if (logger.isTraceEnabled()) {
-			logger.trace("main(String[]) - Done"); //$NON-NLS-1$
-		}
+        if (logger.isTraceEnabled()) {
+            logger.trace("main(String[]) - Done"); //$NON-NLS-1$
+        }
     }
 
 }

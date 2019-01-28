@@ -12,49 +12,49 @@ import java.util.List;
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月19日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月19日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class ActorChainCfg {
-	private String id;
-	
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
+    private String id;
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
 
-	private List<ActorTransactionCfg> before=new ArrayList();
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	 private List<ActorTransactionCfg> after=new ArrayList();
+    private List<ActorTransactionCfg> before = new ArrayList();
 
-	public List<ActorTransactionCfg> getBefore() {
-		return before;
-	}
+    private List<ActorTransactionCfg> after = new ArrayList();
 
-	public void setBefore(List<ActorTransactionCfg> before) {
-		this.before = before;
-	}
+    public List<ActorTransactionCfg> getBefore() {
+        return before;
+    }
 
-	public List<ActorTransactionCfg> getAfter() {
-		return after;
-	}
+    public void setBefore(List<ActorTransactionCfg> before) {
+        this.before = before;
+    }
 
-	public void setAfter(List<ActorTransactionCfg> after) {
-		this.after = after;
-	}
+    public List<ActorTransactionCfg> getAfter() {
+        return after;
+    }
+
+    public void setAfter(List<ActorTransactionCfg> after) {
+        this.after = after;
+    }
 }

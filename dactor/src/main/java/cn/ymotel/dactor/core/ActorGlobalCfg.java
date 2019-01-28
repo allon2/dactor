@@ -12,30 +12,30 @@ import java.util.Map;
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月19日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月19日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class ActorGlobalCfg {
-	private Map params=new HashMap();
+    private Map params = new HashMap();
 
-	/**
-	 * @return the params
-	 */
-	public Map getParams() {
-		return params;
-	}
+    /**
+     * @return the params
+     */
+    public Map getParams() {
+        return params;
+    }
 
-	/**
-	 * @param params the params to set
-	 */
-	public void setParams(Map params) {
-		this.params = params;
-	}
-	
+    /**
+     * @param params the params to set
+     */
+    public void setParams(Map params) {
+        this.params = params;
+    }
+
 }

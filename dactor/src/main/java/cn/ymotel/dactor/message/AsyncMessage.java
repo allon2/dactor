@@ -11,23 +11,24 @@ import java.util.Map;
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月29日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月29日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class AsyncMessage extends DefaultMessage {
 //	private Map context=new HashMap();
-	/**
-	 * @param context 需要处理的上下文
-	 */
-	public AsyncMessage(Map context) {
+
+    /**
+     * @param context 需要处理的上下文
+     */
+    public AsyncMessage(Map context) {
 //		this.context.putAll(context);
-		this.getContext().putAll(context);
-	}
+        this.getContext().putAll(context);
+    }
 
 }

@@ -6,63 +6,65 @@
  */
 package cn.ymotel.dactor.message;
 
-import java.util.Deque;
-
-
-import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.core.ActorChainCfg;
+import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.workflow.ActorProcessStructure;
 import cn.ymotel.dactor.workflow.WorkFlowProcess;
+
+import java.util.Deque;
 
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月21日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月21日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class SpringControlMessage extends ControlMessage {
-	private ActorTransactionCfg sourceCfg;
-	 
-/**
-	 * @return the sourceCfg
-	 */
-	public ActorTransactionCfg getSourceCfg() {
-		return sourceCfg;
-	}
- 
+    private ActorTransactionCfg sourceCfg;
 
-	/**
-	 * parent,child
-	 */
-	private Deque<ActorProcessStructure> actorsStacks=WorkFlowProcess.createActorsStack();
-	/**
-	 * child,parent
-	 */
-	private Deque<ActorProcessStructure> downStacks=WorkFlowProcess.createActorsStack();
+    /**
+     * @return the sourceCfg
+     */
+    public ActorTransactionCfg getSourceCfg() {
+        return sourceCfg;
+    }
 
-	public Deque<ActorProcessStructure> getDownStack(){
-		return downStacks;
-	}
-	//查看堆栈顶层对象
-	public ActorProcessStructure getProcessStructure(){
-		if(actorsStacks.isEmpty()){
-			return null;
-		}
- 		return actorsStacks.peek();
-	}
-	public Deque<ActorProcessStructure> getActorsStack(){
-		return actorsStacks;
-	}
-	public void init(ActorTransactionCfg actorcfg,ActorChainCfg chain) {
-		sourceCfg=actorcfg;
-		WorkFlowProcess.PushActorsToStackWithChain(actorsStacks, actorcfg, chain);
-	}
+
+    /**
+     * parent,child
+     */
+    private Deque<ActorProcessStructure> actorsStacks = WorkFlowProcess.createActorsStack();
+    /**
+     * child,parent
+     */
+    private Deque<ActorProcessStructure> downStacks = WorkFlowProcess.createActorsStack();
+
+    public Deque<ActorProcessStructure> getDownStack() {
+        return downStacks;
+    }
+
+    //查看堆栈顶层对象
+    public ActorProcessStructure getProcessStructure() {
+        if (actorsStacks.isEmpty()) {
+            return null;
+        }
+        return actorsStacks.peek();
+    }
+
+    public Deque<ActorProcessStructure> getActorsStack() {
+        return actorsStacks;
+    }
+
+    public void init(ActorTransactionCfg actorcfg, ActorChainCfg chain) {
+        sourceCfg = actorcfg;
+        WorkFlowProcess.PushActorsToStackWithChain(actorsStacks, actorcfg, chain);
+    }
 
 
 }

@@ -12,40 +12,40 @@ import java.util.concurrent.Semaphore;
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年5月24日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年5月24日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class CourrentLimitControl {
- 	private static Map CourrentSemaphore=new java.util.concurrent.ConcurrentHashMap();
-	
-	public boolean isNotLimit(String actorId){
-		if(!CourrentSemaphore.containsKey(actorId)){
-			return  true;
-		}
-		Semaphore semaphore=(Semaphore)CourrentSemaphore.get(actorId);
-		/**
-		 * 没有可用，直接返回
-		 */
-		return semaphore.tryAcquire();
+    private static Map CourrentSemaphore = new java.util.concurrent.ConcurrentHashMap();
+
+    public boolean isNotLimit(String actorId) {
+        if (!CourrentSemaphore.containsKey(actorId)) {
+            return true;
+        }
+        Semaphore semaphore = (Semaphore) CourrentSemaphore.get(actorId);
+        /**
+         * 没有可用，直接返回
+         */
+        return semaphore.tryAcquire();
 //		return false;
-	}
-	
-	public void release(String actorId){
-		if(!CourrentSemaphore.containsKey(actorId)){
-			return  ;
-		}
-		Semaphore semaphore=(Semaphore)CourrentSemaphore.get(actorId);
-		semaphore.release();
-	}
-	public void init(){
-		
-		
-		
-	}
+    }
+
+    public void release(String actorId) {
+        if (!CourrentSemaphore.containsKey(actorId)) {
+            return;
+        }
+        Semaphore semaphore = (Semaphore) CourrentSemaphore.get(actorId);
+        semaphore.release();
+    }
+
+    public void init() {
+
+
+    }
 }

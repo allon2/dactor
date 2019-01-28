@@ -6,63 +6,65 @@
  */
 package cn.ymotel.dactor.message;
 
-import java.util.Deque;
-
-
 import cn.ymotel.dactor.core.MessageDispatcher;
-
 import cn.ymotel.dactor.workflow.ActorProcessStructure;
+
+import java.util.Deque;
 
 /**
  * {type specification, must edit}
- * 
+ *
  * @author Administrator {must edit, use true name}
- *         <p>
- *         Created on 2014年5月13日 Modification history {add your history}
- *         </p>
+ * <p>
+ * Created on 2014年5月13日 Modification history {add your history}
+ * </p>
  * @version 1.0
  * @since 1.0
  */
 public class ControlMessage {
 
 
+    private String state = "";
 
-	private String state="";
-	
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-	/**
-	 * @param state the state to set
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-	private MessageDispatcher messageDispatcher;
+    /**
+     * @return the state
+     */
+    public String getState() {
+        return state;
+    }
 
-	public MessageDispatcher getMessageDispatcher() {
-		return messageDispatcher;
-	}
-	public void setMessageDispatcher(MessageDispatcher messageDispatcher) {
-		this.messageDispatcher = messageDispatcher;
-	}
-	public Deque<ActorProcessStructure> getActorsStack(){
-		return null;
-	}
-	public ActorProcessStructure getProcessStructure(){
-		return null;
-	}
+    /**
+     * @param state the state to set
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	private ControlMessage parent =null;
+    private MessageDispatcher messageDispatcher;
 
-	public ControlMessage getParent() {
-		return parent;
-	}
+    public MessageDispatcher getMessageDispatcher() {
+        return messageDispatcher;
+    }
 
-	public void setParent(ControlMessage parent) {
-		this.parent = parent;
-	}
+    public void setMessageDispatcher(MessageDispatcher messageDispatcher) {
+        this.messageDispatcher = messageDispatcher;
+    }
+
+    public Deque<ActorProcessStructure> getActorsStack() {
+        return null;
+    }
+
+    public ActorProcessStructure getProcessStructure() {
+        return null;
+    }
+
+    private ControlMessage parent = null;
+
+    public ControlMessage getParent() {
+        return parent;
+    }
+
+    public void setParent(ControlMessage parent) {
+        this.parent = parent;
+    }
 }

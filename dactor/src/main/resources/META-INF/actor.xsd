@@ -1,159 +1,160 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema elementFormDefault="qualified" 
+<xs:schema elementFormDefault="qualified"
 
-attributeFormDefault="unqualified"
+           attributeFormDefault="unqualified"
 
-xmlns="http://www.ymotel.cn/schema/dactor"
-xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.ymotel.cn/schema/dactor"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
 
- targetNamespace="http://www.ymotel.cn/schema/dactor"
-		xmlns:beans="http://www.springframework.org/schema/beans"
+           targetNamespace="http://www.ymotel.cn/schema/dactor"
+           xmlns:beans="http://www.springframework.org/schema/beans"
 >
-	<xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-4.0.xsd" />
+    <xs:import namespace="http://www.springframework.org/schema/beans"
+               schemaLocation="http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"/>
 
-     <xs:element name="actors" >
-     
-    <xs:complexType>
-     <xs:complexContent>
-             <xs:extension base="beans:identifiedType">  
-             <xs:sequence>
-             				<xs:choice minOccurs="0" maxOccurs="unbounded">
-             									<xs:element ref="actor"/>
-             									<xs:element ref="chain"/>
-             									<xs:element ref="global"/>
-    								       <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
-    											
-             				
-             				</xs:choice>
-            
-             </xs:sequence>
-     		 
-     
-              <xs:attribute name="namespace"   type="xs:string"/>
-                    </xs:extension>
-              
-         </xs:complexContent>
-      
-    </xs:complexType>
-  </xs:element>
+    <xs:element name="actors">
+
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="beans:identifiedType">
+                    <xs:sequence>
+                        <xs:choice minOccurs="0" maxOccurs="unbounded">
+                            <xs:element ref="actor"/>
+                            <xs:element ref="chain"/>
+                            <xs:element ref="global"/>
+                            <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
+
+
+                        </xs:choice>
+
+                    </xs:sequence>
+
+
+                    <xs:attribute name="namespace" type="xs:string"/>
+                </xs:extension>
+
+            </xs:complexContent>
+
+        </xs:complexType>
+    </xs:element>
     <xs:element name="global">
-    <xs:complexType>
-      <xs:sequence>
-      <xs:element name="param" type="paramType" minOccurs="0" maxOccurs="unbounded"/>      
-      </xs:sequence>
-      <xs:attribute name="id" use="required"/>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param" type="paramType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="paramType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
-  </xs:element>
-  	<xs:complexType name="paramType">
-  	<xs:attribute name="name" type="xs:string" use="required"/>
-  	<xs:attribute name="value" type="xs:string" use="required"/>
-  	</xs:complexType>
- 
-  <xs:element name="chain">
-    <xs:complexType>
-        <xs:choice>
-        <xs:element maxOccurs="unbounded" ref="actor"/>
-        <xs:sequence>
-            <xs:element ref="before"/>
-            <xs:element ref="after"/>
-        </xs:sequence>
-    </xs:choice>
-      <xs:attribute name="id" use="required"/>
 
-     </xs:complexType>
-  </xs:element>
+    <xs:element name="chain">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element maxOccurs="unbounded" ref="actor"/>
+                <xs:sequence>
+                    <xs:element ref="before" minOccurs="0"/>
+                    <xs:element ref="after" minOccurs="0"/>
+                </xs:sequence>
+            </xs:choice>
+            <xs:attribute name="id" use="required"/>
+
+        </xs:complexType>
+    </xs:element>
     <xs:element name="before">
         <xs:complexType>
             <xs:sequence>
-                <xs:element maxOccurs="unbounded" ref="ref"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="ref"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
     <xs:element name="after">
         <xs:complexType>
             <xs:sequence>
-                <xs:element maxOccurs="unbounded" ref="ref"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="ref"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="actorref">
-    <xs:complexType>
-      <xs:attribute name="ref" use="required" type="xs:string"/>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="actor">
-    <xs:complexType>
-      <xs:all>
-        <xs:element minOccurs="0" ref="steps"/>
-         <xs:element minOccurs="0" ref="results"/>
-         <xs:element minOccurs="0" ref="description"/>
-         <xs:element minOccurs="0"  ref="overrides"/>
-      </xs:all>
-      <xs:attribute name="id" use="required" type="xs:string"/>
-      <xs:attribute name="parent"   type="xs:string"/>
-      <xs:attribute name="chain" 	type="xs:string"/>
-        <xs:attribute name="beginBeanId"   type="xs:string"/>
-      <xs:attribute name="endBeanId" 	type="xs:string"/>
-       <xs:attribute name="urlPattern" 	type="xs:string"/>
-         <xs:attribute name="handleException" 	type="xs:string"/>    
-    </xs:complexType>
-  </xs:element>
-   <xs:element name="description" type="xs:NCName"/>
-     
-     
-      <xs:element name="overrides">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="beanId"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="beanId">
-    <xs:complexType>
-      <xs:simpleContent>
-        <xs:extension base="xs:NCName">
-          <xs:attribute name="name" use="required" type="xs:NCName"/>
-        </xs:extension>
-      </xs:simpleContent>
-    </xs:complexType>
-  </xs:element>
-     
-  <xs:element name="steps">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="step"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="step">
-    <xs:complexType>
-      <xs:attribute name="fromBeanId" use="required" type="xs:string"/>
-      <xs:attribute name="conditon"  type="xs:string"/>
-      <xs:attribute name="toBeanId" use="required" type="xs:string"/>
-       <xs:attribute name="after"  type="xs:string"/>
-       <xs:attribute name="async" type="xs:boolean" default="false"/>
-      <xs:attribute name="xpoint" />
-      <xs:attribute name="ypont" />
-    </xs:complexType>
-  </xs:element>
-  
-   <xs:element name="results">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="result"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="result">
-    <xs:complexType>
-      <xs:simpleContent>
-        <xs:extension base="xs:string">
-          <xs:attribute name="name" use="required" type="xs:string"/>
-        </xs:extension>
-      </xs:simpleContent>
-    </xs:complexType>
-  </xs:element>
+        <xs:complexType>
+            <xs:attribute name="ref" use="required" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="actor">
+        <xs:complexType>
+            <xs:all>
+                <xs:element minOccurs="0" ref="steps"/>
+                <xs:element minOccurs="0" ref="results"/>
+                <xs:element minOccurs="0" ref="description"/>
+                <xs:element minOccurs="0" ref="overrides"/>
+            </xs:all>
+            <xs:attribute name="id" use="required" type="xs:string"/>
+            <xs:attribute name="parent" type="xs:string"/>
+            <xs:attribute name="chain" type="xs:string"/>
+            <xs:attribute name="beginBeanId" type="xs:string"/>
+            <xs:attribute name="endBeanId" type="xs:string"/>
+            <xs:attribute name="urlPattern" type="xs:string"/>
+            <xs:attribute name="handleException" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="description" type="xs:NCName"/>
+
+
+    <xs:element name="overrides">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="beanId"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="beanId">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NCName">
+                    <xs:attribute name="name" use="required" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="steps">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="step"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="step">
+        <xs:complexType>
+            <xs:attribute name="fromBeanId" use="required" type="xs:string"/>
+            <xs:attribute name="conditon" type="xs:string"/>
+            <xs:attribute name="toBeanId" use="required" type="xs:string"/>
+            <xs:attribute name="after" type="xs:string"/>
+            <xs:attribute name="async" type="xs:boolean" default="false"/>
+            <xs:attribute name="xpoint"/>
+            <xs:attribute name="ypont"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="results">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="result"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="result">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="name" use="required" type="xs:string"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
     <xs:element name="ref">
         <xs:complexType>
             <xs:attribute name="bean" use="required" type="xs:NCName"/>

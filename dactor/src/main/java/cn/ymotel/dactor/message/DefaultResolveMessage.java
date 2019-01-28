@@ -6,9 +6,13 @@
  */
 package cn.ymotel.dactor.message;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,91 +20,87 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.alibaba.fastjson.JSON;
-
 
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月10日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月10日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class DefaultResolveMessage {
-	/**
-	 * Logger for this class
-	 */
-	private static final Log logger = LogFactory.getLog(DefaultResolveMessage.class);
+    /**
+     * Logger for this class
+     */
+    private static final Log logger = LogFactory.getLog(DefaultResolveMessage.class);
 
-	public Message resolveContext(AsyncContext context, HttpServletRequest request, HttpServletResponse response){
-		  LocalServletMessage message=new LocalServletMessage();
+    public Message resolveContext(AsyncContext context, HttpServletRequest request, HttpServletResponse response) {
+        ServletMessage message = new ServletMessage();
 //		  message
-		  message.setAsyncContext(context);
-		  message.setRequest(request);
-		  message.setResponse(response);
-		  init(message,request,response);	
-		  return message;
-	}
-	public Message resolveContext(Message message){
-		return new DefaultMessage();
-	}
-	private void init(Message message,HttpServletRequest request, HttpServletResponse response){
- 		Map map=new HashMap();
-	for(java.util.Enumeration enum1=request.getParameterNames();enum1.hasMoreElements();){
-			String obj=(String)enum1.nextElement();
-			
-			String[] values=request.getParameterValues(obj);
-			if(values==null){
-				map.put(obj, null);
+        message.setAsyncContext(context);
+        message.setRequest(request);
+        message.setResponse(response);
+        init(message, request, response);
+        return message;
+    }
 
-			}else if(values.length==1){
-				map.put(obj, values[0]);
-			}else {
-				map.put(obj, values);
-			}
-			
-		}
-	
-	
- 	/**
-	 * json
-	 */
-	 if(request.getContentType()!=null&&request.getContentType().toLowerCase().startsWith("application/json")){
-		
-		 Map rtnMap=null;
-		 try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));  
-			 StringBuffer sb = new StringBuffer("");  
-			 String temp;  
-			 while ((temp = br.readLine()) != null) {  
-			     sb.append(temp);  
-			 }  
-			 br.close();  
-			 rtnMap=(Map) JSON.parse(sb.toString());
-		} catch (UnsupportedEncodingException e) {
-				if (logger.isTraceEnabled()) {
-					logger.trace("init(Message, HttpServletRequest, HttpServletResponse)"); //$NON-NLS-1$
-				}
-		} catch (IOException e) {
-				if (logger.isTraceEnabled()) {
-					logger.trace("init(Message, HttpServletRequest, HttpServletResponse)"); //$NON-NLS-1$
-				}
-		}
-		 map.putAll(rtnMap);
-	 }
-	
-	
-	((DefaultMessage)message).setContext(map);
+    public Message resolveContext(Message message) {
+        return new DefaultMessage();
+    }
 
-	message.setOrigSource(map);
- 	}
+    private void init(Message message, HttpServletRequest request, HttpServletResponse response) {
+        Map map = new HashMap();
+        for (java.util.Enumeration enum1 = request.getParameterNames(); enum1.hasMoreElements(); ) {
+            String obj = (String) enum1.nextElement();
+
+            String[] values = request.getParameterValues(obj);
+            if (values == null) {
+                map.put(obj, null);
+
+            } else if (values.length == 1) {
+                map.put(obj, values[0]);
+            } else {
+                map.put(obj, values);
+            }
+
+        }
+
+
+        /**
+         * json
+         */
+        if (request.getContentType() != null && request.getContentType().toLowerCase().startsWith("application/json")) {
+
+            Map rtnMap = null;
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+                StringBuffer sb = new StringBuffer("");
+                String temp;
+                while ((temp = br.readLine()) != null) {
+                    sb.append(temp);
+                }
+                br.close();
+                rtnMap = (Map) JSON.parse(sb.toString());
+            } catch (UnsupportedEncodingException e) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("init(Message, HttpServletRequest, HttpServletResponse)"); //$NON-NLS-1$
+                }
+            } catch (IOException e) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("init(Message, HttpServletRequest, HttpServletResponse)"); //$NON-NLS-1$
+                }
+            }
+            map.putAll(rtnMap);
+        }
+
+
+        ((DefaultMessage) message).setContext(map);
+
+        message.setOrigSource(map);
+    }
 }

@@ -6,24 +6,23 @@
  */
 package cn.ymotel.dactor.action.httpclient;
 
+import cn.ymotel.dactor.message.Message;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.protocol.HttpClientContext;
-
-import cn.ymotel.dactor.message.Message;
 
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月17日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月17日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public interface ActorHttpClientResponseHandler {
-	public void handleResponse(HttpResponse response,HttpClientContext httpclientcontext,String charset,Message message) throws Exception;
+    public void handleResponse(HttpResponse response, HttpClientContext httpclientcontext, String charset, Message message) throws Exception;
 
 }

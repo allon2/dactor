@@ -7,7 +7,26 @@
 	http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd
 	
 	">
+    <actor:chain id="test1Chain">
+        <actor:before>
+            <actor:ref bean="beforechain"></actor:ref>
+        </actor:before>
 
+    </actor:chain>
+    <actor:chain id="test2Chain">
+        <actor:before>
+        </actor:before>
+
+    </actor:chain>
+    <actor:chain id="test3Chain">
+        <actor:after>
+        </actor:after>
+    </actor:chain>
+    <actor:chain id="test4Chain">
+        <actor:after>
+            <actor:ref bean="beforechain"></actor:ref>
+        </actor:after>
+    </actor:chain>
     <actor:chain id="unLoginChain">
         <actor:before>
             <actor:ref bean="beforechain"></actor:ref>

@@ -34,7 +34,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note
- 1.0.0版本
+ 1.0.2版本
 - 初始化版本
 ## Getting Started
   example是J2EE程序,下载后，可直接运行,其中集成了若干例子  
@@ -58,13 +58,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.1'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.2'
 
 ```
 

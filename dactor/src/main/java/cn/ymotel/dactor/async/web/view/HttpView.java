@@ -11,16 +11,16 @@ import cn.ymotel.dactor.message.Message;
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月10日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月10日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public interface HttpView {
-	public void render(Message message, String viewName);
+    public void render(Message message, String viewName);
 
 }

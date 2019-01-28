@@ -11,21 +11,17 @@ import cn.ymotel.dactor.message.Message;
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年4月21日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年4月21日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public interface Actor {
-	public Object  HandleMessage(Message message) throws Exception;
-	public static String ORACLE="oracle";
-	public static String MYSQL="mysql";
-	
+    public Object HandleMessage(Message message) throws Exception;
 
 
-	
 }

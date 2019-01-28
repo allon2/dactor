@@ -6,268 +6,254 @@
  */
 package cn.ymotel.dactor.core;
 
-import ognl.DefaultMemberAccess;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.InitializingBean;
-
 import ognl.Node;
 import ognl.Ognl;
 import ognl.OgnlContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.util.*;
 
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年9月19日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年9月19日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public class ActorTransactionCfg implements InitializingBean {
-	/**
-	 * Logger for this class
-	 */
-	private static final Log logger = LogFactory.getLog(ActorTransactionCfg.class);
+    /**
+     * Logger for this class
+     */
+    private static final Log logger = LogFactory.getLog(ActorTransactionCfg.class);
 
 
-	private ActorTransactionCfg parent;
+    private ActorTransactionCfg parent;
 
-	public ActorTransactionCfg getParent() {
-		return parent;
-	}
+    public ActorTransactionCfg getParent() {
+        return parent;
+    }
 
-	private Map overridesMap=new HashMap();
-	
-	/**
-	 * 默认不处理Exception
-	 */
-	private boolean handleException=false;
-	
-	/**
-	 * @return the handleException
-	 */
-	public boolean isHandleException() {
-		return handleException;
-	}
+    private Map overridesMap = new HashMap();
 
-	/**
-	 * @param handleException the handleException to set
-	 */
-	public void setHandleException(boolean handleException) {
-		this.handleException = handleException;
-	}
+    /**
+     * 默认不处理Exception
+     */
+    private boolean handleException = false;
 
-	/**
-	 * @param overridesMap the overridesMap to set
-	 */
-	public void setOverridesMap(Map overridesMap) {
-		this.overridesMap = overridesMap;
-	}
+    /**
+     * @return the handleException
+     */
+    public boolean isHandleException() {
+        return handleException;
+    }
 
-	/**
-	 * @param parent the parent to set
-	 */
-	public void setParent(ActorTransactionCfg parent) {
-		this.parent = parent;
-	}
-	private String id;
-	
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * @param handleException the handleException to set
+     */
+    public void setHandleException(boolean handleException) {
+        this.handleException = handleException;
+    }
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-	private ActorChainCfg chain;
-	private ActorGlobalCfg global;
+    /**
+     * @param overridesMap the overridesMap to set
+     */
+    public void setOverridesMap(Map overridesMap) {
+        this.overridesMap = overridesMap;
+    }
 
-	/**
-	 * @return the global
-	 */
-	public ActorGlobalCfg getGlobal() {
-		return global;
-	}
+    /**
+     * @param parent the parent to set
+     */
+    public void setParent(ActorTransactionCfg parent) {
+        this.parent = parent;
+    }
 
-	/**
-	 * @param global the global to set
-	 */
-	public void setGlobal(ActorGlobalCfg global) {
-		this.global = global;
-	}
+    private String id;
 
-	/**
-	 * @return the chain
-	 */
-	public ActorChainCfg getChain() {
-		return chain;
-	}
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @param chain the chain to set
-	 */
-	public void setChain(ActorChainCfg chain) {
-		this.chain = chain;
-	}
-	private String beginBeanId;
-	private String endBeanId;
-	private String[] urlPattern;
-	private Map steps;
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return the beginBeanId
-	 */
-	public String getBeginBeanId() {
-		return beginBeanId;
-	}
+    private ActorChainCfg chain;
+    private ActorGlobalCfg global;
 
-	/**
-	 * @param beginBeanId the beginBeanId to set
-	 */
-	public void setBeginBeanId(String beginBeanId) {
-		this.beginBeanId = beginBeanId;
-	}
+    /**
+     * @return the global
+     */
+    public ActorGlobalCfg getGlobal() {
+        return global;
+    }
 
-	 
+    /**
+     * @param global the global to set
+     */
+    public void setGlobal(ActorGlobalCfg global) {
+        this.global = global;
+    }
 
-	/**
-	 * @return the endBeanId
-	 */
-	public String getEndBeanId() {
-		return endBeanId;
-	}
+    /**
+     * @return the chain
+     */
+    public ActorChainCfg getChain() {
+        return chain;
+    }
 
-	/**
-	 * @param endBeanId the endBeanId to set
-	 */
-	public void setEndBeanId(String endBeanId) {
-		this.endBeanId = endBeanId;
-	}
+    /**
+     * @param chain the chain to set
+     */
+    public void setChain(ActorChainCfg chain) {
+        this.chain = chain;
+    }
 
-	 
+    private String beginBeanId;
+    private String endBeanId;
+    private String[] urlPattern;
+    private Map steps;
 
-	
-	/**
-	 * @return the urlPattern
-	 */
-	public String[] getUrlPattern() {
-		return urlPattern;
-	}
+    /**
+     * @return the beginBeanId
+     */
+    public String getBeginBeanId() {
+        return beginBeanId;
+    }
 
-	/**
-	 * @param urlPattern the urlPattern to set
-	 */
-	public void setUrlPattern(String[] urlPattern) {
-		this.urlPattern = urlPattern;
-	}
+    /**
+     * @param beginBeanId the beginBeanId to set
+     */
+    public void setBeginBeanId(String beginBeanId) {
+        this.beginBeanId = beginBeanId;
+    }
 
-	/**
-	 * @return the steps
-	 */
-	public Map getSteps() {
-		return steps;
-	}
 
-	/**
-	 * @param steps the steps to set
-	 */
-	public void setSteps(Map steps) {
-		this.steps = steps;
-	}
-	private Map results=new HashMap();
+    /**
+     * @return the endBeanId
+     */
+    public String getEndBeanId() {
+        return endBeanId;
+    }
 
-	/**
-	 * @return the results
-	 */
-	public Map getResults() {
-		return results;
-	}
+    /**
+     * @param endBeanId the endBeanId to set
+     */
+    public void setEndBeanId(String endBeanId) {
+        this.endBeanId = endBeanId;
+    }
 
-	/**
-	 * @param results the results to set
-	 */
-	public void setResults(Map results) {
-		this.results = results;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		if(this.getBeginBeanId()==null||this.getBeginBeanId().trim().equals("")){
-			 
-				this.setBeginBeanId((String)this.getGlobal().getParams().get("beginBeanId"));
-			 
-		}
-		if(this.getEndBeanId()==null||this.getEndBeanId().trim().equals("")){
-			this.setEndBeanId((String)this.getGlobal().getParams().get("endBeanId"));
-		}
-		
-		/**
-		 * 如果子有使用子的，没有再使用父的condtions
-		 */
-		if(this.steps ==null||this.steps.isEmpty())
-		{
-		}else{
-			
-			
-			for(java.util.Iterator iter = this.steps.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry=(Map.Entry)iter.next();
-				List ls=(List)entry.getValue();
-				for(int i=0;i<ls.size();i++){
-					Map tmpMap=(Map)ls.get(i);
-					String value=(String)tmpMap.get("conditon");
-					if(value==null||value.equals("")){
-						continue;
-					}
-					
-					
-				 
-						
+    /**
+     * @return the urlPattern
+     */
+    public String[] getUrlPattern() {
+        return urlPattern;
+    }
+
+    /**
+     * @param urlPattern the urlPattern to set
+     */
+    public void setUrlPattern(String[] urlPattern) {
+        this.urlPattern = urlPattern;
+    }
+
+    /**
+     * @return the steps
+     */
+    public Map getSteps() {
+        return steps;
+    }
+
+    /**
+     * @param steps the steps to set
+     */
+    public void setSteps(Map steps) {
+        this.steps = steps;
+    }
+
+    private Map results = new HashMap();
+
+    /**
+     * @return the results
+     */
+    public Map getResults() {
+        return results;
+    }
+
+    /**
+     * @param results the results to set
+     */
+    public void setResults(Map results) {
+        this.results = results;
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (this.getBeginBeanId() == null || this.getBeginBeanId().trim().equals("")) {
+
+            this.setBeginBeanId((String) this.getGlobal().getParams().get("beginBeanId"));
+
+        }
+        if (this.getEndBeanId() == null || this.getEndBeanId().trim().equals("")) {
+            this.setEndBeanId((String) this.getGlobal().getParams().get("endBeanId"));
+        }
+
+        /**
+         * 如果子有使用子的，没有再使用父的condtions
+         */
+        if (this.steps == null || this.steps.isEmpty()) {
+        } else {
+
+
+            for (java.util.Iterator iter = this.steps.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                List ls = (List) entry.getValue();
+                for (int i = 0; i < ls.size(); i++) {
+                    Map tmpMap = (Map) ls.get(i);
+                    String value = (String) tmpMap.get("conditon");
+                    if (value == null || value.equals("")) {
+                        continue;
+                    }
+
+
 //						Message  root = new HashMap();
-						OgnlContext context =  (OgnlContext) Ognl.createDefaultContext(null);
-	//
-						try {
-							Node node =  (Node) Ognl.compileExpression(context, null, value);
-							tmpMap.put("conditon", node);
-							continue;
-						} catch (Exception e) {
-						if (logger.isTraceEnabled()) {
-							logger.trace("afterPropertiesSet()"); //$NON-NLS-1$
-						}
-						}
-			 
-					
-					
-					
-					
-				}
+                    OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
+                    //
+                    try {
+                        Node node = (Node) Ognl.compileExpression(context, null, value);
+                        tmpMap.put("conditon", node);
+                        continue;
+                    } catch (Exception e) {
+                        if (logger.isTraceEnabled()) {
+                            logger.trace("afterPropertiesSet()"); //$NON-NLS-1$
+                        }
+                    }
+
+
+                }
 //				tmpCondtions.put(getOverride(entry.getKey()), getOverrideList((List)entry.getValue()));
-			}	
-			
-			
-			
-			
-			return ;
-		}
+            }
+
+
+            return;
+        }
 //		if(this.parent==null){
 //			return ;
 //		}
@@ -292,69 +278,70 @@ public class ActorTransactionCfg implements InitializingBean {
 //		 * 有父
 //		 */
 //		this.steps =tmpCondtions;
-	}
-	public  String getOverride(Object key){
-		if(overridesMap.containsKey(key)){
-		return (String)this.overridesMap.get(key);
-		}
-		return (String)key;
-	}
-	public List getOverrideList(List list){
-		List rtnList=new ArrayList();
-		for(int i=0;i<list.size();i++){
-			Map rtnMap=new HashMap();
-			Map tmpMap=(Map)list.get(i);
+    }
+
+    public String getOverride(Object key) {
+        if (overridesMap.containsKey(key)) {
+            return (String) this.overridesMap.get(key);
+        }
+        return (String) key;
+    }
+
+    public List getOverrideList(List list) {
+        List rtnList = new ArrayList();
+        for (int i = 0; i < list.size(); i++) {
+            Map rtnMap = new HashMap();
+            Map tmpMap = (Map) list.get(i);
 //			rtnMap.putAll(tmpMap);
-			for(java.util.Iterator iter=tmpMap.entrySet().iterator();iter.hasNext();){
-				Map.Entry entry=(Map.Entry)iter.next();
-				String value=getOverride(entry.getValue());
-				
-				if(!entry.getKey().equals("conditon")){
-					
-					rtnMap.put(entry.getKey(), value);
-					continue;
-				}
-				if(value==null||value.trim().equals("")){
-					
-					rtnMap.put(entry.getKey(), value);
-					continue;
-				}
-				
-				
-				if(entry.getKey().equals("conditon")){
-					
+            for (java.util.Iterator iter = tmpMap.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                String value = getOverride(entry.getValue());
+
+                if (!entry.getKey().equals("conditon")) {
+
+                    rtnMap.put(entry.getKey(), value);
+                    continue;
+                }
+                if (value == null || value.trim().equals("")) {
+
+                    rtnMap.put(entry.getKey(), value);
+                    continue;
+                }
+
+
+                if (entry.getKey().equals("conditon")) {
+
 //					Message  root = new HashMap();
-					OgnlContext context =  (OgnlContext) Ognl.createDefaultContext(null);
+                    OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
 //
-					try {
-						Node node =  (Node) Ognl.compileExpression(context, null, value);
-						rtnMap.put(entry.getKey(), node);
-						continue;
-					} catch (Exception e) {
-						if (logger.isTraceEnabled()) {
-							logger.trace("getOverrideList(List)"); //$NON-NLS-1$
-						}
-					}
-					
-					
+                    try {
+                        Node node = (Node) Ognl.compileExpression(context, null, value);
+                        rtnMap.put(entry.getKey(), node);
+                        continue;
+                    } catch (Exception e) {
+                        if (logger.isTraceEnabled()) {
+                            logger.trace("getOverrideList(List)"); //$NON-NLS-1$
+                        }
+                    }
 
-				}
-				rtnMap.put(entry.getKey(), value);
 
-				
-				
-			}
-			rtnList.add(rtnMap);
-		}
-		return rtnList;
-	}
-	@Override
-	public String toString() {
-		return "ActorTransactionCfg [parent=" + parent + ", overridesMap=" + overridesMap
-				+ ", handleException=" + handleException + ", id=" + id
-				+ ", chain=" + chain + ", global=" + global + ", beginBeanId="
-				+ beginBeanId + ", endBeanId=" + endBeanId + ", urlPattern="
-				+ Arrays.toString(urlPattern) + ", steps=" + steps
-				+ ", results=" + results + "]";
-	}
+                }
+                rtnMap.put(entry.getKey(), value);
+
+
+            }
+            rtnList.add(rtnMap);
+        }
+        return rtnList;
+    }
+
+    @Override
+    public String toString() {
+        return "ActorTransactionCfg [parent=" + parent + ", overridesMap=" + overridesMap
+                + ", handleException=" + handleException + ", id=" + id
+                + ", chain=" + chain + ", global=" + global + ", beginBeanId="
+                + beginBeanId + ", endBeanId=" + endBeanId + ", urlPattern="
+                + Arrays.toString(urlPattern) + ", steps=" + steps
+                + ", results=" + results + "]";
+    }
 }

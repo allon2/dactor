@@ -13,82 +13,81 @@ import java.util.Map;
 /**
  * {type specification, must edit}
  *
- * @author  Administrator {must edit, use true name}
+ * @author Administrator {must edit, use true name}
  * <p>
- *   Created on 2014年4月21日
- *   Modification history	
- *   {add your history}
+ * Created on 2014年4月21日
+ * Modification history
+ * {add your history}
  * </p>
  * @version 1.0
  * @since 1.0
  */
 public interface Message {
 
-	/**
-	 * 
-	 * 得到Message放入队列中的时间,用于判断整个交易是否处理超时,在将Message放入Actor之前判断
-	 *
-	 * @return 返回生成消息的时间
-	 *
-	 * @version 1.0
-	 * @since 1.0
-	 */
-	public java.util.Date getStartDate();
-	
-	/**
-	 * 
-	 *  产生Message的原始对象，一般也会负责处理错误等结果,可以扩展WebActor
-	 *
-	 * @return 返回原始对象
-	 *
-	 * @version 1.0
-	 * @since 1.0
-	 */
-	public Object getOrigSource();
-	
-	
-	public void setOrigSource(Object obj);
-	/**
-	 * 
-	 * 保存上下文的内容
-	 *
-	 * @return 返回请求信息
-	 *
-	 * @version 1.0
-	 * @since 1.0
-	 */
-	public Map getContext();
-	
-	/**
-	 *
-	 * @return 得到忽略大小写的Map
-	 */
-	public Map getCaseInsensitivegetContext();
-	
-	/**
-	 * 存储逻辑控制信息,程序员不能修改
-	 * 
-	 *
-	 * @return 返回存储逻辑控制信息
-	 *
-	 * @version 1.0
-	 * @since 1.0
-	 */
-	public SpringControlMessage getControlMessage();
-	
-	public void setControlMessage(SpringControlMessage message);
-	
-	public void setException(Throwable exception);
-	public Throwable getException();
-	public String getTransactionId();
+    /**
+     * 得到Message放入队列中的时间,用于判断整个交易是否处理超时,在将Message放入Actor之前判断
+     *
+     * @return 返回生成消息的时间
+     * @version 1.0
+     * @since 1.0
+     */
+    public java.util.Date getStartDate();
 
-	
-	public Message getParentMessage();
-	public void setParentMessage(Message parentMessage) ;
-	public List<Message> getChilds() ;
-	public void setChilds(List<Message> childs);
-	public java.util.concurrent.atomic.AtomicInteger getChildCount();
-	public void setChildCount(int childCount) ;
-	
-	
+    /**
+     * 产生Message的原始对象，一般也会负责处理错误等结果,可以扩展WebActor
+     *
+     * @return 返回原始对象
+     * @version 1.0
+     * @since 1.0
+     */
+    public Object getOrigSource();
+
+
+    public void setOrigSource(Object obj);
+
+    /**
+     * 保存上下文的内容
+     *
+     * @return 返回请求信息
+     * @version 1.0
+     * @since 1.0
+     */
+    public Map getContext();
+
+    /**
+     * @return 得到忽略大小写的Map
+     */
+    public Map getCaseInsensitivegetContext();
+
+    /**
+     * 存储逻辑控制信息,程序员不能修改
+     *
+     * @return 返回存储逻辑控制信息
+     * @version 1.0
+     * @since 1.0
+     */
+    public SpringControlMessage getControlMessage();
+
+    public void setControlMessage(SpringControlMessage message);
+
+    public void setException(Throwable exception);
+
+    public Throwable getException();
+
+    public String getTransactionId();
+
+
+    public Message getParentMessage();
+
+    public void setParentMessage(Message parentMessage);
+
+    public List<Message> getChilds();
+
+    public void setChilds(List<Message> childs);
+
+    public java.util.concurrent.atomic.AtomicInteger getChildCount();
+
+    public void setChildCount(int childCount);
+
+
 }
