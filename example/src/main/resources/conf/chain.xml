@@ -35,7 +35,17 @@
             <actor:ref bean="afterchain"></actor:ref>
         </actor:after>
      </actor:chain>
+
+
     <actor:actor id="beforechain" handleException="true"  endBeanId="FinishActor" >
+
+        <actor:steps>
+            <actor:step xpoint="" ypont="" fromBeanId="beginActor"  conditon="" toBeanId="placeholderActor"/>
+            <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="context._SUFFIX=='json'"  toBeanId="JsonViewResolverActor"/>
+            <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="exception==null" toBeanId="ViewResolveActor"/>
+            <actor:step xpoint="" ypont=""   fromBeanId="placeholderActor" conditon="exception!=null"  toBeanId="ErrorViewResolveActor"/>
+        </actor:steps>
+
     </actor:actor>
     <actor:actor id="afterchain" handleException="true"  endBeanId="FinishActor" >
 
@@ -54,5 +64,23 @@
     </actor:actor>
 
     <actor:actor id="chaintest2"  parent="chainparent" chain="unLoginChain" beginBeanId="randomTxtActor">
+    </actor:actor>
+
+
+    <actor:chain id="isLoginChain">
+        <actor:before>
+            <actor:ref bean="actorhttpcore"></actor:ref>
+            <actor:ref bean="isLoginActor1"></actor:ref>
+        </actor:before>
+
+    </actor:chain>
+    <actor:actor id="isLoginActor1"     beginBeanId="isLoginActor">
+        <actor:steps>
+            <actor:step xpoint="" ypont=""  fromBeanId="isLoginActor"   toBeanId="placeholderActor"/>
+        </actor:steps>
+    </actor:actor>
+
+    <bean id="isLoginActor" class="cn.ymotel.example.imgcode.IsLoginActor"></bean>
+    <actor:actor id="isLogin"  chain="isLoginChain" beginBeanId="randomTxtActor">
     </actor:actor>
 </beans>
