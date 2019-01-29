@@ -36,7 +36,7 @@ public class PlaceholderActor implements Actor, ApplicationContextAware, BeanNam
     public Object HandleMessage(Message message) throws Exception {
         Deque<ActorProcessStructure> deque = message.getControlMessage().getActorsStack();
         Deque<ActorProcessStructure> downque = message.getControlMessage().getDownStack();
-        deque.peek().setFromBeanId(beanName);
+        downque.peek().setFromBeanId(beanName);
         try {
             downque.push(deque.pop());
         } catch (Exception e) {

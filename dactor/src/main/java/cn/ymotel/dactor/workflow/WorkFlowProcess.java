@@ -74,7 +74,6 @@ public class WorkFlowProcess {
         if (actorStack.isEmpty() && downStack.isEmpty()) {
             return;
         }
-        ActorProcessStructure struc = actorStack.peek();
 
 
         FireNextMessage(actorStack, downStack, message, appcontext);
@@ -125,8 +124,12 @@ public class WorkFlowProcess {
 //				deque.push(downdeque.pop());
 //			}
 //		}
+        //全部执行完毕
+        if(downdeque.isEmpty()){
+            return;
+        }
 
-        ActorProcessStructure strunc = deque.peek();
+        ActorProcessStructure strunc = downdeque.peek();
         if (strunc == null) {
             return;
         }
@@ -141,42 +144,29 @@ public class WorkFlowProcess {
         }
         if (strunc.isEndExecute()) {
             strunc.setFromBeanId(null);
-            if (downdeque.isEmpty() && deque.isEmpty()) { //全部执行完毕
-                return;
-            }
-            if (!downdeque.isEmpty()) {
-                deque.pop();
-                deque.push(downdeque.pop());
-                FireNextMessage(deque, downdeque, message, appcontext);
-                return;
-            }
 
             if (!downdeque.isEmpty()) {
-                deque.pop();
-                if (deque.isEmpty()) {
-                    deque.push(downdeque.pop());
-                }
-                FireNextMessage(deque, downdeque, message, appcontext);
-                return;
-            }
-            if (!deque.isEmpty()) {
-                deque.pop();
+
+                downdeque.pop();
                 FireNextMessage(deque, downdeque, message, appcontext);
                 return;
             }
 
-
-//			FireNextMessage(deque,downdeque,message,appcontext);
             return;
         }
 
         Throwable throwable = message.getException();
         if (throwable != null) {
+            //如果不捕获异常，将会扔到下一个Actor中进行处理，本交易其他内容将会忽略
             if (!strunc.getActorTransactionCfg().isHandleException()) {
                 //处理异常;
                 strunc.setFromBeanId(message.getControlMessage().getProcessStructure().getActorTransactionCfg().getEndBeanId());
+                downdeque.pop();
                 FireNextMessage(deque, downdeque, message, appcontext);
                 return;
+            }else{
+//                FireNextMessage(deque, downdeque, message, appcontext);
+//                return ;
             }
         }
         String beanId = getBeanIdFromStep(strunc, message);
@@ -185,6 +175,7 @@ public class WorkFlowProcess {
 
         if (appcontext.getBean(beanId) instanceof ActorTransactionCfg) {
             AppendCfg2Deque((ActorTransactionCfg) appcontext.getBean(beanId), deque);
+            downdeque.push(deque.pop());
             FireNextMessage(deque, downdeque, message, appcontext);
             return;
         }

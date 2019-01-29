@@ -42,6 +42,7 @@ public class SpringControlMessage extends ControlMessage {
     private Deque<ActorProcessStructure> actorsStacks = WorkFlowProcess.createActorsStack();
     /**
      * child,parent
+     * 正在执行，或者执行中的ProcessStructure
      */
     private Deque<ActorProcessStructure> downStacks = WorkFlowProcess.createActorsStack();
 
@@ -51,10 +52,10 @@ public class SpringControlMessage extends ControlMessage {
 
     //查看堆栈顶层对象
     public ActorProcessStructure getProcessStructure() {
-        if (actorsStacks.isEmpty()) {
+        if (downStacks.isEmpty()) {
             return null;
         }
-        return actorsStacks.peek();
+        return downStacks.peek();
     }
 
     public Deque<ActorProcessStructure> getActorsStack() {
@@ -64,6 +65,7 @@ public class SpringControlMessage extends ControlMessage {
     public void init(ActorTransactionCfg actorcfg, ActorChainCfg chain) {
         sourceCfg = actorcfg;
         WorkFlowProcess.PushActorsToStackWithChain(actorsStacks, actorcfg, chain);
+        downStacks.push(actorsStacks.pop());
     }
 
 

@@ -34,6 +34,8 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note
+ 1.0.4版本  
+     优化程序逻辑  
  1.0.3版本  
     Message增加setUser和getUser对象  
  1.0.2版本
@@ -60,13 +62,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.3'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.4'
 
 ```
 

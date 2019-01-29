@@ -39,7 +39,7 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
     @Override
     public boolean putMessageInDispatcher(Message message, boolean blocked) {
         //为空，则说明，没有需要处理的数据，属于正常处理，属于处理完毕情况，所以返回True
-        if (message.getControlMessage().getActorsStack().isEmpty()) {
+        if (message.getControlMessage().getDownStack().isEmpty()) {
             return true;
         }
         if (message.getControlMessage().getProcessStructure().getFromBeanId() == null) {

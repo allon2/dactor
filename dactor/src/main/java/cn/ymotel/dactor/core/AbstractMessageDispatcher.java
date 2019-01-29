@@ -68,7 +68,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Ap
             return;
         }
         //为空，则说明，没有需要处理的数据
-        if (message.getControlMessage().getActorsStack().isEmpty()) {
+        if (message.getControlMessage().getProcessStructure()==null) {
             return;
 
         }
