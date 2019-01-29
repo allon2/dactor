@@ -174,5 +174,11 @@ public class DefaultMessage implements Message {
         return new CaseInsensitiveMap(context);
     }
 
-
+    private Object user;
+    public Object getUser(){
+        return user;
+    };
+    public void setUser(Object user){
+        this.user=user;
+    };
 }

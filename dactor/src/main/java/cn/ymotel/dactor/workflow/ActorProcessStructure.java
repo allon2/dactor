@@ -18,7 +18,6 @@ import cn.ymotel.dactor.core.ActorTransactionCfg;
  * {add your history}
  * </p>
  * <p>
- * <p>
  * 记录Actor当前执行状态
  * </p>
  * @version 1.0

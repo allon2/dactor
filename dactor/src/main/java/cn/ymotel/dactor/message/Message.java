@@ -89,5 +89,6 @@ public interface Message {
 
     public void setChildCount(int childCount);
 
-
+    public Object getUser();
+    public void setUser(Object user);
 }
