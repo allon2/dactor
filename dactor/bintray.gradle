@@ -1,105 +1,97 @@
-apply plugin: 'com.jfrog.bintray'
+//buildscript {
+//    repositories {
+//        //使用阿里的maven镜像
+//        maven { url 'http://maven.aliyun.com/nexus/content/groups/public'}
+//    }
+//    dependencies {
+//        //引入bintray插件
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+//    }
+//}
 
-// This is the library version used when deploying the artifact
-version = PROJ_VERSION
-
-// Maven Group ID for the artifact
-group = PROJ_GROUP
-
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'jar'
-
-                // Add your description here
-                name PROJ_NAME
-                description PROJ_DESCRIPTION
-                url PROJ_WEBSITEURL
-
-                // Set your license
-                licenses {
-                    license {
-                        name LICENSE_NAME
-                        url LICENSE_URL
-                    }
-                }
-                developers {
-                    developer {
-                        id DEVELOPER_ID
-                        name DEVELOPER_NAME
-                        email DEVELOPER_EMAIL
-                    }
-                }
-                scm {
-                    connection PROJ_VCSURL
-                    developerConnection PROJ_VCSURL
-                    url PROJ_WEBSITEURL
-                }
-            }
-        }
-    }
-}
-
-task sourcesJar(type: Jar) {
-//    from sourceSets.main.java.srcDirs
-    from sourceSets.main.allSource
-
+Properties properties = new Properties()
+properties.load(project.file('local.properties').newDataInputStream())
+println properties;
+task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
+    from sourceSets.main.allSource
 }
-
-
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
 
-javadoc {
-    options {
-        encoding "UTF-8"
-        charSet 'UTF-8'
-        author true
-        version true
-        links "http://docs.oracle.com/javase/7/docs/api"
+//apply plugin: 'java-library'
+//apply plugin: 'maven-publish'
+//apply plugin: 'com.jfrog.bintray'
+
+def pomConfig = {
+    licenses {
+        license {
+            name LICENSE_NAME
+            url LICENSE_URL
+            distribution properties.getProperty("bintray.repo")
+        }
+    }
+    developers {
+        developer {
+            id DEVELOPER_ID
+            name DEVELOPER_NAME
+            email DEVELOPER_EMAIL
+        }
+    }
+    scm {
+        //项目网站
+        url PROJ_WEBSITEURL
     }
 }
 
-artifacts {
-    archives javadocJar
-    archives sourcesJar
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId PROJ_GROUP
+            artifactId PROJ_NAME//com.example.projectName
+            version PROJ_VERSION
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', PROJ_DESCRIPTION)
+                root.appendNode('name', PROJ_NAME)
+                root.appendNode('url', PROJ_WEBSITEURL)
+                root.children().last() + pomConfig
+            }
+        }
+    }
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
 
-    configurations = ['published', 'archives']
+bintray {
+    user =  properties.getProperty("bintray.user")//bintray的用户名，即显示在导航栏右侧的名字
+    key = properties.getProperty("bintray.apikey")//Api key，见下文
+    publications = ['MyPublication']//关联到上文maven publication的名字
+    publish = true//如果false，还需要到网页上手动发布
     pkg {
-        repo =  properties.getProperty("bintray.repo")
-        // it is the name that appears in bintray when logged
+        repo = properties.getProperty("bintray.repo")
         name = PROJ_NAME
-        desc = PROJ_DESCRIPTION
-        websiteUrl = PROJ_WEBSITEURL
-        issueTrackerUrl = PROJ_ISSUETRACKERURL
+        licenses = ['Apache-2.0']
         vcsUrl = PROJ_VCSURL
-        publicDownloadNumbers = true
-        licenses = ["Apache-2.0"]
-        publish = true
+        labels = ['java', 'spring', 'async']
         version {
             gpg {
                 sign = true //Determines whether to GPG sign the files. The default is false
                 passphrase = properties.getProperty("bintray.gpg.password") //Optional. The passphrase for GPG signing'
             }
+            name = PROJ_NAME
+            desc = PROJ_DESCRIPTION
+//            released = new Date()
+            vcsTag = PROJ_VERSION
             mavenCentralSync {
-                sync = true //Optional (true by default). Determines whether to sync the version to Maven Central.
-                user = properties.getProperty("bintray.oss.user") //OSS user token
-                password = properties.getProperty("bintray.oss.password") //OSS user password
-                close = '1'
-                //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
+                sync = true//是否同步到中央仓库
+                user = properties.getProperty("bintray.oss.user")//见下文
+                password = properties.getProperty("bintray.oss.password")//见下文
             }
         }
     }
