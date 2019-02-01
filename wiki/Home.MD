@@ -76,6 +76,24 @@ cn.ymotel.dactor.core.MessageDispatcher是交易流转的核心接口类
   cn.ymotel.dactor.action.ViewResolveActor为需要返回J2EE view的统一处理Actor  
   cn.ymotel.dactor.action.httpclient.HttpClientActor 提供的异步调用httpClient的Actor  
 cn.ymotel.dactor.action.netty.aysnsocket.TcpClientActor 提供的异步调用netty的Actor  
+ ## 交易流程举例说明
+ ```
+   <actor:actor id="actorhttpcore" handleException="true"  endBeanId="FinishActor" >
+ 
+         <actor:steps>
+             <actor:step xpoint="" ypont="" fromBeanId="beginActor"  conditon="" toBeanId="placeholderActor"/>
+             <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="context._SUFFIX=='json'"  toBeanId="JsonViewResolverActor"/>
+             <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="exception==null" toBeanId="ViewResolveActor"/>
+             <actor:step xpoint="" ypont=""   fromBeanId="placeholderActor" conditon="exception!=null"  toBeanId="ErrorViewResolveActor"/>
+         </actor:steps>
+ 
+     </actor:actor>
+
+  <actor id="randomTxt2" parent="actorhttpcore" beginBeanId="randomTxtActor">
+     </actor>
+ ```
+ 以上交易的交易流程图如下
+ ![Image text](randomTxt2.png)
 以上的完整例子都可在example中得到
 
  
