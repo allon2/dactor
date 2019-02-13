@@ -71,4 +71,14 @@ public class ServletMessage extends DefaultMessage {
     public void setAsyncContext(javax.servlet.AsyncContext asyncContext) {
         AsyncContext = asyncContext;
     }
+
+    @Override
+    public Object getUser() {
+         return request.getSession(true).getAttribute("_USER");
+    }
+
+    @Override
+    public void setUser(Object user) {
+        request.getSession(true).setAttribute("_USER", user);
+    }
 }
