@@ -87,18 +87,14 @@ public class WorkFlowProcess {
      * @param deque 队列
      */
     public static void AppendCfg2Deque(ActorTransactionCfg cfg, Deque<ActorProcessStructure> deque) {
-        if (cfg.getChain() != null) {
-            for (int i = cfg.getChain().getAfter().size(); i > 0; i--) {
-                deque.push(InitActorProcessStructure(cfg.getChain().getAfter().get(i - 1)));
-            }
-        }
+
         deque.push(InitActorProcessStructure(cfg));
         if (cfg.getParent() != null) {
             AppendCfg2Deque(cfg.getParent(), deque);
         }
         if (cfg.getChain() != null) {
-            for (int i = cfg.getChain().getBefore().size(); i > 0; i--) {
-                deque.push(InitActorProcessStructure(cfg.getChain().getBefore().get(i - 1)));
+            for (int i = cfg.getChain().getChain().size(); i > 0; i--) {
+                deque.push(InitActorProcessStructure(cfg.getChain().getChain().get(i - 1)));
             }
         }
     }
@@ -170,6 +166,10 @@ public class WorkFlowProcess {
             }
         }
         String beanId = getBeanIdFromStep(strunc, message);
+        String asyncBeanId=getAsyncBeanIdFromStep(strunc, message);
+        if(asyncBeanId!=null){
+            SendAsyncMessage(message,appcontext,asyncBeanId);
+        }
         strunc.setFromBeanId(beanId);
 
 
@@ -218,7 +218,38 @@ public class WorkFlowProcess {
         return null;
 
     }
+    public static String getAsyncBeanIdFromStep(ActorProcessStructure struncture, Message message) {
+        if (struncture == null) {
+            return null;
+        }
+        Map condtions = struncture.getActorTransactionCfg().getAsyncSteps();
+        if (condtions == null || condtions.isEmpty()) {
 
+            //condtions 为空，直接执行EndActor
+            return null;
+        }
+        List fromBeanIdCondtions = (List) condtions.get(struncture.getFromBeanId());
+        if (fromBeanIdCondtions == null || fromBeanIdCondtions.isEmpty()) {
+            //condtions 为空，直接执行EndActor
+            return  null;
+        }
+
+        for (int i = 0; i < fromBeanIdCondtions.size(); i++) {
+            Map tmpMap = (Map) fromBeanIdCondtions.get(i);
+            Object condtion = tmpMap.get("conditon");
+            String toBeanId = (String) tmpMap.get("toBeanId");
+
+            boolean isTrue = getConditonValue(message, condtion);
+            if (isTrue) {
+                logger.info("Condtion---" + condtion);
+
+                return toBeanId;
+            }
+
+        }
+        return null;
+
+    }
     private static void SendAsyncMessage(Message message, ApplicationContext appcontext, String toBeanId) {
         ActorTransactionCfg cfg = (ActorTransactionCfg) appcontext.getBean(toBeanId);
         AsyncMessage asyncMessage = new AsyncMessage(message.getContext());

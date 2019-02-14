@@ -201,6 +201,19 @@ public class ActorTransactionCfg implements InitializingBean {
         this.results = results;
     }
 
+    /**
+     * 保存可以异步处理的Step
+     */
+    private Map asyncSteps=new HashMap();
+
+    public Map getAsyncSteps() {
+        return asyncSteps;
+    }
+
+    public void setAsyncSteps(Map asyncSteps) {
+        this.asyncSteps = asyncSteps;
+    }
+
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
@@ -214,46 +227,12 @@ public class ActorTransactionCfg implements InitializingBean {
         if (this.getEndBeanId() == null || this.getEndBeanId().trim().equals("")) {
             this.setEndBeanId((String) this.getGlobal().getParams().get("endBeanId"));
         }
-
+        compileCondtion(this.steps);
+        compileCondtion(this.asyncSteps);
         /**
          * 如果子有使用子的，没有再使用父的condtions
          */
-        if (this.steps == null || this.steps.isEmpty()) {
-        } else {
 
-
-            for (java.util.Iterator iter = this.steps.entrySet().iterator(); iter.hasNext(); ) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                List ls = (List) entry.getValue();
-                for (int i = 0; i < ls.size(); i++) {
-                    Map tmpMap = (Map) ls.get(i);
-                    String value = (String) tmpMap.get("conditon");
-                    if (value == null || value.equals("")) {
-                        continue;
-                    }
-
-
-//						Message  root = new HashMap();
-                    OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
-                    //
-                    try {
-                        Node node = (Node) Ognl.compileExpression(context, null, value);
-                        tmpMap.put("conditon", node);
-                        continue;
-                    } catch (Exception e) {
-                        if (logger.isTraceEnabled()) {
-                            logger.trace("afterPropertiesSet()"); //$NON-NLS-1$
-                        }
-                    }
-
-
-                }
-//				tmpCondtions.put(getOverride(entry.getKey()), getOverrideList((List)entry.getValue()));
-            }
-
-
-            return;
-        }
 //		if(this.parent==null){
 //			return ;
 //		}
@@ -279,7 +258,42 @@ public class ActorTransactionCfg implements InitializingBean {
 //		 */
 //		this.steps =tmpCondtions;
     }
+    private void compileCondtion(Map steps){
+        if (steps == null || steps.isEmpty()) {
+        } else {
 
+
+            for (java.util.Iterator iter = steps.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                List ls = (List) entry.getValue();
+                for (int i = 0; i < ls.size(); i++) {
+                    Map tmpMap = (Map) ls.get(i);
+                    String value = (String) tmpMap.get("conditon");
+                    if (value == null || value.equals("")) {
+                        continue;
+                    }
+
+
+//						Message  root = new HashMap();
+                    OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
+                    //
+                    try {
+                        Node node = (Node) Ognl.compileExpression(context, null, value);
+                        tmpMap.put("conditon", node);
+                        continue;
+                    } catch (Exception e) {
+                        if (logger.isTraceEnabled()) {
+                            logger.trace("afterPropertiesSet()"); //$NON-NLS-1$
+                        }
+                    }
+
+
+                }
+             }
+
+
+         }
+    }
     public String getOverride(Object key) {
         if (overridesMap.containsKey(key)) {
             return (String) this.overridesMap.get(key);

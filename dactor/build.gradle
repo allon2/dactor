@@ -53,7 +53,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-webmvc', version: '4.3.22.RELEASE'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.5', ext: 'pom'
-    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.2'
+//    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.2'
     compile group: 'org.freemarker', name: 'freemarker', version: '2.3.28'
 //  compile project(':war_pom:core')
     compile group: 'org.springframework', name: 'spring-websocket', version:'4.3.22.RELEASE'

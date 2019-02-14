@@ -52,32 +52,12 @@
 
     <xs:element name="chain">
         <xs:complexType>
-            <xs:choice>
-                <xs:element maxOccurs="unbounded" ref="actor"/>
-                <xs:sequence>
-                    <xs:element ref="before" minOccurs="0"/>
-                    <xs:element ref="after" minOccurs="0"/>
-                </xs:sequence>
-            </xs:choice>
+           <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="beans:list"/>
+      </xs:sequence>
             <xs:attribute name="id" use="required"/>
-
         </xs:complexType>
     </xs:element>
-    <xs:element name="before">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" ref="ref"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="after">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element minOccurs="0" maxOccurs="unbounded" ref="ref"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
     <xs:element name="actorref">
         <xs:complexType>
             <xs:attribute name="ref" use="required" type="xs:string"/>
@@ -153,11 +133,6 @@
                     <xs:attribute name="name" use="required" type="xs:string"/>
                 </xs:extension>
             </xs:simpleContent>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="ref">
-        <xs:complexType>
-            <xs:attribute name="bean" use="required" type="xs:NCName"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>

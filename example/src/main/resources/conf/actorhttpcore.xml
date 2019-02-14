@@ -55,15 +55,12 @@
 
 
     <actor:chain id="unLoginChain">
-        <actor:before>
-            <actor:ref bean="actorhttpcore"></actor:ref>
-            <actor:ref bean="actorhttpcore"></actor:ref>
-        </actor:before>
-        <actor:after>
-            <actor:ref bean="actorhttpcore"></actor:ref>
-            <actor:ref bean="actorhttpcore"></actor:ref>
+        <list>
+            <ref bean="actorhttpcore"></ref>
+            <ref bean="actorhttpcore"></ref>
 
-        </actor:after>
+        </list>
+
 
 
     </actor:chain>

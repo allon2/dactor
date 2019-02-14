@@ -100,27 +100,23 @@ public class ActorChainCfgBeanDefinitionParser extends
 //		BeanDefinitionHolder hodler=new BeanDefinitionHolder();
         org.w3c.dom.NodeList list = element.getChildNodes();
 //		System.out.println(element+"----"+list.getLength());
-        for (int i = 0; i < list.getLength(); i++) {
-            org.w3c.dom.Node node = list.item(i);
+        for(int i=0;i<list.getLength();i++){
+            org.w3c.dom.Node node=list.item(i);
 
-            if (node.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
-                continue;
+            if (node.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {continue;}
+
+            if(parserContext.getDelegate().getLocalName(node).equals("list")){
+                Element el=(Element)node;
+                List rtnList=parserContext.getDelegate().parseListElement(el, builder.getRawBeanDefinition());
+                builder.addPropertyValue("chain", rtnList);
+                break;
+//  			chain.add(new RuntimeBeanReference(el.getAttribute("ref")));
+//  			String name=el.getAttribute("name");
+//  			String value=el.getAttribute("value");
+//  			params.put(name, value);
             }
-
-            if (parserContext.getDelegate().getLocalName(node).equals("before")) {
-                Element el = (Element) node;
-//  			List rtnList=parserContext.getDelegate().parseListElement(el, builder.getRawBeanDefinition());
-                builder.addPropertyValue("before", getRefs(el, parserContext));
-
-            }
-            if (parserContext.getDelegate().getLocalName(node).equals("after")) {
-                Element el = (Element) node;
-//			List rtnList=parserContext.getDelegate().parseListElement(el, builder.getRawBeanDefinition());
-                builder.addPropertyValue("after", getRefs(el, parserContext));
-
-            }
+//  		System.out.println(parserContext.getDelegate().getLocalName(node)+"-------"+node.getNodeType()+"node----"+node);
         }
-//  	builder.addPropertyValue("chain", chain);
 
         builder.addPropertyValue("id", actorId);
 
@@ -130,21 +126,5 @@ public class ActorChainCfgBeanDefinitionParser extends
 
     }
 
-    private List getRefs(Element element, ParserContext parserContext) {
-        org.w3c.dom.NodeList list = element.getChildNodes();
-        List ls = new ManagedList();
-        for (int i = 0; i < list.getLength(); i++) {
-            org.w3c.dom.Node node = list.item(i);
 
-            if (node.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
-                continue;
-            }
-            if (parserContext.getDelegate().getLocalName(node).equals("ref")) {
-                Element el = (Element) node;
-                String bean = el.getAttribute("bean");
-                ls.add(new RuntimeBeanReference(bean));
-            }
-        }
-        return ls;
-    }
 }

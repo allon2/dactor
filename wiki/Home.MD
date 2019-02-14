@@ -21,7 +21,8 @@ actor配置如下
 
         <actor:steps>
             <actor:step xpoint="" ypont="" fromBeanId="beginActor"  conditon="" toBeanId="placeholderActor"/>
-            <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="context._SUFFIX=='json'"  toBeanId="JsonViewResolverActor"/>
+             <actor:step xpoint="" ypont="" fromBeanId="beginActor"  conditon="" async="true"  toBeanId="placeholderActor"/>
+           <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="context._SUFFIX=='json'"  toBeanId="JsonViewResolverActor"/>
             <actor:step xpoint="" ypont=""  fromBeanId="placeholderActor" conditon="exception==null" toBeanId="ViewResolveActor"/>
             <actor:step xpoint="" ypont=""   fromBeanId="placeholderActor" conditon="exception!=null"  toBeanId="ErrorViewResolveActor"/>
         </actor:steps>
@@ -34,7 +35,8 @@ actor配置如下
  parent和chain为调用具体交易前需要调用的公共交易，由于大部分交易都有通用的前置交易和统一的后置交易。通过设置parent或者chain，可提高代码复用度。  
  fromBeanId和toBeanId配置的是Actor或者实现Actor接口的beanId。
  parent和chain中的ref都需要是Actor.  
- results中可定义返回的state和需要处理的viewActor
+ results中可定义返回的state和需要处理的viewActor  
+ async标记是否是旁路交易，默认值为false，为true值时,会将上下文内容设置复制一份，重新生成一份Message,进行执行，不影响主流程。
 chain配置
  ```
    <actor:chain id="unLoginChain">

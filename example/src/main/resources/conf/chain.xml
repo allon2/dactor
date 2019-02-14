@@ -8,32 +8,26 @@
 	
 	">
     <actor:chain id="test1Chain">
-        <actor:before>
-            <actor:ref bean="beforechain"></actor:ref>
-        </actor:before>
+        <list>
+            <ref bean="beforechain"></ref>
+
+        </list>
+
 
     </actor:chain>
-    <actor:chain id="test2Chain">
-        <actor:before>
-        </actor:before>
 
-    </actor:chain>
-    <actor:chain id="test3Chain">
-        <actor:after>
-        </actor:after>
-    </actor:chain>
     <actor:chain id="test4Chain">
-        <actor:after>
-            <actor:ref bean="beforechain"></actor:ref>
-        </actor:after>
+        <list>
+            <ref bean="beforechain"></ref>
+
+        </list>
+
     </actor:chain>
     <actor:chain id="unLoginChain">
-        <actor:before>
-            <actor:ref bean="beforechain"></actor:ref>
-        </actor:before>
-        <actor:after>
-            <actor:ref bean="afterchain"></actor:ref>
-        </actor:after>
+        <list>
+            <ref bean="actorhttpcore"></ref>
+
+        </list>
      </actor:chain>
 
 
@@ -68,10 +62,12 @@
 
 
     <actor:chain id="isLoginChain">
-        <actor:before>
-            <actor:ref bean="actorhttpcore"></actor:ref>
-            <actor:ref bean="isLoginActor1"></actor:ref>
-        </actor:before>
+        <list>
+            <ref bean="actorhttpcore"></ref>
+            <ref bean="isLoginActor1"></ref>
+
+        </list>
+
 
     </actor:chain>
     <actor:actor id="isLoginActor1"     beginBeanId="isLoginActor">

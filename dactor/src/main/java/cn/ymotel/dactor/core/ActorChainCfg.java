@@ -38,23 +38,20 @@ public class ActorChainCfg {
         this.id = id;
     }
 
-    private List<ActorTransactionCfg> before = new ArrayList();
 
-    private List<ActorTransactionCfg> after = new ArrayList();
+    private List<ActorTransactionCfg> chain=new ArrayList();
 
-    public List<ActorTransactionCfg> getBefore() {
-        return before;
+    /**
+     * @return the chain
+     */
+    public List<ActorTransactionCfg> getChain() {
+        return chain;
     }
 
-    public void setBefore(List<ActorTransactionCfg> before) {
-        this.before = before;
-    }
-
-    public List<ActorTransactionCfg> getAfter() {
-        return after;
-    }
-
-    public void setAfter(List<ActorTransactionCfg> after) {
-        this.after = after;
+    /**
+     * @param chain the chain to set
+     */
+    public void setChain(List<ActorTransactionCfg> chain) {
+        this.chain = chain;
     }
 }

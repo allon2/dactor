@@ -117,9 +117,11 @@ public class ActorTransactionCfgBeanDefinitionParser extends
 
             if (parserContext.getDelegate().getLocalName(node).equals(CONDTIONS)) {
                 Element el = (Element) node;
-                Map tmpcondtions = getCondtion(el, parserContext);
+                Map tmpcondtions = getCondtion(el, parserContext,false);
+                Map asynctmpcondtions = getCondtion(el, parserContext,true);
 
                 builder.addPropertyValue("steps", tmpcondtions);
+                builder.addPropertyValue("asyncSteps", asynctmpcondtions);
 
 
             }
@@ -190,7 +192,7 @@ public class ActorTransactionCfgBeanDefinitionParser extends
         return map;
     }
 
-    public Map getCondtion(Element element, ParserContext parserContext) {
+    public Map getCondtion(Element element, ParserContext parserContext,boolean async) {
 //		List ls=new ArrayList();
         Map condtions = new HashMap();
 
@@ -216,10 +218,27 @@ public class ActorTransactionCfgBeanDefinitionParser extends
                 property.put("fromBeanId", el.getAttribute("fromBeanId"));
                 property.put("toBeanId", el.getAttribute("toBeanId"));
                 property.put("conditon", el.getAttribute("conditon"));
+
                 property.put("async", el.getAttribute("async"));
                 property.put("after", el.getAttribute("after"));
 
-                tmpList.add(property);
+                if(async){
+                    //只返回异步交易
+                    if("true".equalsIgnoreCase(el.getAttribute("async"))){
+                        tmpList.add(property);
+
+                    }
+                }else{
+                    if("true".equalsIgnoreCase(el.getAttribute("async"))){
+
+                    }else{
+                        tmpList.add(property);
+                    }
+                    //只返回同步交易
+
+                }
+
+
 
             }
 
