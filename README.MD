@@ -36,7 +36,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 ## Release Note
 1.0.6版本  
      通过设置async=true的方式,便捷的增加旁路交易
-     移除对javax.mail-api的依赖
+     移除对javax.mail-api的依赖  
 1.0.5版本  
      ServletMessage的用户对象直接从会话中取得  
  1.0.4版本  
