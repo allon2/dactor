@@ -39,15 +39,34 @@ actor配置如下
  async标记是否是旁路交易，默认值为false，为true值时,会将上下文内容设置复制一份，重新生成一份Message,进行执行，不影响主流程。
 chain配置
  ```
-   <actor:chain id="unLoginChain">
-        <actor:before>
-            <actor:ref bean="actorhttpcore"></actor:ref>
-        </actor:before>
-    </actor:chain>
+   <actor:chain id="isLoginChain">
+          <list>
+              <ref bean="actorhttpcore"></ref>
+              <ref bean="isLoginActor1"></ref>
+  
+          </list>
+      </actor:chain>
 ```  
 chain可直观展现Actor调用顺序.    
 在chain中可顺序并列多个parent类。每个parent中的Step都需要有placeHolderActor，以调用子类。      
-依次执行before中的交易，再执行自身交易。自身交易执行完毕，再依次回溯责任链中的每个交易，直到无可用交易。  
+依次执行list中的交易，再执行自身交易。自身交易执行完毕，再依次回溯责任链中的每个交易，直到无可用交易。  
+命名空间
+  ```
+ <actor:actors xmlns="http://www.ymotel.cn/schema/dactor"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:aop="http://www.springframework.org/schema/aop"
+               xmlns:actor="http://www.ymotel.cn/schema/dactor"
+               xmlns:beans="http://www.springframework.org/schema/beans"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+ 	http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd"  namespace="np">
+     <!-- parent 和beginBeanId为全局name,randomTxt2在Spring中的全程是np.randomTxt2-->
+     <actor id="randomTxt2" parent="actorhttpcore" beginBeanId="randomTxtActor">
+     </actor>
+ </actor:actors>
+  ```
+  在actor中可增加命名空间，简化代码开发。在actor中配置namespace=np,则实例中的actor的id会自动拼装为np.randomTxt2  
+     http://localhost:8080/example/np.randomTxt2.json为使用命名空间的例子,相关配置在conf/namespace.xml中。  
+ 
 ## 重要类方法说明
 cn.ymotel.dactor.core.MessageDispatcher是交易流转的核心接口类   
     public void startMessage(Message message, ActorTransactionCfg actorcfg, boolean blocked) throws Exception  

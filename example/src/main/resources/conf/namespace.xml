@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actor:actors xmlns="http://www.ymotel.cn/schema/dactor"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:aop="http://www.springframework.org/schema/aop"
+              xmlns:actor="http://www.ymotel.cn/schema/dactor"
+              xmlns:beans="http://www.springframework.org/schema/beans"
+              xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd"  namespace="np">
+    <!-- parent 和beginBeanId为全局name,randomTxt2在Spring中的全程是np.randomTxt2-->
+    <actor id="randomTxt2" parent="actorhttpcore" beginBeanId="randomTxtActor">
+    </actor>
+</actor:actors>
