@@ -166,6 +166,9 @@ public class WorkFlowProcess {
             }
         }
         String beanId = getBeanIdFromStep(strunc, message);
+        if(beanId==null){
+            return ;
+        }
         String asyncBeanId=getAsyncBeanIdFromStep(strunc, message);
         if(asyncBeanId!=null){
             SendAsyncMessage(message,appcontext,asyncBeanId);
@@ -215,7 +218,7 @@ public class WorkFlowProcess {
             }
 
         }
-        return null;
+        return struncture.getActorTransactionCfg().getEndBeanId();
 
     }
     public static String getAsyncBeanIdFromStep(ActorProcessStructure struncture, Message message) {
