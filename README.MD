@@ -74,13 +74,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.6'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.7'
 
 ```
 
