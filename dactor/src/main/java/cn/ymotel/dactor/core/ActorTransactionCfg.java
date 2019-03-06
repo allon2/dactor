@@ -227,6 +227,37 @@ public class ActorTransactionCfg implements InitializingBean {
         if (this.getEndBeanId() == null || this.getEndBeanId().trim().equals("")) {
             this.setEndBeanId((String) this.getGlobal().getParams().get("endBeanId"));
         }
+        if(steps==null){
+            steps=new HashMap();
+        }
+
+        if(this.getGlobal().getParams().get("beginBeanId").equals(this.getBeginBeanId())){
+            //不添加
+        }else {
+            if (!steps.containsKey((String) this.getGlobal().getParams().get("beginBeanId"))) {
+                //不添加，使用默认
+                List ls = new ArrayList();
+                Map tMap = new HashMap();
+                tMap.put("fromBeanId", this.getGlobal().getParams().get("beginBeanId"));
+                tMap.put("toBeanId", this.getBeginBeanId());
+                tMap.put("conditon", null);
+                ls.add(tMap);
+                steps.put(this.getGlobal().getParams().get("beginBeanId"), ls);
+                this.setBeginBeanId((String) this.getGlobal().getParams().get("beginBeanId"));
+            }
+        }
+//        if(!steps.containsKey(this.getEndBeanId())){
+//            //不添加，使用默认
+//            List ls=new ArrayList();
+//            Map tMap=new HashMap();
+//            tMap.put("fromBeanId",this.getEndBeanId());
+//            tMap.put("toBeanId",this.getGlobal().getParams().get("endBeanId"));
+//            tMap.put("conditon",null);
+//            ls.add(tMap);
+//            steps.put(this.endBeanId,ls);
+//
+//            this.setEndBeanId((String) this.getGlobal().getParams().get("endBeanId"));
+//        }
         compileCondtion(this.steps);
         compileCondtion(this.asyncSteps);
         /**

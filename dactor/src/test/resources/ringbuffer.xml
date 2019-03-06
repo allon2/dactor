@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:actor="http://www.ymotel.cn/schema/dactor"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd">
+
+
+    <bean id="MessageRingBufferDispatcher" class="cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher">
+   </bean>
+    <actor:global id="actorglobal">
+        <actor:param name="beginBeanId" value="beginActor"/>
+        <actor:param name="endBeanId" value="endActor"/>
+    </actor:global>
+    <bean id="beginActor" class="cn.ymotel.dactor.action.BeginActor"></bean>
+    <bean id="FinishActor" class="cn.ymotel.dactor.action.FinishActor"></bean>
+
+    <bean id="endActor" class="cn.ymotel.dactor.action.EndActor"></bean>
+    <bean id="placeholderActor" class="cn.ymotel.dactor.action.PlaceholderActor"></bean>
+</beans>

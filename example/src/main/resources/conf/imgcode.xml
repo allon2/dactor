@@ -26,6 +26,9 @@
     </actor>
     <actor id="randomTxt2" parent="actorhttpcore" beginBeanId="randomTxtActor">
     </actor>
+    <!--  beginBeanId为Actor标签的Bean-->
+    <actor id="randomTxt3"   beginBeanId="randomTxt1">
+    </actor>
     <actor id="exceptionTest" parent="actorhttpcore" beginBeanId="exceptionTestActor">
     </actor>
     <beans:bean id="exceptionTestActor" class="cn.ymotel.example.imgcode.exceptionTestActor"></beans:bean>

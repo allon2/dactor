@@ -174,7 +174,9 @@ public class WorkFlowProcess {
             SendAsyncMessage(message,appcontext,asyncBeanId);
         }
         strunc.setFromBeanId(beanId);
-
+        if(beanId.equals(strunc.getActorTransactionCfg().getEndBeanId())){
+            strunc.setEndExecute(true);
+        }
 
         if (appcontext.getBean(beanId) instanceof ActorTransactionCfg) {
             AppendCfg2Deque((ActorTransactionCfg) appcontext.getBean(beanId), deque);

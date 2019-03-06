@@ -37,6 +37,9 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note
+1.0.8版本  
+     在Steps中的beginBeanId支持用Actor标签的BeanId  
+     增加测试案例
 1.0.7版本  
      修正Step中所有条件不为真时，报错问题  
 1.0.6版本  
@@ -60,6 +63,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
    chaintest1:只使用责任链  
    chaintest2:同时使用责任链和一级父子关系  
    exceptionTest:子交易抛出错误,框架对错误的处理  
+   randomTxt3为beginBeanId为Actor标签的BeanId例子
    httptest演示的是通过httpclient异步方式访问百度网站   
         访问URL:http://localhost:8080/example/ httptest.do    
    http://localhost:8080/example/np.randomTxt2.json为使用命名空间的例子,相关配置在conf/namespace.xml中。  
@@ -74,13 +78,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.7'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.8'
 
 ```
 
