@@ -39,7 +39,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 ## Release Note
 1.0.8版本  
      在Steps中的beginBeanId支持用Actor标签的BeanId  
-     增加测试案例
+     增加测试案例  
 1.0.7版本  
      修正Step中所有条件不为真时，报错问题  
 1.0.6版本  
