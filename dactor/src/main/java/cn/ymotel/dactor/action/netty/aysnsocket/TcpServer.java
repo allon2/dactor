@@ -2,6 +2,7 @@ package cn.ymotel.dactor.action.netty.aysnsocket;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -10,10 +11,12 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import org.springframework.beans.factory.InitializingBean;
 
-public class TcpServerHelper implements InitializingBean {
-    private int port = 810;
+public class TcpServer implements InitializingBean {
+    private int port = 8810;
 
     public int getPort() {
         return port;
@@ -33,20 +36,20 @@ public class TcpServerHelper implements InitializingBean {
         this.tcpServerhandler = tcpServerhandler;
     }
 
-    private io.netty.channel.Channel channel = null;
-    private EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+    private EventLoopGroup bossGroup = new NioEventLoopGroup();
     private EventLoopGroup workerGroup = new NioEventLoopGroup();
     private static final StringDecoder DECODER = new StringDecoder();
     private static final StringEncoder ENCODER = new StringEncoder();
 
     public void close() {
-        channel.close();
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
     }
 
     public static void main(String[] args) throws Exception {
-        TcpServerHelper helper = new TcpServerHelper();
+        TcpServer helper = new TcpServer();
+        TcpServerHandler handler=new TcpServerHandler();
+        helper.setTcpServerhandler(handler);
         helper.afterPropertiesSet();
     }
 
@@ -58,7 +61,8 @@ public class TcpServerHelper implements InitializingBean {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-//	            .handler(new LoggingHandler(LogLevel.INFO))
+                    .option(ChannelOption.SO_BACKLOG, 1024)
+                    .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(
                             new ChannelInitializer<SocketChannel>() {
                                 @Override
@@ -68,7 +72,7 @@ public class TcpServerHelper implements InitializingBean {
                                     ch.pipeline().addLast(new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
                                     // the encoder and decoder are static as these are sharable
                                     ch.pipeline().addLast(DECODER);
-//                                    ch.pipeline().addLast(ENCODER);
+                                    ch.pipeline().addLast(ENCODER);
                                     ch.pipeline().addLast(tcpServerhandler);
                                 }
                             } //

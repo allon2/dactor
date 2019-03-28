@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:actor="http://www.ymotel.cn/schema/dactor"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd">
+    <bean id="FinishActor2" class="cn.ymotel.dactor.actor.FinishActor"></bean>
+
+    <bean id="TcpServer" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpServer" destroy-method="close">
+        <property name="tcpServerhandler"  ref="TcpServerHandler"></property>
+    </bean>
+    <bean id="TcpServerHandler" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpServerHandler">
+        <property name="messageDispatcher" ref="MessageRingBufferDispatcher"/>
+    </bean>
+    <actor:actor id="server1"   parent="actorhttpcore"  beginBeanId="ServerTestActor">
+        <actor:steps>
+            <actor:step fromBeanId="ServerTestActor" toBeanId="TcpServerActor"/>
+        </actor:steps>
+    </actor:actor>
+    <bean id="ServerTestActor" class="cn.ymotel.dactor.action.netty.aysnsocket.ServerTestActor">
+
+    </bean>
+    <bean id="TcpServerActor" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpServerActor">
+    </bean>
+    <actor:actor id="actorhttpcore" handleException="true"  endBeanId="FinishActor2" >
+        <actor:steps>
+            <actor:step xpoint="" ypont="" fromBeanId="beginActor"  conditon="" toBeanId="placeholderActor"/>
+        </actor:steps>
+
+    </actor:actor>
+
+    <actor:actor id="client"  parent="actorhttpcore"  beginBeanId="TcpClientActor">
+        <actor:steps>
+            <actor:step fromBeanId="TcpClientActor" toBeanId="ClientReciverActor"/>
+        </actor:steps>
+    </actor:actor>
+    <bean id="ClientReciverActor" class="cn.ymotel.dactor.action.netty.aysnsocket.ClientReciverActor">
+
+    </bean>
+    <bean id="TcpClientActor" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpClientActor">
+        <property name="helper" ref="TcpClientHelper" />
+    </bean>
+
+    <bean id="TcpClientHelper" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpClientHelper">
+        <property name="tcpClientHanlder" ref="TcpClientHanlder"/>
+    </bean>
+
+    <bean id="TcpClientHanlder" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpClientHanlder">
+     </bean>
+
+
+</beans>

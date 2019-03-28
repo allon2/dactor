@@ -1,9 +1,10 @@
 package cn.ymotel.dactor.action.netty.aysnsocket;
 
+import cn.ymotel.dactor.message.Message;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -11,11 +12,13 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.springframework.beans.factory.InitializingBean;
 
 public class TcpClientHelper implements InitializingBean {
     private String host = "localhost";
-    private int port = 810;
+    private int port = 8810;
     private TcpClientHanlder tcpClientHanlder;
 
     public String getHost() {
@@ -48,12 +51,25 @@ public class TcpClientHelper implements InitializingBean {
 
     public static void main(String[] args) throws Exception {
         TcpClientHelper helper = new TcpClientHelper();
+        TcpClientHanlder handler=new TcpClientHanlder();
+        helper.setTcpClientHanlder(handler);
         helper.afterPropertiesSet();
-        helper.getChannel().writeAndFlush("aa");
+        helper.AsyncSendMessage(null,"safafafcafaaa\r\n");
+//        helper.getChannel().writeAndFlush("safafafcafaaa\r\n");
+        System.out.println("success");
     }
-
+    public  void AsyncSendMessage(final Message message, Object obj){
+         bootstrap.connect(host, port).addListener(new ChannelFutureListener(){
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                System.out.println("connected");
+                io.netty.channel.Channel channel= future.channel();
+                channel.attr(TcpClientHanlder.MESSAGE).setIfAbsent(message);
+                channel.writeAndFlush(obj+"\r\n");
+            }
+        });
+    }
     public io.netty.channel.Channel getChannel() throws InterruptedException {
-//		System.out.println(bootstrap.connect(host, port));
         return bootstrap.connect(host, port).sync().channel();
     }
 
@@ -72,10 +88,10 @@ public class TcpClientHelper implements InitializingBean {
 
                         // Add the text line codec combination first,
                         pipeline.addLast(new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
-//                         pipeline.addLast(DECODER);
-//                         pipeline.addLast(ENCODER);
+                         pipeline.addLast(DECODER);
+                         pipeline.addLast(ENCODER);
 
-                        ch.pipeline().addLast(tcpClientHanlder);
+                       pipeline.addLast(tcpClientHanlder);
                     }
                 });
 
