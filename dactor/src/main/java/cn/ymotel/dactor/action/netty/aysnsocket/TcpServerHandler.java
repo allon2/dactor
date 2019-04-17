@@ -42,11 +42,10 @@ public class TcpServerHandler extends SimpleChannelInboundHandler implements App
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("server----channelRead---aaaaaaaaaa--"+msg +"-----");
         Message message=new DefaultMessage();
         Map data=(Map)JSON.parse((String)msg);
         message.getContext().putAll(data);
-        message.getContext().put("_ChannelHandlerContext", ctx);
+        message.getControlData().put("_ChannelHandlerContext", ctx);
         String transactionId = (String)data.get("actorId");
         ActorTransactionCfg cfg=(ActorTransactionCfg)applicationContext.getBean(transactionId);
 //

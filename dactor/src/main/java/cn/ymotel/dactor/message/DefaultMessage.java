@@ -180,5 +180,17 @@ public class DefaultMessage implements Message {
     };
     public void setUser(Object user){
         this.user=user;
-    };
+    }
+    private Map controlMap=new HashMap();
+    @Override
+    public Map getControlData() {
+        return controlMap;
+    }
+
+    @Override
+    public Map getCaseInsensitivegetControlData() {
+        return new CaseInsensitiveMap(controlMap);
+    }
+
+    ;
 }

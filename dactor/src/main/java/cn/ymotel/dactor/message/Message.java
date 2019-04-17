@@ -91,4 +91,15 @@ public interface Message {
 
     public Object getUser();
     public void setUser(Object user);
+
+    /**
+     * 获得控制数据，将控制信息和处理数据分离
+     * @return 控制数据
+     */
+    public Map getControlData();
+
+    /**
+     * @return 得到忽略大小写的Map
+     */
+    public Map getCaseInsensitivegetControlData();
 }

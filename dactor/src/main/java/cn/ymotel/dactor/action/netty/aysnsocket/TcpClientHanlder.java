@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSON;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
 import org.apache.commons.logging.Log;
@@ -51,7 +53,16 @@ public class TcpClientHanlder extends SimpleChannelInboundHandler {
 
         ctx.close();
     }
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (IdleStateEvent.class.isAssignableFrom(evt.getClass())) {
+            Message message = (Message) ctx.attr(MESSAGE).get();
+            message.getControlMessage().getMessageDispatcher().sendMessage(message);
 
+            ctx.close();
+        }
+
+    }
 
 
 

@@ -14,7 +14,7 @@ public class TcpServerActor extends AbstractJsonSupportActor {
     @Override
     public Object Execute(Message message) throws Exception {
         System.out.println("in server"+message.getContext());
-        ChannelHandlerContext ctx=(ChannelHandlerContext)message.getContext().get("_ChannelHandlerContext");
+        ChannelHandlerContext ctx=(ChannelHandlerContext)message.getControlData().get("_ChannelHandlerContext");
         Map obj=null;
         if(message.getContext().get("_Content")!=null){
             obj=(Map)message.getContext().get("_Content");
