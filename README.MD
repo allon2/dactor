@@ -6,6 +6,8 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 ## 项目地址
  GitHub:https://github.com/allon2/dactor  
  GitEE:https://gitee.com/handyun/dactor  
+## QQ交流群
+ 783580303
 ## Overview
 目前开发过程中的几个常见模型
  -  同步编程
