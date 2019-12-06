@@ -14,6 +14,7 @@ import com.lmax.disruptor.WorkHandler;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 
+
 /**
  * 取得消息队列放入线程中
  *
@@ -45,14 +46,18 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
         if (message.getControlMessage().getProcessStructure().getFromBeanId() == null) {
             return true;
         }
-        logger.info("beanId--" + message.getControlMessage().getProcessStructure().getFromBeanId() + "--Id--" + message.getControlMessage().getProcessStructure().getActorTransactionCfg().getId());
-
+        if(logger.isDebugEnabled()) {
+            logger.debug("beanId--" + message.getControlMessage().getProcessStructure().getFromBeanId() + "--Id--" + message.getControlMessage().getProcessStructure().getActorTransactionCfg().getId());
+        }
 
         return ringbufferManager.putMessage(message, blocked);
 
     }
 
     private int bufferSize = 1024;
+    /**
+     * 并行消费信号量
+     */
     private WaitStrategy strategy = null;
 
     /**
@@ -119,6 +124,14 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
         this.ringbufferManager.afterPropertiesSet();
 
 
+    }
+
+    public RingBufferManager getRingbufferManager() {
+        return ringbufferManager;
+    }
+
+    public void setRingbufferManager(RingBufferManager ringbufferManager) {
+        this.ringbufferManager = ringbufferManager;
     }
 
     public void shutdown() {

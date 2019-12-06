@@ -8,6 +8,7 @@ package cn.ymotel.dactor.core.disruptor;
 
 import cn.ymotel.dactor.action.Actor;
 import cn.ymotel.dactor.message.Message;
+import cn.ymotel.dactor.spring.SpringUtils;
 import cn.ymotel.dactor.workflow.ActorProcessStructure;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.WorkHandler;
@@ -15,6 +16,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.util.concurrent.*;
 
 /**
  * {type specification, must edit}
@@ -29,6 +32,11 @@ import org.springframework.context.ApplicationContextAware;
  * @since 1.0
  */
 public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHandler<MessageEvent>, ApplicationContextAware {
+    /**
+     * 控制并发数，防止超过处理能力
+     */
+    private ExecutorService cachedThreadPool=Executors.newCachedThreadPool();
+
 
 
     private final org.apache.commons.logging.Log logger = LogFactory.getLog(MessageEventHandler.class);
@@ -80,13 +88,17 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
      * @version 1.0
      * @since 1.0
      */
-    private void handleEvent(ActorProcessStructure struc, Message message) {
+    private void handleEvent(ActorProcessStructure struc, Message message,Actor actor ) {
 
 
-        Actor actor = (Actor) appcontext.getBean(struc.getFromBeanId());
+//        Actor actor = (Actor) appcontext.getBean(struc.getFromBeanId());
+
+
+
         ;
-        logger.info("beanId--" + struc.getFromBeanId() + "--Id--" + struc.getActorTransactionCfg().getId());
-
+        if(logger.isDebugEnabled()) {
+            logger.debug("beanId--" + struc.getFromBeanId() + "--Id--" + struc.getActorTransactionCfg().getId());
+        }
 
         try {
             Object obj = actor.HandleMessage(message);
@@ -139,8 +151,39 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
             return;
         }
 
+        Actor actor = (Actor) SpringUtils.getCacheBean(appcontext,struc.getFromBeanId());
 
-        handleEvent(struc, message);
+        handleEvent(struc, message,actor);
+
+
+//        if(actor instanceof CpuAble){
+//            handleEvent(struc, message,actor);
+//        }else{
+////            semaphore.acquire();
+//            cachedThreadPool.submit(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        handleEvent(struc, message,actor);
+//                    } finally {
+////                        semaphore.release();
+//                    }
+//
+//                }
+//            });
+//            //控制并发数
+//            CompletableFuture.runAsync(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        handleEvent(struc, message,actor);
+//                    } finally {
+//                        semaphore.release();
+//                    }
+//
+//                }
+//            });
+//        }
 
 
     }

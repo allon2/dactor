@@ -26,7 +26,7 @@ public class TcpClientHanlder extends SimpleChannelInboundHandler {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("client reand---"+msg);
+//        System.out.println("client reand---"+msg);
         Map obj=(Map)JSON.parse((String)msg);
         Message message=(Message) ctx.channel().attr(MESSAGE).get();
         if(message!=null) {
@@ -49,6 +49,7 @@ public class TcpClientHanlder extends SimpleChannelInboundHandler {
             logger.trace("exceptionCaught(ChannelHandlerContext, Throwable)"); //$NON-NLS-1$
         }
         Message message = (Message) ctx.attr(MESSAGE).get();
+        message.setException(cause);
         message.getControlMessage().getMessageDispatcher().sendMessage(message);
 
         ctx.close();

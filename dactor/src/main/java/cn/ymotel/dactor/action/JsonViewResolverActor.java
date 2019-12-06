@@ -64,19 +64,29 @@ public class JsonViewResolverActor implements Actor {
         }
 
         if (jsonObject instanceof Map) {
+            Map rtnMap=(Map)jsonObject;
+            /**
+             * 兼容上下文中有直接
+             */
+            if(rtnMap.containsKey("errcode")){
+//                if(rtnMap.get("errcode").equals("0")){
+//                    //成功
+//                }
+//                //有错误信息
 
+            }else
             if (message.getException() == null) {
-                ((Map) jsonObject).put("errcode", "0");
-                ((Map) jsonObject).put("errmsg", "成功");
+                rtnMap.put("errcode", "0");
+                rtnMap.put("errmsg", "成功");
 
             } else if (message.getException() instanceof DActorException) {
                 DActorException ex = (DActorException) message.getException();
-                ((Map) jsonObject).put("errcode", ex.getErrorCode());//一般错误
-                ((Map) jsonObject).put("errmsg", ex.getMessage());
+                rtnMap.put("errcode", ex.getErrorCode());//一般错误
+                rtnMap.put("errmsg", ex.getMessage());
 
             } else {
-                ((Map) jsonObject).put("errcode", "10000");//一般错误
-                ((Map) jsonObject).put("errmsg", message.getException().getMessage());
+                rtnMap.put("errcode", "10000");//一般错误
+                rtnMap.put("errmsg", message.getException().getMessage());
             }
             if (message.getException() != null) {
                 if (logger.isTraceEnabled()) {

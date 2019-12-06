@@ -37,10 +37,8 @@ public class ActorsBeanDefinitionParser implements BeanDefinitionParser {
 
             if (namespace != null && !namespace.trim().equals("")) {
                 elt.setAttribute("id", namespace + "." + elt.getAttribute("id"));
-            } else {
-                handler.parse(elt, parserContext);
-                continue;
             }
+
 
 
             HandleBean(elt, parserContext);

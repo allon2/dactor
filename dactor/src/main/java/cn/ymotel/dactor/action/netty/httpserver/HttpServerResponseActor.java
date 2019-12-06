@@ -1,19 +1,26 @@
-package cn.ymotel.dactor.action.netty.aysnsocket;
+package cn.ymotel.dactor.action.netty.httpserver;
 
 import cn.ymotel.dactor.action.AbstractJsonSupportActor;
 import cn.ymotel.dactor.exception.DActorException;
 import cn.ymotel.dactor.message.Message;
 import com.alibaba.fastjson.JSON;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.util.CharsetUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TcpServerActor extends AbstractJsonSupportActor {
+import static io.netty.buffer.Unpooled.copiedBuffer;
+
+public class HttpServerResponseActor extends AbstractJsonSupportActor {
     @Override
     public Object Execute(Message message) throws Exception {
-//        System.out.println("in server"+message.getContext());
         ChannelHandlerContext ctx=(ChannelHandlerContext)message.getControlData().get("_ChannelHandlerContext");
         Map obj=null;
         if(message.getContext().get("_Content")!=null){
@@ -38,8 +45,22 @@ public class TcpServerActor extends AbstractJsonSupportActor {
             head.put("errmsg", message.getException().getMessage());
         }
         rtnMap.put("body",obj);
-        ctx.writeAndFlush(JSON.toJSON(rtnMap)+"\r\n").addListener(ChannelFutureListener.CLOSE);
-    return null;
-    }
+//        ctx.writeAndFlush(JSON.toJSON(rtnMap)+"\r\n").addListener(ChannelFutureListener.CLOSE);
 
+        ByteBuf content = copiedBuffer(JSON.toJSON(rtnMap)+"", CharsetUtil.UTF_8);
+        FullHttpResponse response = null;
+        response = responseOK(HttpResponseStatus.OK, content);
+
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+
+        return message;
+    }
+    private FullHttpResponse responseOK(HttpResponseStatus status, ByteBuf content) {
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, content);
+        if (content != null) {
+            response.headers().set("Content-Type", "text/plain;charset=UTF-8");
+            response.headers().set("Content_Length", response.content().readableBytes());
+        }
+        return response;
+    }
 }

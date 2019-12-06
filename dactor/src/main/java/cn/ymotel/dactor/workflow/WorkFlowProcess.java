@@ -11,6 +11,7 @@ import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.message.AsyncMessage;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.message.SpringControlMessage;
+import cn.ymotel.dactor.spring.SpringUtils;
 import ognl.Ognl;
 import ognl.OgnlContext;
 import org.apache.commons.logging.LogFactory;
@@ -30,7 +31,8 @@ import java.util.*;
  * @version 1.0
  * @since 1.0
  */
-public class WorkFlowProcess {
+public class
+WorkFlowProcess {
     private final static org.apache.commons.logging.Log logger = LogFactory.getLog(WorkFlowProcess.class);
 
     public static void PushActorsToStackWithChain(Deque<ActorProcessStructure> actorStack, ActorTransactionCfg cfg, ActorChainCfg chain) {
@@ -129,8 +131,9 @@ public class WorkFlowProcess {
         if (strunc == null) {
             return;
         }
-        logger.info("beanId--" + strunc.getFromBeanId() + "--Id--" + strunc.getActorTransactionCfg().getId());
-
+        if(logger.isDebugEnabled()) {
+            logger.debug("beanId--" + strunc.getFromBeanId() + "--Id--" + strunc.getActorTransactionCfg().getId());
+        }
 //		if(strunc.getActorTransactionCfg().getBeginBeanId().equals(strunc.getFromBeanId())){
 //			return ;
 //		}
@@ -177,9 +180,9 @@ public class WorkFlowProcess {
         if(beanId.equals(strunc.getActorTransactionCfg().getEndBeanId())){
             strunc.setEndExecute(true);
         }
-
-        if (appcontext.getBean(beanId) instanceof ActorTransactionCfg) {
-            AppendCfg2Deque((ActorTransactionCfg) appcontext.getBean(beanId), deque);
+        Object bean= SpringUtils.getCacheBean(appcontext,beanId);
+        if (bean instanceof ActorTransactionCfg) {
+            AppendCfg2Deque((ActorTransactionCfg) bean, deque);
             downdeque.push(deque.pop());
             FireNextMessage(deque, downdeque, message, appcontext);
             return;
@@ -214,8 +217,9 @@ public class WorkFlowProcess {
 
             boolean isTrue = getConditonValue(message, condtion);
             if (isTrue) {
-                logger.info("Condtion---" + condtion);
-
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Condtion---" + condtion);
+                }
                 return toBeanId;
             }
 
@@ -246,8 +250,9 @@ public class WorkFlowProcess {
 
             boolean isTrue = getConditonValue(message, condtion);
             if (isTrue) {
-                logger.info("Condtion---" + condtion);
-
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Condtion---" + condtion);
+                }
                 return toBeanId;
             }
 
@@ -256,7 +261,7 @@ public class WorkFlowProcess {
 
     }
     private static void SendAsyncMessage(Message message, ApplicationContext appcontext, String toBeanId) {
-        ActorTransactionCfg cfg = (ActorTransactionCfg) appcontext.getBean(toBeanId);
+        ActorTransactionCfg cfg = (ActorTransactionCfg) SpringUtils.getCacheBean(appcontext,toBeanId);
         AsyncMessage asyncMessage = new AsyncMessage(message.getContext());
         try {
             message.getControlMessage().getMessageDispatcher().startMessage(asyncMessage, cfg, true);

@@ -10,6 +10,7 @@ import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
 import cn.ymotel.dactor.message.Message;
+import cn.ymotel.dactor.spring.SpringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -61,7 +62,8 @@ public class AsyncServlet extends FrameworkServlet {
         /**
          * Fmt:message可以直接访问MessageSource对应的属性
          */
-        org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource) this.getWebApplicationContext().getBean(messageSourceId);
+
+        org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource)SpringUtils.getCacheBean(this.getWebApplicationContext(),messageSourceId);
         JstlUtils.exposeLocalizationContext(request, messageSource);
 
 
@@ -90,13 +92,15 @@ public class AsyncServlet extends FrameworkServlet {
         /**
          * 找不到交易码，直接输出空白结果
          */
-        if (!this.getWebApplicationContext().containsBean(transactionId)) {
+
+        if (! SpringUtils.containBean(this.getWebApplicationContext(),transactionId)) {
             response.getOutputStream().flush();
             ;
 
             return;
         }
-        ActorTransactionCfg cfg = (ActorTransactionCfg) this.getWebApplicationContext().getBean(transactionId);
+
+        ActorTransactionCfg cfg = (ActorTransactionCfg) SpringUtils.getCacheBean(this.getWebApplicationContext(),transactionId);
 //			System.out.println("重复提交3");
 
         AsyncContext asyncContext = request.startAsync(request, response);
@@ -217,10 +221,12 @@ public class AsyncServlet extends FrameworkServlet {
         if (l == -1) l = path.length();
 
         transactionId = path.substring(s, l);
+        //支持rest格式
 //		transactionId=transactionId.replaceAll("/",".");
 
 
 //		}
+
         return transactionId;
     }
 
@@ -235,7 +241,7 @@ public class AsyncServlet extends FrameworkServlet {
         if (sc.getAttribute(DISPATCHER) != null) {
             return (MessageRingBufferDispatcher) sc.getAttribute(DISPATCHER);
         }
-        MessageRingBufferDispatcher dispatcher = (MessageRingBufferDispatcher) this.getWebApplicationContext().getBean("MessageRingBufferDispatcher");
+        MessageRingBufferDispatcher dispatcher = (MessageRingBufferDispatcher) SpringUtils.getCacheBean(this.getWebApplicationContext(),"MessageRingBufferDispatcher");
         sc.setAttribute(DISPATCHER, dispatcher);
 
         return dispatcher;
@@ -251,7 +257,7 @@ public class AsyncServlet extends FrameworkServlet {
         urlPathHelper.setAlwaysUseFullPath(true);
 
 
-        defaultResolveMessage = (DefaultResolveMessage) this.getWebApplicationContext().getBean("DefaultResolveMessage");
+        defaultResolveMessage = (DefaultResolveMessage)SpringUtils.getCacheBean(this.getWebApplicationContext(),"DefaultResolveMessage") ;
     }
 
 }

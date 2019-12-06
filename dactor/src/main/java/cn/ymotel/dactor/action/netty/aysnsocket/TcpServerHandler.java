@@ -5,6 +5,7 @@ import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultMessage;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
 import cn.ymotel.dactor.message.Message;
+import cn.ymotel.dactor.spring.SpringUtils;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -47,7 +48,7 @@ public class TcpServerHandler extends SimpleChannelInboundHandler implements App
         message.getContext().putAll(data);
         message.getControlData().put("_ChannelHandlerContext", ctx);
         String transactionId = (String)data.get("actorId");
-        ActorTransactionCfg cfg=(ActorTransactionCfg)applicationContext.getBean(transactionId);
+        ActorTransactionCfg cfg=(ActorTransactionCfg) SpringUtils.getCacheBean(applicationContext,transactionId);
 //
 //
         getMessageDispatcher().startMessage(message, cfg, false);
