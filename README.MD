@@ -40,10 +40,10 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note
 1.0.11版本    
-     1:对SpringBean进行缓存,缓解getBean造成的锁问题
-	 2:增加对netty http的支持
-	 3:日志默认级别调整为debug
-1.0.10版本    
+     1:对SpringBean进行缓存,缓解getBean造成的锁问题  
+	 2:增加对netty http的支持  
+	 3:日志默认级别调整为debug  
+	 1.0.10版本    
      Message增加ControlData，将业务信息和控制信息分离   
 1.0.9版本  
      修正在集成的Netty错误,并增加测试案例  
