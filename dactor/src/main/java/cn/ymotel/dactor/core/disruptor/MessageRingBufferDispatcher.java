@@ -94,6 +94,16 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
         this.threadNumber = threadNumber;
     }
 
+    public void setMaxsize(int maxsize) {
+        this.maxsize = maxsize;
+    }
+
+    public void setChecktime(int checktime) {
+        this.checktime = checktime;
+    }
+
+    private int maxsize=-1;
+    private int checktime=1000;
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
@@ -107,20 +117,22 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
             threadNumber = Runtime.getRuntime().availableProcessors();
         }
         WorkHandler<MessageEvent>[] workHandlers = new WorkHandler[threadNumber];
-        for (int i = 0; i < workHandlers.length; i++) {
-            MessageEventHandler handler = new MessageEventHandler();
-            handler.setApplicationContext(this.getApplicationContext());
-            handler.setDispatcher(this);
-            workHandlers[i] = handler;
-        }
+//        for (int i = 0; i < workHandlers.length; i++) {
+//            MessageEventHandler handler = new MessageEventHandler();
+//            handler.setApplicationContext(this.getApplicationContext());
+//            handler.setDispatcher(this);
+//            workHandlers[i] = handler;
+//        }
         this.ringbufferManager.setBufferSize(bufferSize);
         this.ringbufferManager.setThreadNumber(threadNumber);
-        this.ringbufferManager.setWorkhandler(workHandlers);
+//        this.ringbufferManager.setWorkhandler(workHandlers);
         if (strategy != null) {
             this.ringbufferManager.setStrategy(this.getStrategy());
-            ;
-
         }
+        this.ringbufferManager.setApplicationContext(this.getApplicationContext());
+        this.ringbufferManager.setChecktime(checktime);
+        this.ringbufferManager.setMaxsize(maxsize);
+        this.ringbufferManager.setMessageRingBufferDispatcher(this);
         this.ringbufferManager.afterPropertiesSet();
 
 
