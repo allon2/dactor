@@ -39,12 +39,12 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note
-1.0.12版本
-​	1:动态调节消费者线程数
-​    2：增加maxsize：动态消费最大增加数
-​    3：修改threadNumber为minsize，可不配置，不配置为核心CPU个数
-​	4：增加checktime函数，默认为1s,监控消费者线程是否不足
-​	5：支持Rest格式,如/a/b.json格式，对应内部为namespace为a,actor的id为b
+1.0.12版本  
+​	1:动态调节消费者线程数  
+​    2：增加maxsize：动态消费最大增加数  
+​    3：修改threadNumber为minsize，可不配置，不配置为核心CPU个数  
+​	4：增加checktime函数，默认为1s,监控消费者线程是否不足  
+​	5：支持Rest格式,如/a/b.json格式，对应内部为namespace为a,actor的id为b  
 1.0.11版本    
      1:对SpringBean进行缓存,缓解getBean造成的锁问题  
 	 2:增加对netty http的支持  
