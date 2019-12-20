@@ -8,9 +8,6 @@ package cn.ymotel.dactor.core.disruptor;
 
 import cn.ymotel.dactor.message.Message;
 import com.lmax.disruptor.*;
-import com.lmax.disruptor.dsl.Disruptor;
-import com.lmax.disruptor.dsl.ProducerType;
-import com.lmax.disruptor.util.DaemonThreadFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -45,7 +42,7 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 
     private ApplicationContext appcontext = null;
 
-    private int threadNumber = -1;
+    private int minsize = -1;
     private int maxsize=-1;
 
     public void setMaxsize(int maxsize) {
@@ -58,8 +55,8 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 
     RingBuffer<MessageEvent> ringBuffer;
 
-    public void setThreadNumber(int threadNumber) {
-        this.threadNumber = threadNumber;
+    public void setMinsize(int minsize) {
+        this.minsize = minsize;
     }
 
     public RingBuffer<MessageEvent> getRingBuffer() {
@@ -102,6 +99,9 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
         this.strategy = strategy;
     }
 
+    public int getProcessorsize(){
+        return processorList.size();
+    }
     public boolean putMessage(Message message, boolean blocked) {
         ;
 
@@ -127,13 +127,13 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 //        this.workhandler = workhandler;
 //    }
 
-    private WorkerPool<MessageEvent> workerPool;
+//    private WorkerPool<MessageEvent> workerPool;
     private WorkProcessor<MessageEvent> createProcessor( RingBuffer<MessageEvent> ringBuffer,WorkHandler workHandler) {
         return new WorkProcessor<>(ringBuffer, ringBuffer.newBarrier(), workHandler, new IgnoreExceptionHandler(),workSequence);
     }
     private final Sequence workSequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
     public void initConsumer(){
-        for(int i=0;i<threadNumber;i++){
+        for(int i = 0; i< minsize; i++){
             ExecuteProcessor();
         }
     }
@@ -208,7 +208,7 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
             @Override
             public void run() {
                 long workingprocess=ringBuffer.getBufferSize()-ringBuffer.remainingCapacity();
-                if(workingprocess<=threadNumber){
+                if(workingprocess<= minsize){
                     return ;
                 }
                 if(workingprocess>processorList.size()){
@@ -221,7 +221,7 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
                             workingprocess=maxsize;
                         }
                     }
-                    long incrn=workingprocess-threadNumber;
+                    long incrn=workingprocess-processorList.size();
                     if(incrn<=0){
                         return ;
                     }
@@ -229,8 +229,8 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 
                 }else {
 
-                    long inum=processorList.size()-workingprocess;
-                    if(inum<=threadNumber){
+                    long inum=processorList.size()-workingprocess- minsize;
+                    if(inum<=0){
                         return ;
                     }
 

@@ -88,10 +88,21 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
         this.strategy = strategy;
     }
 
-    private int threadNumber = -1;
 
+
+    public void setMinsize(int minsize) {
+        this.minsize = minsize;
+    }
+
+    private int minsize = -1;
+
+    /**
+     * use minsize instead
+     * @param threadNumber
+     */
+    @Deprecated
     public void setThreadNumber(int threadNumber) {
-        this.threadNumber = threadNumber;
+        this.minsize = threadNumber;
     }
 
     public void setMaxsize(int maxsize) {
@@ -102,7 +113,7 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
         this.checktime = checktime;
     }
 
-    private int maxsize=-1;
+    private int maxsize=300;
     private int checktime=1000;
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -113,10 +124,10 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
         this.ringbufferManager = new RingBufferManager();
 //		this.eventHandler=new MessageEventHandler();
 
-        if (threadNumber == -1) {
-            threadNumber = Runtime.getRuntime().availableProcessors();
+        if (minsize == -1) {
+            minsize = Runtime.getRuntime().availableProcessors();
         }
-        WorkHandler<MessageEvent>[] workHandlers = new WorkHandler[threadNumber];
+//        WorkHandler<MessageEvent>[] workHandlers = new WorkHandler[minsize];
 //        for (int i = 0; i < workHandlers.length; i++) {
 //            MessageEventHandler handler = new MessageEventHandler();
 //            handler.setApplicationContext(this.getApplicationContext());
@@ -124,7 +135,7 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
 //            workHandlers[i] = handler;
 //        }
         this.ringbufferManager.setBufferSize(bufferSize);
-        this.ringbufferManager.setThreadNumber(threadNumber);
+        this.ringbufferManager.setMinsize(minsize);
 //        this.ringbufferManager.setWorkhandler(workHandlers);
         if (strategy != null) {
             this.ringbufferManager.setStrategy(this.getStrategy());

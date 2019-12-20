@@ -39,6 +39,12 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note
+1.0.12版本
+​	1:动态调节消费者线程数
+​    2：增加maxsize：动态消费最大增加数
+​    3：修改threadNumber为minsize，可不配置，不配置为核心CPU个数
+​	4：增加checktime函数，默认为1s,监控消费者线程是否不足
+​	5：支持Rest格式,如/a/b.json格式，对应内部为namespace为a,actor的id为b
 1.0.11版本    
      1:对SpringBean进行缓存,缓解getBean造成的锁问题  
 	 2:增加对netty http的支持  
@@ -62,6 +68,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  1.0.3版本  
     Message增加setUser和getUser对象  
  1.0.2版本
+
 - 初始化版本
 ## Getting Started
   example是J2EE程序,下载后，可直接运行,其中集成了若干例子  
@@ -80,7 +87,7 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 
    启动后，可在控制台看到内部调用结果  
    ![Image text](1.png)
-   
+
 
 ### Maven dependency
 
@@ -88,13 +95,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.11</version>
+    <version>1.0.12</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.11'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.12'
 
 ```
 
@@ -117,7 +124,7 @@ chain,grandfather,parent都可为空，不设置
             <step fromBeanId="placeholderActor" toBeanId="endActor" conditon=""/>
         </steps>
     </actor>
- ```
+```
 condtion可为空，空字符串，或者是ognl表达式  
 placeholderActor的作用是在暂存当前环境，并调用子交易，待子交易执行完毕后，再恢复当前环境继续执行  
 如果在Step中未找到toBeanIdActor，会直接调用endBeanId方法，认为自身交易已执行结束。  
@@ -142,7 +149,7 @@ placeholderActor的作用是在暂存当前环境，并调用子交易，待子�
          <actor:param name="beginBeanId" value="beginActor"/>
          <actor:param name="endBeanId" value="endActor"/>
    </actor:global>
-```   
+```
 beginBeanId为默认的开始Actor,value中的值是在Spring中对应的beanName，程序初始化时将会取得此值，对未指定beginBeanId或者endBeanId的Actor初始化全局配置。  
 beginActor和endActor都需要继承Actor接口。
 actor配置如下
@@ -160,7 +167,7 @@ actor配置如下
                     <result name="success">htmlstream:</result>
              </results>
     </actor:actor>
- ```
+```
  属性handleException如果不设置的话,遇到异常,程序将会认为子类中已经执行完毕,跳到parent中PlaceHolder处执行。设置为true，将不会直接跳转到parent中，由子类进行自我处理。  
  parent和chain为调用具体交易前需要调用的公共交易，由于大部分交易都有通用的前置交易和统一的后置交易。通过设置parent或者chain，可提高代码复用度。  
  fromBeanId和toBeanId配置的是Actor或者实现Actor接口的beanId。
@@ -176,7 +183,7 @@ chain配置
   
           </list>
       </actor:chain>
-```  
+ ```
 chain可直观展现Actor调用顺序.    
 在chain中可顺序并列多个parent类。每个parent中的Step都需要有placeHolderActor，以调用子类。      
 依次执行list中的交易，再执行自身交易。自身交易执行完毕，再依次回溯责任链中的每个交易，直到无可用交易。 
@@ -212,7 +219,7 @@ cn.ymotel.dactor.core.MessageDispatcher是交易流转的核心接口类
  ```
   <bean id="MessageRingBufferDispatcher" class="cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher">
     </bean>
- ```   
+ ```
  MessageRingBufferDispatcher的strategy、bufferSize、threadNumber为三个可设置属性.正常情况下使用默认设置即可。  
  strategy默认使用ringBuffer的BlockingWaitStrategy策略进行调度，如果交易量比较大，可调整此策略。  
  bufferSize默认使用1024。   

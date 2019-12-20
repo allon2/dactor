@@ -190,44 +190,45 @@ public class AsyncServlet extends FrameworkServlet {
     }
 
     protected static String resolveTransactionId(String path, HttpServletRequest request) {
-
-        /*
-         * the path fetch from urlPathHelper, according servlet url pattern:
-         * for example: my servlet context is "context", full url will be:
-         * full url					url pattern      path
-         * /context/.../test.do		*.do			 /test.do
-         * /context/prefix/test/ss	/prefix/*		 /test/ss
-         */
-
-        String transactionId = null;
-
-//		String transactionId = request.getParameter(idParameterName);
-//		if(transactionId == null){
-        int s = 1;
-        int l1 = path.indexOf('/', s);
-        int l2 = path.lastIndexOf('.');
-
-
-        int l = -1;
-        if (l1 != -1 && l2 != -1) {
-            l = l1 > l2 ? l2 : l1;
-        } else {
-            if (l1 != -1)
-                l = l1;
-            else if (l2 != -1)
-                l = l2;
-        }
-
-        if (l == -1) l = path.length();
-
-        transactionId = path.substring(s, l);
-        //支持rest格式
-//		transactionId=transactionId.replaceAll("/",".");
-
-
-//		}
-
-        return transactionId;
+        return path.substring(1,path.lastIndexOf(".")).replaceAll("/",".");
+//
+//        /*
+//         * the path fetch from urlPathHelper, according servlet url pattern:
+//         * for example: my servlet context is "context", full url will be:
+//         * full url					url pattern      path
+//         * /context/.../test.do		*.do			 /test.do
+//         * /context/prefix/test/ss	/prefix/*		 /test/ss
+//         */
+//
+//        String transactionId = null;
+//
+////		String transactionId = request.getParameter(idParameterName);
+////		if(transactionId == null){
+//        int s = 1;
+//        int l1 = path.indexOf('/', s);
+//        int l2 = path.lastIndexOf('.');
+//
+//
+//        int l = -1;
+//        if (l1 != -1 && l2 != -1) {
+//            l = l1 > l2 ? l2 : l1;
+//        } else {
+//            if (l1 != -1)
+//                l = l1;
+//            else if (l2 != -1)
+//                l = l2;
+//        }
+//
+//        if (l == -1) l = path.length();
+//
+//        transactionId = path.substring(s, l);
+//        //支持rest格式
+////		transactionId=transactionId.replaceAll("/",".");
+//
+//
+////		}
+//
+//        return transactionId;
     }
 
     /* (non-Javadoc)
