@@ -8,6 +8,14 @@ package cn.ymotel.dactor.action.httpclient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.cookie.*;
+import org.apache.http.impl.cookie.BestMatchSpecFactory;
+import org.apache.http.impl.cookie.BrowserCompatSpec;
+import org.apache.http.impl.cookie.BrowserCompatSpecFactory;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -15,6 +23,7 @@ import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
 import org.apache.http.nio.reactor.ConnectingIOReactor;
+import org.apache.http.protocol.HttpContext;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.IOException;
@@ -96,15 +105,36 @@ public class HttpClientHelper implements InitializingBean {
         if (logger.isTraceEnabled()) {
             logger.trace("afterPropertiesSet() - " + cm.getDefaultConnectionConfig()); //$NON-NLS-1$
         }
-//       SSLIOSessionStrategy sslSessionStrategy = new SSLIOSessionStrategy(
-//    		   SSLContexts.createDefault(),
-//               null,
-//               null,
-//               SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER);       
-//         httpclient = HttpAsyncClients.custom()
-//                .setConnectionManager(cm).setSSLStrategy(sslSessionStrategy)
-//                .build();
+
+        CookieSpecProvider easySpecProvider = new CookieSpecProvider() {
+
+            public CookieSpec create(HttpContext context) {
+
+                return new BrowserCompatSpec() {
+                    @Override
+                    public void validate(Cookie cookie, CookieOrigin origin)
+                            throws MalformedCookieException {
+                        // Oh, I am easy
+                    }
+                };
+            }
+
+        };
+        Registry<CookieSpecProvider> reg = RegistryBuilder.<CookieSpecProvider>create()
+                .register(CookieSpecs.BEST_MATCH,
+                        new BestMatchSpecFactory())
+                .register(CookieSpecs.BROWSER_COMPATIBILITY,
+                        new BrowserCompatSpecFactory())
+                .register("mySpec", easySpecProvider)
+                .build();
+
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setCookieSpec("mySpec")
+                .build();
+
         HttpAsyncClientBuilder builder = HttpAsyncClients.custom()
+                .setDefaultCookieSpecRegistry(reg)
+                .setDefaultRequestConfig(requestConfig)
                 .setConnectionManager(cm).setSSLStrategy(SSLIOSessionStrategy.getDefaultStrategy());
 
 

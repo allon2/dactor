@@ -13,9 +13,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -70,7 +68,8 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
     private int bufferSize = 1024;
 
     private WaitStrategy strategy = new BlockingWaitStrategy();
-    private List<WorkProcessor> processorList=new ArrayList();
+//    private List<WorkProcessor> processorList=new ArrayList();
+//    private Map<WorkProcessor,MessageEventHandler> workHandlerMap=new HashMap();
     /**
      * @return the bufferSize
      */
@@ -100,7 +99,7 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
     }
 
     public int getProcessorsize(){
-        return processorList.size();
+        return this.workProcessorManager.getProcessorList().size();
     }
     public boolean putMessage(Message message, boolean blocked) {
         ;
@@ -128,57 +127,67 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 //    }
 
 //    private WorkerPool<MessageEvent> workerPool;
-    private WorkProcessor<MessageEvent> createProcessor( RingBuffer<MessageEvent> ringBuffer,WorkHandler workHandler) {
-        return new WorkProcessor<>(ringBuffer, ringBuffer.newBarrier(), workHandler, new IgnoreExceptionHandler(),workSequence);
-    }
-    private final Sequence workSequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
-    public void initConsumer(){
-        for(int i = 0; i< minsize; i++){
-            ExecuteProcessor();
-        }
-    }
-    private void ExecuteProcessor(){
-        WorkProcessor processor=  createProcessor(this.ringBuffer,createWorkHandler());
-        processorList.add(processor);
-        ringBuffer.addGatingSequences(processor.getSequence());
-        executor.execute(processor);
-
-    }
-    public void incrConsumer(long incrnum){
-
-            for(int i=0;i<incrnum;i++){
-                ExecuteProcessor();
-            }
-//        WorkProcessor processor=  createProcessor(this.ringBuffer,createWorkHandler());
-//       ringBuffer.addGatingSequences(processor.getSequence());
+//    private WorkProcessor<MessageEvent> createProcessor( RingBuffer<MessageEvent> ringBuffer,WorkHandler workHandler) {
+//        return new WorkProcessor<>(ringBuffer, ringBuffer.newBarrier(), workHandler, new IgnoreExceptionHandler(),workSequence);
+//    }
+//    private final Sequence workSequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
+//    public void initConsumer(){
+//        for(int i = 0; i< minsize; i++){
+//            ExecuteProcessor();
+//        }
+//    }
+//    private void ExecuteProcessor(){
+//        MessageEventHandler handler=createWorkHandler();
+//        WorkProcessor processor=  createProcessor(this.ringBuffer,handler);
+//        workHandlerMap.put(processor,handler);
+//        processorList.add(processor);
+//        ringBuffer.addGatingSequences(processor.getSequence());
 //        executor.execute(processor);
-    }
-    public WorkHandler<MessageEvent> createWorkHandler(){
-        MessageEventHandler handler = new MessageEventHandler();
-        handler.setApplicationContext(this.appcontext);
-        handler.setDispatcher(this.messageRingBufferDispatcher);
-        return handler;
-    }
-    public void decrConsumer(long reducenum){
-
-        for(Iterator iter = processorList.iterator(); iter.hasNext();){
-            if(reducenum>=0){
-                break;
-            }
-            reducenum=reducenum-1;
-            WorkProcessor<MessageEvent> tprocessor=(WorkProcessor<MessageEvent>)iter.next();
-            tprocessor.halt();
-            ringBuffer.removeGatingSequence(tprocessor.getSequence());
-            iter.remove();
-        }
-
-
-    }
+//
+//    }
+//    public void incrConsumer(long incrnum){
+//
+//            for(int i=0;i<incrnum;i++){
+//                ExecuteProcessor();
+//            }
+////        WorkProcessor processor=  createProcessor(this.ringBuffer,createWorkHandler());
+////       ringBuffer.addGatingSequences(processor.getSequence());
+////        executor.execute(processor);
+//    }
+//    public MessageEventHandler createWorkHandler(){
+//        MessageEventHandler handler = new MessageEventHandler();
+//        handler.setApplicationContext(this.appcontext);
+//        handler.setDispatcher(this.messageRingBufferDispatcher);
+//        return handler;
+//    }
+//    public void decrConsumer(long reducenum){
+//
+//        for(Iterator iter = processorList.iterator(); iter.hasNext();){
+//            if(reducenum<=0){
+//               return;
+//            }
+//            reducenum=reducenum-1;
+//            WorkProcessor<MessageEvent> tprocessor=(WorkProcessor<MessageEvent>)iter.next();
+//            tprocessor.halt();
+////            try {
+////                workHandlerMap.get(tprocessor).awaitShutdown();
+////            } catch (InterruptedException e) {
+////                e.printStackTrace();
+////            }
+//            ringBuffer.removeGatingSequence(tprocessor.getSequence());
+//            iter.remove();
+//            workHandlerMap.remove(tprocessor);
+//
+//        }
+//
+//
+//    }
 
     /**
      * 毫秒为单位
      */
     private int checktime=1000;
+    private WorkProcessorManager workProcessorManager=null;
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
@@ -201,46 +210,72 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 
         //初始化队列数
         ringBuffer = RingBuffer.createMultiProducer(factory, bufferSize, strategy);
-        initConsumer();
 
-        RingBufferManager rfm=this;
-        Executors.newSingleThreadScheduledExecutor().schedule(new Runnable() {
-            @Override
-            public void run() {
-                long workingprocess=ringBuffer.getBufferSize()-ringBuffer.remainingCapacity();
-                if(workingprocess<= minsize){
-                    return ;
-                }
-                if(workingprocess>processorList.size()){
-                    //需要增加
-                    if(maxsize==-1){
+          workProcessorManager=new WorkProcessorManager(executor,messageRingBufferDispatcher,this.appcontext,ringBuffer);
+        Sentinel sentinel=new Sentinel();
+        sentinel.setMaxsize(maxsize);
+        sentinel.setMinsize(minsize);
+        sentinel.setWorkProcessorManager(workProcessorManager);
+        workProcessorManager.incrConsumer(minsize);
+//                for(int i = 0; i< minsize; i++){
+//                    workProcessorManager.incrOneConsumer();
+//        }
+//        initConsumer();
 
-                    }else{
-                        if(workingprocess>maxsize){
-                            //只能增加到最大
-                            workingprocess=maxsize;
-                        }
-                    }
-                    long incrn=workingprocess-processorList.size();
-                    if(incrn<=0){
-                        return ;
-                    }
-                    rfm.incrConsumer(incrn);
-
-                }else {
-
-                    long inum=processorList.size()-workingprocess- minsize;
-                    if(inum<=0){
-                        return ;
-                    }
-
-
-                    rfm.decrConsumer(inum);
-                    //需要减少
-//                    rfm.decrConsumer();
-                }
-            }
-        },checktime, TimeUnit.MILLISECONDS);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(sentinel,checktime,checktime, TimeUnit.MILLISECONDS);
+//        RingBufferManager rfm=this;
+//        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                long workingprocess=ringBuffer.getBufferSize()-ringBuffer.remainingCapacity();
+//                int processorListSize=processorList.size();
+//                System.out.println(minsize+"--"+processorList.size()+"---"+workingprocess);
+//
+//                //正在处理的数小于minsize，并且队列数小于minsize，停止处理
+//                if(workingprocess<= minsize&&processorListSize<=minsize){
+//                    return ;
+//                }
+//                if(workingprocess>processorListSize){
+//                    //需要增加
+//                    if(maxsize==-1){
+//
+//                    }else{
+//                        if(workingprocess>maxsize){
+//                            //只能增加到最大
+//                            workingprocess=maxsize;
+//                        }
+//                    }
+//                    long incrn=workingprocess-processorListSize;
+//                    if(incrn<=0){
+//                        return ;
+//                    }
+//                    rfm.incrConsumer(incrn);
+//
+//                }else {
+//                    /**
+//                     * 最小处理数不能小于minsize
+//                     */
+//                    if(processorListSize<=minsize){
+//                        return ;
+//                    }
+//
+//                    long inum=processorListSize-workingprocess-MessageEventHandler.consumercount.get();
+//                    if(processorListSize-inum<=minsize){
+//                        inum=processorListSize-minsize;
+//                    }
+//                    System.out.println("decreame number--|||||"+inum+"|||"+processorList.size()+"|||"+workingprocess+"|||"+minsize);
+//                    if(inum<=0){
+//                        return ;
+//                    }
+//
+//
+//                    rfm.decrConsumer(inum);
+//                    //需要减少
+//////                    rfm.decrConsumer();
+//                }
+//            }
+//        },checktime,checktime, TimeUnit.MILLISECONDS);
 
 //        SequenceBarrier sequenceBarrier = ringBuffer.newBarrier();
 //        executor = Executors.newFixedThreadPool(this.threadNumber);
@@ -261,13 +296,21 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
     ExecutorService executor = null;
 
     public void shutdown() {
-        for(Iterator iter = processorList.iterator(); iter.hasNext();){
-             WorkProcessor<MessageEvent> tprocessor=(WorkProcessor<MessageEvent>)iter.next();
-            tprocessor.halt();
-            ringBuffer.removeGatingSequence(tprocessor.getSequence());
-            iter.remove();
-        }
+//        for(Iterator iter = processorList.iterator(); iter.hasNext();){
+//             WorkProcessor<MessageEvent> tprocessor=(WorkProcessor<MessageEvent>)iter.next();
+//            tprocessor.halt();
+//            ringBuffer.removeGatingSequence(tprocessor.getSequence());
+//            try {
+//                workHandlerMap.get(tprocessor).awaitShutdown();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }finally {
+//                workHandlerMap.remove(tprocessor);
+//            }
+//            iter.remove();
+//        }
 //        workerPool.halt();
+        workProcessorManager.shutdown();
         executor.shutdown();
 
     }

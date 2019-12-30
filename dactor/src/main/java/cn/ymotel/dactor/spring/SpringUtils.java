@@ -20,7 +20,9 @@ public class SpringUtils {
             return bean;
         }
         if(bean==null){
-            bean= applicationContext.getBean(beanName);
+            if(applicationContext.containsBean(beanName)){
+              bean= applicationContext.getBean(beanName);
+            }
          }
 
         if(bean==null){
@@ -37,6 +39,23 @@ public class SpringUtils {
             return false;
         }
         return true;
+    }
+    public static String getBeanFromTranstionId(ApplicationContext applicationContext,String beanName){
+       Object obj=null;
+
+        for(;;){
+//            System.out.println("beanName---"+beanName);
+            obj= getCacheBean(applicationContext,beanName);
+            if(obj!=null){
+                return beanName;
+            }
+            if(beanName.indexOf(".")>=0){
+                beanName=beanName.substring(0,beanName.lastIndexOf("."));
+            }else{
+                return null;
+            }
+        }
+
     }
     public static void main(String[] args){
         System.out.println(cachedBean);

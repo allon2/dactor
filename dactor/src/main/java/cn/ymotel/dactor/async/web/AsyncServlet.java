@@ -92,13 +92,17 @@ public class AsyncServlet extends FrameworkServlet {
         /**
          * 找不到交易码，直接输出空白结果
          */
-
-        if (! SpringUtils.containBean(this.getWebApplicationContext(),transactionId)) {
+        transactionId=SpringUtils.getBeanFromTranstionId(this.getWebApplicationContext(),transactionId);
+        if(transactionId==null){
             response.getOutputStream().flush();
-            ;
-
-            return;
+                return;
         }
+//        if (! SpringUtils.containBean(this.getWebApplicationContext(),transactionId)) {
+//            response.getOutputStream().flush();
+//            ;
+//
+//            return;
+//        }
 
         ActorTransactionCfg cfg = (ActorTransactionCfg) SpringUtils.getCacheBean(this.getWebApplicationContext(),transactionId);
 //			System.out.println("重复提交3");
@@ -190,7 +194,10 @@ public class AsyncServlet extends FrameworkServlet {
     }
 
     protected static String resolveTransactionId(String path, HttpServletRequest request) {
-        return path.substring(1,path.lastIndexOf(".")).replaceAll("/",".");
+        if(path.startsWith("/")) {
+            return path.substring(1, path.lastIndexOf(".")).replaceAll("/", ".");
+        }
+        return path.substring(0, path.lastIndexOf(".")).replaceAll("/", ".");
 //
 //        /*
 //         * the path fetch from urlPathHelper, according servlet url pattern:

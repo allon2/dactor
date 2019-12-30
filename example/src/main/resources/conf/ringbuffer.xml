@@ -8,6 +8,9 @@
 
     <bean id="MessageRingBufferDispatcher" class="cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher">
         <property name="maxsize" value="300"/>
+        <property name="minsize" value="1"/>
    </bean>
-
+    <bean id="ringbuffermonitor" class="cn.ymotel.dactor.core.disruptor.RingBufferMonitorThread" init-method="start">
+        <property name="messageRingBufferDispatcher" ref="MessageRingBufferDispatcher"/>
+    </bean>
 </beans>
