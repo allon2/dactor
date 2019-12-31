@@ -38,7 +38,10 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
   Servlet 3.0+(因为需要使用Servlet的异步功能)  
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
-## Release Note
+## Release Note  
+1.0.13版本  
+​	1:完善代码解决消费者减少后,消息丢失问题   
+	2:支持url路径中加动态参数  
 1.0.12版本  
 ​	1:动态调节消费者线程数  
 ​    2：增加maxsize：动态消费最大增加数  
@@ -95,13 +98,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.12'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.13'
 
 ```
 
