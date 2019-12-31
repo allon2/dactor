@@ -78,6 +78,10 @@ public class Sentinel implements  Runnable{
              * 每次增加二分之一
              */
             incrn=incrn/2;
+            long mod=incrn%2;
+            if(mod!=0){
+                incrn++;
+            }
             for(int i=0;i<incrn;i++){
                 workProcessorManager.incrOneConsumer();
             }
