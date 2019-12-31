@@ -15,11 +15,11 @@ public class RandomTxtActor extends AbstractJsonSupportActor {
 
     @Override
     public Object Execute(Message message) throws Exception {
-        System.out.println("in random text");
-        /**
-         * 休息30秒
-         */
-        sleep(10*1000);
+//        System.out.println("in random text");
+//        /**
+//         * 休息30秒
+//         */
+//        sleep(10*1000);
         Map map=new HashMap();
         map.put("111","222");
         return map;

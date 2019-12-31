@@ -11,8 +11,8 @@ public class WorkProcessorManager {
     private MessageRingBufferDispatcher messageRingBufferDispatcher;
     private ApplicationContext appcontext = null;
     private     RingBuffer<MessageEvent> ringBuffer;
-
-    public List<WorkProcessor> getProcessorList() {
+    private  Sentinel sentinel;
+    public List<WorkProcessorExt> getProcessorList() {
         return processorList;
     }
 
@@ -20,21 +20,22 @@ public class WorkProcessorManager {
         return ringBuffer;
     }
 
-    public WorkProcessorManager(ExecutorService executor, MessageRingBufferDispatcher messageRingBufferDispatcher, ApplicationContext appcontext, RingBuffer<MessageEvent> ringBuffer) {
+    public WorkProcessorManager(ExecutorService executor, MessageRingBufferDispatcher messageRingBufferDispatcher, ApplicationContext appcontext, RingBuffer<MessageEvent> ringBuffer,Sentinel sentinel) {
         this.executor = executor;
         this.messageRingBufferDispatcher = messageRingBufferDispatcher;
         this.appcontext = appcontext;
         this.ringBuffer = ringBuffer;
+        this.sentinel=sentinel;
     }
 
     /**
      * 初始化 end
      */
 
-    private List<WorkProcessor> processorList=new ArrayList();
-    private Map<WorkProcessor,MessageEventHandler> workHandlerMap=new HashMap();
+    private List<WorkProcessorExt> processorList=new ArrayList();
+//    private Map<WorkProcessorExt,MessageEventHandler> workHandlerMap=new HashMap();
     private final Sequence workSequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
-    private WorkProcessor<MessageEvent> createProcessor(RingBuffer<MessageEvent> ringBuffer, WorkHandler workHandler) {
+    private WorkProcessorExt<MessageEvent> createProcessor(RingBuffer<MessageEvent> ringBuffer, WorkHandler workHandler) {
 //        SequenceBarrier barrier=null;
 //            if(processorList.size()==0){
 //                barrier=ringBuffer.newBarrier();
@@ -42,7 +43,7 @@ public class WorkProcessorManager {
 //                WorkProcessor processor=  processorList.get(processorList.size()-1);
 //            }
 
-        return new WorkProcessor<>(ringBuffer, ringBuffer.newBarrier(), workHandler, new IgnoreExceptionHandler(),workSequence);
+        return new WorkProcessorExt<>(ringBuffer, ringBuffer.newBarrier(), workHandler, new IgnoreExceptionHandler(),workSequence);
     }
 
     /**
@@ -50,8 +51,8 @@ public class WorkProcessorManager {
      */
     public  void incrOneConsumer(){
         MessageEventHandler handler=createWorkHandler();
-        WorkProcessor processor=  createProcessor(this.ringBuffer,handler);
-        workHandlerMap.put(processor,handler);
+        WorkProcessorExt processor=  createProcessor(this.ringBuffer,handler);
+//        workHandlerMap.put(processor,handler);
         processorList.add(processor);
         ringBuffer.addGatingSequences(processor.getSequence());
         executor.execute(processor);
@@ -63,13 +64,17 @@ public class WorkProcessorManager {
         }
     }
     public void decrOneConsumer(){
-        WorkProcessor<MessageEvent> tprocessor= processorList.get(0);
+        WorkProcessorExt<MessageEvent> tprocessor= processorList.get(0);
 
         tprocessor.halt();
-
+//        try {
+//            workHandlerMap.get(tprocessor).awaitShutdown();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         ringBuffer.removeGatingSequence(tprocessor.getSequence());
 
-            workHandlerMap.remove(tprocessor);
+//            workHandlerMap.remove(tprocessor);
         processorList.remove(tprocessor);
 //            return ;
 
@@ -87,6 +92,7 @@ public class WorkProcessorManager {
         MessageEventHandler handler = new MessageEventHandler();
         handler.setApplicationContext(this.appcontext);
         handler.setDispatcher(this.messageRingBufferDispatcher);
+        handler.setSentinel(sentinel);
         return handler;
     }
 }

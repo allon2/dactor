@@ -37,9 +37,13 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
      * 控制并发数，防止超过处理能力
      */
 //    private ExecutorService cachedThreadPool=Executors.newCachedThreadPool();
-    private final CountDownLatch shutdownLatch = new CountDownLatch(1);
-    public static java.util.concurrent.atomic.AtomicInteger consumercount=new java.util.concurrent.atomic.AtomicInteger(0);
+//    private final CountDownLatch shutdownLatch = new CountDownLatch(1);
+//    public static java.util.concurrent.atomic.AtomicInteger consumercount=new java.util.concurrent.atomic.AtomicInteger(0);
+    private Sentinel sentinel;
 
+    public void setSentinel(Sentinel sentinel) {
+        this.sentinel = sentinel;
+    }
 
     private final org.apache.commons.logging.Log logger = LogFactory.getLog(MessageEventHandler.class);
     ;
@@ -91,12 +95,12 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
      * @since 1.0
      */
     private void handleEvent(ActorProcessStructure struc, Message message,Actor actor ) {
-
-        consumercount.getAndIncrement();
-        System.out.println(consumercount.get());
+        sentinel.getProcessingConsumerNumber().incrementAndGet();
+//        consumercount.getAndIncrement();
+//        System.out.println(consumercount.get());
 //        Actor actor = (Actor) appcontext.getBean(struc.getFromBeanId());
 
-        System.out.println("beanId--" + struc.getFromBeanId() + "--Id--" + struc.getActorTransactionCfg().getId());
+//        System.out.println("beanId--" + struc.getFromBeanId() + "--Id--" + struc.getActorTransactionCfg().getId());
 
         ;
         if(logger.isDebugEnabled()) {
@@ -133,7 +137,8 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
 
         } finally {
 //            System.out.println("handler--event");
-            consumercount.decrementAndGet();
+            sentinel.getProcessingConsumerNumber().decrementAndGet();
+//            consumercount.decrementAndGet();
         }
 
 
@@ -200,13 +205,13 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
     @Override
     public void onShutdown()
     {
-        System.out.println("on shutdown"+Thread.currentThread());
-        shutdownLatch.countDown();
+//        System.out.println("on shutdown"+Thread.currentThread());
+//        shutdownLatch.countDown();
     }
 
-    public void awaitShutdown() throws InterruptedException
-    {
-        shutdownLatch.await();
-    }
+//    public void awaitShutdown() throws InterruptedException
+//    {
+//        shutdownLatch.await();
+//    }
 
 }

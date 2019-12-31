@@ -8,15 +8,16 @@ package cn.ymotel.dactor.core.disruptor;
 
 import cn.ymotel.dactor.message.Message;
 import com.lmax.disruptor.*;
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
+import com.lmax.disruptor.util.DaemonThreadFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 /**
@@ -188,6 +189,12 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
      */
     private int checktime=1000;
     private WorkProcessorManager workProcessorManager=null;
+   private  Sentinel sentinel=new Sentinel();
+
+    public Sentinel getSentinel() {
+        return sentinel;
+    }
+
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
@@ -204,19 +211,35 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 //        ringBuffer=disruptor.getRingBuffer();
 //        disruptor.shutdown();
 
-
+//
         executor= Executors.newCachedThreadPool();
+//        executor=new ThreadPoolExecutor(minsize, maxsize,
+//                120L, TimeUnit.SECONDS,
+//                new SynchronousQueue<>(),
+//                r -> {
+//                    Thread t = new Thread(r);
+//                    t.setName("disruptorHandler");
+//                    return t;
+//                });
 
-
+        Disruptor disruptor = new Disruptor<>(factory, bufferSize,  DaemonThreadFactory.INSTANCE, ProducerType.MULTI,strategy);
+        ringBuffer=disruptor.getRingBuffer();
+        disruptor.start();
         //初始化队列数
-        ringBuffer = RingBuffer.createMultiProducer(factory, bufferSize, strategy);
+//        ringBuffer = RingBuffer.createMultiProducer(factory, bufferSize, strategy);
 
-          workProcessorManager=new WorkProcessorManager(executor,messageRingBufferDispatcher,this.appcontext,ringBuffer);
-        Sentinel sentinel=new Sentinel();
+
+          workProcessorManager=new WorkProcessorManager(executor,messageRingBufferDispatcher,this.appcontext,ringBuffer,sentinel);
         sentinel.setMaxsize(maxsize);
         sentinel.setMinsize(minsize);
         sentinel.setWorkProcessorManager(workProcessorManager);
         workProcessorManager.incrConsumer(minsize);
+
+//        workProcessorManager.incrConsumer(10);
+//        for(int i=0;i<10;i++) {
+//            workProcessorManager.decrOneConsumer();
+//        }
+
 //                for(int i = 0; i< minsize; i++){
 //                    workProcessorManager.incrOneConsumer();
 //        }
