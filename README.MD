@@ -39,6 +39,8 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note  
+1.0.14版本  
+​    1:解决在队列满的情况下，互锁导致程序宕机问题 
 1.0.13版本  
 ​    1:完善代码解决消费者减少后,消息丢失问题   
     2:支持url路径中加动态参数  
@@ -98,13 +100,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.13</version>
+    <version>1.0.14</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.13'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.14'
 
 ```
 
