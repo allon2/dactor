@@ -102,21 +102,60 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
     public int getProcessorsize(){
         return this.workProcessorManager.getProcessorList().size();
     }
+    private LinkedBlockingQueue <Message> quene=new LinkedBlockingQueue();
     public boolean putMessage(Message message, boolean blocked) {
+//        if(!blocked){
+//            quene.isEmpty()
+//        }
+//
+//        if(blocked&&(!quene.isEmpty())){
+//            quene.add(message);
+//            return true;
+//        }
+        //非阻塞,并且队列不为空，说明ringBuffer为满，直接返回
+//        if(quene.isEmpty()){}else {
+//            if (!blocked) {
+//                    return false;
+//            }
+//            if(blocked) {
+//                quene.add(message);
+//            }
+//        }
         ;
-
-        long seq = 0;
-        if (blocked) {
-            seq = ringBuffer.next();
-        } else {
-            try {
-                seq = ringBuffer.tryNext();
-            } catch (InsufficientCapacityException e) {
-                e.printStackTrace();
+        //非阻塞,并且队列不为空，说明ringBuffer为满，直接返回
+        if(quene.isEmpty()){}else{
+            if(!blocked){
                 return false;
             }
+
         }
-        ringBuffer.get(seq).setMessage(message);
+        long seq = 0;
+
+        try {
+            seq = ringBuffer.tryNext();
+        } catch (InsufficientCapacityException e) {
+            e.printStackTrace();
+            if(!blocked) {
+                return false;
+            }else{
+                //阻塞
+                try {
+                    quene.put(message);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                return true;
+            }
+        }
+        if(quene.isEmpty()) {
+            ringBuffer.get(seq).setMessage(message);
+        }else{
+            try {
+                ringBuffer.get(seq).setMessage(quene.take());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         ringBuffer.publish(seq);
         return true;
     }
@@ -212,7 +251,21 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 //        disruptor.shutdown();
 
 //
+        RingBufferManager rbf=this;
         executor= Executors.newCachedThreadPool();
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                for(;;) {
+                    try {
+                        Message message = quene.take();
+                        rbf.putMessage(message, true);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
 //        executor=new ThreadPoolExecutor(minsize, maxsize,
 //                120L, TimeUnit.SECONDS,
 //                new SynchronousQueue<>(),

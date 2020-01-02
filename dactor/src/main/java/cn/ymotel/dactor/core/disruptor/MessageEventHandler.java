@@ -123,11 +123,11 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
 //				WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
 
             if (obj != null && obj instanceof Message) {
-                executor.submit((() ->   dispatcher.sendMessage(message)));
+//                executor.submit((() ->   dispatcher.sendMessage(message)));
 //                executor.submit(new Runnable() {
 //                    @Override
 //                    public void run() {
-//                        dispatcher.sendMessage(message);
+                        dispatcher.sendMessage(message);
 //
 //                    }
 //                });
@@ -143,9 +143,9 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
             }
             //已经执行的FromBeanId
 //				WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
-            executor.submit((() ->   dispatcher.sendMessage(message)));
+//            executor.submit((() ->   dispatcher.sendMessage(message)));
 
-//            dispatcher.sendMessage(message);
+            dispatcher.sendMessage(message);
 //				dispatcher.sendMessage(message);
 
         } finally {
