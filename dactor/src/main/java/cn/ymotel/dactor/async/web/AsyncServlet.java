@@ -131,7 +131,8 @@ public class AsyncServlet extends FrameworkServlet {
             asyncContext.getResponse().setContentType("text/html; charset=utf-8");
             asyncContext.getRequest().setAttribute("_EXCEPTION", e);
             //输出空白页面
-            asyncContext.getResponse().getOutputStream().flush();
+            asyncContext.getResponse().getWriter().print(e.getMessage());
+            asyncContext.getResponse().getWriter().flush();
 
             asyncContext.complete();
         }

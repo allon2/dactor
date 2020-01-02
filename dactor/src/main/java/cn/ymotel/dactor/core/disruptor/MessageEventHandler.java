@@ -48,7 +48,12 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
     private final org.apache.commons.logging.Log logger = LogFactory.getLog(MessageEventHandler.class);
     ;
     private MessageRingBufferDispatcher dispatcher;
+    ExecutorService executor = null;
     private ApplicationContext appcontext = null;
+
+    public void setExecutor(ExecutorService executor) {
+        this.executor = executor;
+    }
 
     /**
      * @return the dispatcher
@@ -118,7 +123,14 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
 //				WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
 
             if (obj != null && obj instanceof Message) {
-                dispatcher.sendMessage(message);
+                executor.submit((() ->   dispatcher.sendMessage(message)));
+//                executor.submit(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        dispatcher.sendMessage(message);
+//
+//                    }
+//                });
             }
         } catch (Throwable exception) {
 
@@ -131,8 +143,9 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
             }
             //已经执行的FromBeanId
 //				WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
+            executor.submit((() ->   dispatcher.sendMessage(message)));
 
-            dispatcher.sendMessage(message);
+//            dispatcher.sendMessage(message);
 //				dispatcher.sendMessage(message);
 
         } finally {
