@@ -48,12 +48,12 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
     private final org.apache.commons.logging.Log logger = LogFactory.getLog(MessageEventHandler.class);
     ;
     private MessageRingBufferDispatcher dispatcher;
-    ExecutorService executor = null;
+//    ExecutorService executor = null;
     private ApplicationContext appcontext = null;
 
-    public void setExecutor(ExecutorService executor) {
-        this.executor = executor;
-    }
+//    public void setExecutor(ExecutorService executor) {
+//        this.executor = executor;
+//    }
 
     /**
      * @return the dispatcher
@@ -164,6 +164,9 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
     @Override
     public void onEvent(MessageEvent event) throws Exception {
         Message message = event.getMessage();
+        if(message==null){
+            return ;
+        }
 
         ActorProcessStructure struc = message.getControlMessage().getProcessStructure();
         if (struc == null) {

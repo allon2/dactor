@@ -102,7 +102,8 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
     public int getProcessorsize(){
         return this.workProcessorManager.getProcessorList().size();
     }
-    private LinkedBlockingQueue <Message> quene=new LinkedBlockingQueue();
+    private ConcurrentLinkedQueue <Message> quene=new ConcurrentLinkedQueue();
+    private Semaphore semaphore=new Semaphore(0);
     public boolean putMessage(Message message, boolean blocked) {
 //        if(!blocked){
 //            quene.isEmpty()
@@ -123,7 +124,7 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 //        }
         ;
         //非阻塞,并且队列不为空，说明ringBuffer为满，直接返回
-        if(quene.isEmpty()){}else{
+        if(!quene.isEmpty()){
             if(!blocked){
                 return false;
             }
@@ -139,23 +140,15 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
                 return false;
             }else{
                 //阻塞
-                try {
-                    quene.put(message);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
+
+                    quene.add(message);
+                    semaphore.release();
+
                 return true;
             }
         }
-        if(quene.isEmpty()) {
             ringBuffer.get(seq).setMessage(message);
-        }else{
-            try {
-                ringBuffer.get(seq).setMessage(quene.take());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+
         ringBuffer.publish(seq);
         return true;
     }
@@ -222,7 +215,15 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
 //
 //
 //    }
+    private void putQueneMessage(){
 
+       long seq= ringBuffer.next();
+        Message message=quene.poll();
+
+        ringBuffer.get(seq).setMessage(message);
+        ringBuffer.publish(seq);
+
+    }
     /**
      * 毫秒为单位
      */
@@ -258,8 +259,9 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
             public void run() {
                 for(;;) {
                     try {
-                        Message message = quene.take();
-                        rbf.putMessage(message, true);
+                        semaphore.acquire();
+//                        Message message = quene.take();
+                        putQueneMessage();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

@@ -93,7 +93,7 @@ public class WorkProcessorManager {
         handler.setApplicationContext(this.appcontext);
         handler.setDispatcher(this.messageRingBufferDispatcher);
         handler.setSentinel(sentinel);
-        handler.setExecutor(executor);
+//        handler.setExecutor(executor);
         return handler;
     }
 }
