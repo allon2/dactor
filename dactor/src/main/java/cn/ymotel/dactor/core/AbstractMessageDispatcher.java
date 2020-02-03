@@ -61,22 +61,21 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Ap
      * @see MessageDispatcher#sendMessage(Message)
      */
     @Override
-    public void sendMessage(Message message) {
+    public boolean sendMessage(Message message) {
         ControlMessage cMsg = message.getControlMessage();
 
         if (cMsg == null) {
-            return;
+            return false;
         }
         //为空，则说明，没有需要处理的数据
         if (message.getControlMessage().getProcessStructure()==null) {
-            return;
+            return false;
 
         }
         WorkFlowProcess.processGetToBeanId(message.getControlMessage(), message, appcontext);
 
 
-        this.putMessageInDispatcher(message, true);
-
+        return this.putMessageInDispatcher(message, true);
     }
 
     /* (non-Javadoc)
@@ -88,9 +87,9 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Ap
      * @see MessageDispatcher#startMessage(Message, ActorTransactionCfg, boolean)
      */
     @Override
-    public void startMessage(Message message, ActorTransactionCfg actorcfg,
+    public boolean startMessage(Message message, ActorTransactionCfg actorcfg,
                              boolean blocked) throws Exception {
-        this.startMessage(message, actorcfg, actorcfg.getChain(), blocked);
+       return this.startMessage(message, actorcfg, actorcfg.getChain(), blocked);
 
     }
 
@@ -98,8 +97,8 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Ap
      * @see MessageDispatcher#startMessage(Message, ActorTransactionCfg, ActorChainCfg)
      */
     @Override
-    public void startMessage(Message message, ActorTransactionCfg actorcfg, ActorChainCfg chain) throws Exception {
-        startMessage(message, actorcfg, chain, true);
+    public boolean startMessage(Message message, ActorTransactionCfg actorcfg, ActorChainCfg chain) throws Exception {
+       return startMessage(message, actorcfg, chain, true);
 
     }
 
@@ -107,7 +106,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Ap
      * @see MessageDispatcher#startMessage(Message, ActorTransactionCfg, ActorChainCfg, boolean)
      */
     @Override
-    public void startMessage(Message message, ActorTransactionCfg actorcfg, ActorChainCfg chain, boolean blocked)
+    public boolean startMessage(Message message, ActorTransactionCfg actorcfg, ActorChainCfg chain, boolean blocked)
             throws Exception {
 
         SpringControlMessage cMsg = new SpringControlMessage();
@@ -115,16 +114,13 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Ap
         cMsg.init(actorcfg, chain);
 
         message.setControlMessage(cMsg);
-        boolean isSuccess = putMessageInDispatcher(message, blocked);
+      return  putMessageInDispatcher(message, blocked);
 
-        if (!isSuccess) {
-            throw new Exception("系统繁忙");
-        }
 
 
     }
 
-    public void startMessage(Message message, ActorTransactionCfg actorcfg) throws Exception {
-        startMessage(message, actorcfg, true);
+    public boolean startMessage(Message message, ActorTransactionCfg actorcfg) throws Exception {
+       return  startMessage(message, actorcfg, true);
     }
 }

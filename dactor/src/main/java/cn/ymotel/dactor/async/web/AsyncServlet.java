@@ -51,6 +51,7 @@ public class AsyncServlet extends FrameworkServlet {
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
     private DefaultResolveMessage defaultResolveMessage;
     private String messageSourceId = "messageSource";
+    private int errorcode=429;//请求数量太多
 
     /* (non-Javadoc)
      * @see org.springframework.web.servlet.FrameworkServlet#doService(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -123,7 +124,11 @@ public class AsyncServlet extends FrameworkServlet {
 
 
         try {
-            getDispatcher(request.getServletContext()).startMessage(message, cfg, false);
+          boolean b=  getDispatcher(request.getServletContext()).startMessage(message, cfg, false);
+          if(!b){
+                ((HttpServletResponse)asyncContext.getResponse()).sendError(errorcode);
+                return ;
+          }
         } catch (Exception e) {
             if (logger.isTraceEnabled()) {
                 logger.trace("doService(HttpServletRequest, HttpServletResponse)"); //$NON-NLS-1$
@@ -262,7 +267,15 @@ public class AsyncServlet extends FrameworkServlet {
     public void init(ServletConfig config) throws ServletException {
         this.setApplicationContext(WebApplicationContextUtils.getRequiredWebApplicationContext(config.getServletContext()));
         super.init(config);
-
+       String serrcode= config.getInitParameter("errcode");
+       if(serrcode==null||serrcode.trim().equals("")){
+       }else{
+           try {
+               errorcode=Integer.parseInt(serrcode);
+           } catch (NumberFormatException e) {
+               e.printStackTrace();
+           }
+       }
         urlPathHelper.setAlwaysUseFullPath(true);
 
 

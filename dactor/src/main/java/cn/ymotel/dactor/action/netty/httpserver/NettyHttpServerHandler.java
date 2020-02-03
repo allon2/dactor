@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
+import static io.netty.handler.codec.http.HttpResponseStatus.TOO_MANY_REQUESTS;
 
 /*
  * 自定义处理的handler
@@ -74,7 +75,11 @@ public class NettyHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
 //            return ;
 //        }
 //
-        getMessageDispatcher().startMessage(message, cfg, false);
+       boolean b= getMessageDispatcher().startMessage(message, cfg, false);
+       if(!b){
+           FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, TOO_MANY_REQUESTS);
+           channelHandlerContext.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+       }
 
     }
     public String getTransactionId(String url){
@@ -184,7 +189,7 @@ public class NettyHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
 
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, byteBufcontent);
         if (content != null) {
-            response.headers().set("Content-Type", "text/plain;charset=UTF-8");
+            response.headers().set("Content-Type", "application/json;charset=UTF-8");
             response.headers().set("Content_Length", response.content().readableBytes());
         }
         return response;
