@@ -39,6 +39,8 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note  
+1.0.15版本  
+​    1:解决在队列满的情况下，程序无法响应问题    
 1.0.14版本  
 ​    1:解决在队列满的情况下，互锁导致程序宕机问题  
 1.0.13版本  
@@ -100,13 +102,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.14'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.15'
 
 ```
 
@@ -139,7 +141,110 @@ placeholderActor的作用是在暂存当前环境，并调用子交易，待子�
 <bean id="MessageRingBufferDispatcher" class="cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher">
 </bean>
 启动框架接收和执行请求
+# **同步异步写法**  
+## 同步写法
+ ```
+  public class BeginActor implements Actor {
 
+    /* (non-Javadoc)
+     * @see com.ymotel.util.actor.Actor#HandleMessage(com.ymotel.util.actor.Message)
+     */
+    @Override
+    public Object HandleMessage(Message message) throws Exception {
+        return message;
+
+    }
+
+}
+ ```
+ 继承Actor接口，在HandlerMessage返回message方法，框架判断返回不为空的情况下，直接将结果丢给框架进行下一步出来
+
+## 异步写法
+ 以HttpClientActor为例,在HandlerMessage中最后返回null，框架收到请求后等待下一步处理，释放线程，在HttpClient中的CallBack中调用   
+ message.getControlMessage().getMessageDispatcher().sendMessage(message);框架收到后进行下一步处理。
+
+ ```
+    public Object HandleMessage(final Message message) throws Exception {
+        Map context = message.getContext();
+
+//		
+        HttpUriRequest request = getHttpBuild(message.getContext()).build();
+
+        if (referer != null) {
+            request.addHeader("Referer", referer);
+        }
+
+
+        /**
+         * 通过此处可共用会话，进行类似登录后交易
+         */
+        HttpClientContext tmplocalContext = null;
+        if (context.containsKey(HTTPCLIENT_CONTEXT)) {
+            tmplocalContext = (HttpClientContext) context.get(HTTPCLIENT_CONTEXT);
+        } else {
+            tmplocalContext = HttpClientContext.create();
+            CookieStore cookieStore = new BasicCookieStore();
+            tmplocalContext.setCookieStore(cookieStore);
+            context.put(HTTPCLIENT_CONTEXT, tmplocalContext);
+        }
+
+        final HttpClientContext localContext = tmplocalContext;
+//        CookieStore cookieStore = new BasicCookieStore();
+//        localContext.setCookieStore(cookieStore);
+        if (logger.isInfoEnabled()) {
+            logger.info("HandleMessage(Message) - httpclient----" + request); //$NON-NLS-1$
+        }
+//		 final HttpGet httpget = new HttpGet(uri);
+
+        final String tmpcontent = content;
+        final String tmpcharset = charset != null ? charset : (String) context.get(CHARSET);
+
+
+        httpClientHelper.getHttpclient().execute(request, localContext, new FutureCallback<HttpResponse>() {
+
+            public void completed(final HttpResponse response) {
+                try {
+                    /**
+                     * 完成后及时清除
+                     */
+                    message.getContext().remove(tmpcontent);
+
+                    actorHttpClientResponse.handleResponse(response, localContext, tmpcharset, message);
+//					String responseString=HandleResponse((String)message.getContext().get(CHARSET),response);
+//					message.getContext().put(RESPONSE, responseString);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    if (logger.isErrorEnabled()) {
+                        logger.error("$FutureCallback<HttpResponse>.completed(HttpResponse)", e); //$NON-NLS-1$
+                    }
+                    message.setException(e);
+                    message.getControlMessage().getMessageDispatcher().sendMessage(message);
+                }
+//                  System.out.println(httpget.getRequestLine() + "->" + response.getStatusLine());
+            }
+
+            public void failed(final Exception ex) {
+                if (logger.isErrorEnabled()) {
+                    logger.error("$FutureCallback<HttpResponse>.failed(Exception)", ex); //$NON-NLS-1$
+                }
+                message.setException(ex);
+                message.getControlMessage().getMessageDispatcher().sendMessage(message);
+
+//                  System.out.println(httpget.getRequestLine() + "->" + ex);
+            }
+
+            public void cancelled() {
+                Exception exception = new Exception("已取消");
+                message.setException(exception);
+                message.getControlMessage().getMessageDispatcher().sendMessage(message);
+
+//                  System.out.println(httpget.getRequestLine() + " cancelled");
+            }
+
+        });
+        return null;
+    }
+ ```
 # **配置和API说明**  
 ## 配置说明
  通过在xml中的Step实现内部Actor之间的流程跳转
