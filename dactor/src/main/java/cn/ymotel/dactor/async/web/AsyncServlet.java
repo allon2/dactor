@@ -83,8 +83,10 @@ public class AsyncServlet extends FrameworkServlet {
         String UrlPath = urlPathHelper.getLookupPathForRequest(request);
 
 
-        String suffix = UrlPath.substring(UrlPath.lastIndexOf(".") + 1);
-
+        String suffix = null;
+        if(UrlPath.lastIndexOf(".")>=0) {
+            suffix= UrlPath.substring(UrlPath.lastIndexOf(".") + 1);
+        }
 
         String transactionId = resolveTransactionId(UrlPath, request);
         if (logger.isDebugEnabled()) {
@@ -127,7 +129,9 @@ public class AsyncServlet extends FrameworkServlet {
           boolean b=  getDispatcher(request.getServletContext()).startMessage(message, cfg, false);
           if(!b){
                 ((HttpServletResponse)asyncContext.getResponse()).sendError(errorcode);
-                return ;
+              asyncContext.complete();
+
+              return ;
           }
         } catch (Exception e) {
             if (logger.isTraceEnabled()) {
@@ -196,10 +200,10 @@ public class AsyncServlet extends FrameworkServlet {
     public static void main(String[] args) {
         String s = "/olview.view/a.do";
 //		System.out.println(s.replaceAll("/",".").replace(".","/"));
-        System.out.println(resolveTransactionId(s, null));
+//        System.out.println(resolveTransactionId(s, null));
     }
 
-    protected static String resolveTransactionId(String path, HttpServletRequest request) {
+    protected  String resolveTransactionId(String path, HttpServletRequest request) {
         if(path.startsWith("/")) {
             return path.substring(1, path.lastIndexOf(".")).replaceAll("/", ".");
         }
