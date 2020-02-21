@@ -7,7 +7,9 @@
 package cn.ymotel.dactor.spring.beandef;
 
 import cn.ymotel.dactor.core.ActorGlobalCfg;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -67,13 +69,19 @@ public class ActorGlobalCfgBeanDefinitionParser extends
 //    		System.out.println(parserContext.getDelegate().getLocalName(node)+"-------"+node.getNodeType()+"node----"+node);
         }
         builder.addPropertyValue("params", params);
-
-        BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getRawBeanDefinition(), "ActorGlobal");
-
-        BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
+//
+//        BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getRawBeanDefinition(), "ActorGlobal");
+//
+//        BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
 
     }
-//  	  protected void doParse(Element element, BeanDefinitionBuilder bean) {  
+
+    @Override
+    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {
+        return "ActorGlobal";
+    }
+
+    //  	  protected void doParse(Element element, BeanDefinitionBuilder bean) {
 //    	org.w3c.dom.NodeList list=element.getChildNodes();
 //    	for(int i=0;i<list.getLength();i++){
 //    		org.w3c.dom.Node node=list.item(i);

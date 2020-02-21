@@ -6,6 +6,8 @@
  */
 package cn.ymotel.dactor.core;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +23,12 @@ import java.util.Map;
  * @version 1.0
  * @since 1.0
  */
-public class ActorGlobalCfg {
+public class ActorGlobalCfg  {
+    public ActorGlobalCfg() {
+        this.params.put("beginBeanId","beginActor");
+        this.params.put("endBeanId","endActor");
+    }
+
     private Map params = new HashMap();
 
     /**

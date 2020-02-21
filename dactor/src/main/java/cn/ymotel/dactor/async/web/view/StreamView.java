@@ -6,6 +6,7 @@
  */
 package cn.ymotel.dactor.async.web.view;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.message.ServletMessage;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -33,7 +34,7 @@ public class StreamView extends AbstractView {
     private static final Log logger = LogFactory.getLog(StreamView.class);
 
 
-    private String content = "_Content";
+    private String content = Constants.CONTENT;
 
     /**
      * @return the content
@@ -82,9 +83,9 @@ public class StreamView extends AbstractView {
         } else {
             return;
         }
-        java.io.FileInputStream fin = null;
-        try {
-            fin = new FileInputStream((File) obj);
+        try (
+                java.io.FileInputStream  fin = new FileInputStream((File) obj);
+                ){
             IOUtils.copyLarge(fin, response.getOutputStream());
 //			IOUtils.copyLarge(new FileInputStream((File)obj), response.getOutputStream());
             response.getOutputStream().flush();
@@ -97,7 +98,6 @@ public class StreamView extends AbstractView {
                 logger.trace("WriteFile(Object, ServletResponse)"); //$NON-NLS-1$
             }
         } finally {
-            IOUtils.closeQuietly(fin);
         }
 
     }
@@ -109,6 +109,8 @@ public class StreamView extends AbstractView {
             return;
         }
         try {
+            response.setCharacterEncoding("UTF-8");
+
             response.getWriter().print(obj);
             response.getWriter().flush();
 //			response.getWriter().close();

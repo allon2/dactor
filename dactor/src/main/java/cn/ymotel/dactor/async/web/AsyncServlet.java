@@ -6,13 +6,17 @@
  */
 package cn.ymotel.dactor.async.web;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.core.ActorTransactionCfg;
+import cn.ymotel.dactor.core.UrlMapping;
 import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.spring.SpringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.FrameworkServlet;
@@ -29,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {type specification, must edit}
+ *  不再更新，以后新特性都使用AsyncServletFilter实现
  *
  * @author Administrator {must edit, use true name}
  * <p>
@@ -40,6 +44,7 @@ import java.util.Map;
  * @version 1.0
  * @since 1.0
  */
+@Deprecated
 public class AsyncServlet extends FrameworkServlet {
     /**
      * Logger for this class
@@ -67,48 +72,29 @@ public class AsyncServlet extends FrameworkServlet {
         org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource)SpringUtils.getCacheBean(this.getWebApplicationContext(),messageSourceId);
         JstlUtils.exposeLocalizationContext(request, messageSource);
 
-
-        if (logger.isTraceEnabled()) {
-            logger.trace("doService(HttpServletRequest, HttpServletResponse) - contenttype----" + request.getContentType()); //$NON-NLS-1$
-        }
-        java.util.Enumeration enum1 = request.getHeaderNames();
-        for (; enum1.hasMoreElements(); ) {
-            String el = enum1.nextElement().toString();
-            if (logger.isTraceEnabled()) {
-                logger.trace("doService(HttpServletRequest, HttpServletResponse) - el----" + el + "----" + request.getHeader(el)); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            ;
-        }
-
         String UrlPath = urlPathHelper.getLookupPathForRequest(request);
 
+        ActorTransactionCfg cfg=null;
+        {
+           Object requestHandler= getRequestHandler(request, UrlPath);
+           if(requestHandler==null){
+               response.getOutputStream().flush();
+               return ;
+           }else
+           if(requestHandler instanceof HttpRequestHandler){
+
+               ((HttpRequestHandler)requestHandler).handleRequest(request,response);
+               return ;
+
+           }else if(requestHandler instanceof ActorTransactionCfg ){
+               cfg=(ActorTransactionCfg)requestHandler;
+           }
+        }
 
         String suffix = null;
         if(UrlPath.lastIndexOf(".")>=0) {
             suffix= UrlPath.substring(UrlPath.lastIndexOf(".") + 1);
         }
-
-        String transactionId = resolveTransactionId(UrlPath, request);
-        if (logger.isDebugEnabled()) {
-            logger.debug("doService(HttpServletRequest, HttpServletResponse) - suffix-----" + suffix + "--transactionId--" + transactionId); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        /**
-         * 找不到交易码，直接输出空白结果
-         */
-        transactionId=SpringUtils.getBeanFromTranstionId(this.getWebApplicationContext(),transactionId);
-        if(transactionId==null){
-            response.getOutputStream().flush();
-                return;
-        }
-//        if (! SpringUtils.containBean(this.getWebApplicationContext(),transactionId)) {
-//            response.getOutputStream().flush();
-//            ;
-//
-//            return;
-//        }
-
-        ActorTransactionCfg cfg = (ActorTransactionCfg) SpringUtils.getCacheBean(this.getWebApplicationContext(),transactionId);
-//			System.out.println("重复提交3");
 
         AsyncContext asyncContext = request.startAsync(request, response);
 
@@ -121,22 +107,21 @@ public class AsyncServlet extends FrameworkServlet {
         Map params = getUrlmap(UrlPath, cfg, request);
 
         message.getContext().putAll(params);
-        message.getContext().put("_METHOD", request.getMethod());
-        message.getContext().put("_SUFFIX", suffix);
+        message.getContext().put(Constants.METHOD, request.getMethod());
+        message.getContext().put(Constants.SUFFIX, suffix);
 
 
         try {
           boolean b=  getDispatcher(request.getServletContext()).startMessage(message, cfg, false);
           if(!b){
+              //队列满
                 ((HttpServletResponse)asyncContext.getResponse()).sendError(errorcode);
               asyncContext.complete();
 
               return ;
           }
         } catch (Exception e) {
-            if (logger.isTraceEnabled()) {
-                logger.trace("doService(HttpServletRequest, HttpServletResponse)"); //$NON-NLS-1$
-            }
+
             asyncContext.getResponse().setContentType("text/html; charset=utf-8");
             asyncContext.getRequest().setAttribute("_EXCEPTION", e);
             //输出空白页面
@@ -147,55 +132,101 @@ public class AsyncServlet extends FrameworkServlet {
         }
 
     }
+    public Object getRequestHandler(HttpServletRequest request, String UrlPath){
+        String transactionId = resolveTransactionId(UrlPath, request);
 
-    public Map getUrlmap(String urlPath, ActorTransactionCfg cfg, HttpServletRequest request) {
+        /**
+         * 找不到交易码，直接输出空白结果
+         */
+        transactionId=SpringUtils.getBeanFromTranstionId(this.getWebApplicationContext(),transactionId);
+        if(transactionId!=null){
+            return  SpringUtils.getCacheBean(this.getWebApplicationContext(),transactionId);
+         }
+        //使用UrlPattern进行查找
+        Map.Entry matchentry=null;
+        Map mapping=UrlMapping.getMapping();
 
-        if (cfg.getUrlPattern() == null) {
-            return new HashMap();
+            for(java.util.Iterator iter=mapping.entrySet().iterator();iter.hasNext();){
+             Map.Entry entry=(Map.Entry)iter.next();
+                if(UrlPath.equals("/")&&entry.getKey().equals("/")){
+                    matchentry=entry;
+                    break;
+                }
+             //取key最长的返回
+            if(antPathMatcher.match((String)entry.getKey(),UrlPath)){
+                 if(matchentry==null){
+                     matchentry=entry;
+                 }else{
+
+
+                     if(((String)matchentry.getKey()).length()<((String)entry.getKey()).length()){
+                         matchentry=entry;
+                     }
+                 }
+            };
         }
-
-        if (urlPath.startsWith("/")) {
-            urlPath = urlPath.substring(1);
-        }
-
-        ///wx.service/1.do
-        if (urlPath.indexOf("/") < 0) {
-            return new HashMap();
-        }
-        int end = urlPath.lastIndexOf(".");
-        if (end >= 0) {
-            urlPath = urlPath.substring(0, end);
-        }
-        Map map = new HashMap();
-        String[] urlPaths = urlPath.split("/");
-        String[] tmps = cfg.getUrlPattern();
-        int len = 0;
-        if (tmps.length > urlPaths.length) {
-            len = urlPaths.length;
-        } else {
-            len = tmps.length;
-        }
-
-        for (int i = 0; i < len; i++) {
-
-            String value = getUrlName(tmps[i]);
-            if (value == null) {
-                continue;
-            }
-
-            map.put(value, urlPaths[i]);
-        }
-//		urlPath.
-        return map;
-    }
-
-    public static String getUrlName(String value) {
-        if (value.indexOf("{") < 0) {
+        if(matchentry==null){
             return null;
         }
-        return value.substring(value.indexOf("{") + 1, value.indexOf("}"));
+        return matchentry.getValue();
 
     }
+    private AntPathMatcher antPathMatcher=new AntPathMatcher();
+    public Map getUrlmap(String urlPath, ActorTransactionCfg cfg, HttpServletRequest request) {
+
+        if (cfg.getUrlPattern() == null||cfg.getUrlPattern().trim().equals("")) {
+            return new HashMap();
+        }
+        String[] pattern=cfg.getUrlPattern().split(",");
+        for(int i=0;i<pattern.length;i++) {
+            if(antPathMatcher.match(pattern[i],urlPath)){
+                return antPathMatcher.extractUriTemplateVariables(pattern[i], urlPath);
+
+            };
+        }
+        return new HashMap();
+//        if (urlPath.startsWith("/")) {
+//            urlPath = urlPath.substring(1);
+//        }
+//
+//        ///wx.service/1.do
+//        if (urlPath.indexOf("/") < 0) {
+//            return new HashMap();
+//        }
+//        int end = urlPath.lastIndexOf(".");
+//        if (end >= 0) {
+//            urlPath = urlPath.substring(0, end);
+//        }
+//        Map map = new HashMap();
+//        String[] urlPaths = urlPath.split("/");
+//        String[] tmps = cfg.getUrlPattern();
+//        int len = 0;
+//        if (tmps.length > urlPaths.length) {
+//            len = urlPaths.length;
+//        } else {
+//            len = tmps.length;
+//        }
+//
+//        for (int i = 0; i < len; i++) {
+//
+//            String value = getUrlName(tmps[i]);
+//            if (value == null) {
+//                continue;
+//            }
+//
+//            map.put(value, urlPaths[i]);
+//        }
+////		urlPath.
+//        return map;
+    }
+
+//    public static String getUrlName(String value) {
+//        if (value.indexOf("{") < 0) {
+//            return null;
+//        }
+//        return value.substring(value.indexOf("{") + 1, value.indexOf("}"));
+//
+//    }
 
     public static void main(String[] args) {
         String s = "/olview.view/a.do";
@@ -204,10 +235,19 @@ public class AsyncServlet extends FrameworkServlet {
     }
 
     protected  String resolveTransactionId(String path, HttpServletRequest request) {
-        if(path.startsWith("/")) {
-            return path.substring(1, path.lastIndexOf(".")).replaceAll("/", ".");
+        if(path==null||path.equals("/")){
+            return null;
         }
-        return path.substring(0, path.lastIndexOf(".")).replaceAll("/", ".");
+        int lastindex=path.lastIndexOf(".");
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        if(lastindex>=0) {
+            return path.substring(0, path.lastIndexOf(".")).replaceAll("/", ".");
+        }else{
+
+            return path.replaceAll("/", ".");
+        }
 //
 //        /*
 //         * the path fetch from urlPathHelper, according servlet url pattern:

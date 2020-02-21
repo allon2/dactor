@@ -98,7 +98,7 @@ public class MessageRingBufferDispatcher extends AbstractMessageDispatcher imple
 
     /**
      * use minsize instead
-     * @param threadNumber
+     * @param threadNumber 最小线程数，已经废弃，使用minsize
      */
     @Deprecated
     public void setThreadNumber(int threadNumber) {

@@ -10,9 +10,9 @@ public class SpringUtils {
 
     /**
      * 避免Spring getBean的锁
-     * @param applicationContext
-     * @param beanName
-     * @return
+     * @param applicationContext application对象
+     * @param beanName  上下文名称
+     * @return bean对象
      */
     public static Object getCacheBean(ApplicationContext applicationContext,String beanName ){
         Object bean=cachedBean.get(beanName);
@@ -42,7 +42,9 @@ public class SpringUtils {
     }
     public static String getBeanFromTranstionId(ApplicationContext applicationContext,String beanName){
        Object obj=null;
-
+        if(beanName==null){
+            return null;
+        }
         for(;;){
 //            System.out.println("beanName---"+beanName);
             obj= getCacheBean(applicationContext,beanName);

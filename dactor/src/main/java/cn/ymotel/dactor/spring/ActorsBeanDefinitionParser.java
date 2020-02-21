@@ -8,6 +8,7 @@ import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -31,19 +32,25 @@ public class ActorsBeanDefinitionParser implements BeanDefinitionParser {
 
     //	@Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
-        String namespace = element.getAttribute("namespace");
-        List<Element> childElts = DomUtils.getChildElements(element);
-        for (Element elt : childElts) {
-
-            if (namespace != null && !namespace.trim().equals("")) {
-                elt.setAttribute("id", namespace + "." + elt.getAttribute("id"));
-            }
-
-
-
-            HandleBean(elt, parserContext);
-
-        }
+//        String namespace = element.getAttribute("namespace");
+//        List<Element> childElts = DomUtils.getChildElements(element);
+//        for (Element elt : childElts) {
+//
+////            if (namespace != null && !namespace.trim().equals("")) {
+////                if(StringUtils.hasText(elt.getAttribute("id"))){
+////                    elt.setAttribute("id", namespace + "." + elt.getAttribute("id"));
+////
+////                }
+////                //不填写，不加命名空间
+////            }
+//
+//
+//
+//                HandleBean(elt, parserContext);
+//
+//
+//
+//        }
         return null;
 
 
@@ -52,7 +59,9 @@ public class ActorsBeanDefinitionParser implements BeanDefinitionParser {
     public void HandleBean(Element elt, ParserContext parserContext) {
 
         if (elt.getLocalName().equals("bean") && parserContext.getDelegate().isDefaultNamespace(elt)) {
-        } else {
+        }
+
+        else {
             handler.parse(elt, parserContext);
 
             return;

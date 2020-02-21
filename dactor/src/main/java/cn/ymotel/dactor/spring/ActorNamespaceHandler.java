@@ -9,6 +9,7 @@ package cn.ymotel.dactor.spring;
 import cn.ymotel.dactor.spring.beandef.ActorChainCfgBeanDefinitionParser;
 import cn.ymotel.dactor.spring.beandef.ActorGlobalCfgBeanDefinitionParser;
 import cn.ymotel.dactor.spring.beandef.ActorTransactionCfgBeanDefinitionParser;
+import cn.ymotel.dactor.spring.beandef.AnnotationBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -37,6 +38,7 @@ public class ActorNamespaceHandler extends NamespaceHandlerSupport {
 
         registerBeanDefinitionParser("global", new ActorGlobalCfgBeanDefinitionParser());
         registerBeanDefinitionParser("actors", actors);
+        registerBeanDefinitionParser("annotation", new AnnotationBeanDefinitionParser());
 
 
     }

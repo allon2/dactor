@@ -22,5 +22,21 @@ import cn.ymotel.dactor.message.Message;
  */
 public interface HttpView {
     public void render(Message message, String viewName);
+    /**
+     * @return the contentType
+     */
+    public String getContentType();
 
+    /**
+     * @param contentType the contentType to set
+     */
+    public void setContentType(String contentType);
+    public default String getSuffix() {
+        return null;
+    }
+
+    /**
+     * @param suffix the suffix to set
+     */
+    public default void setSuffix(String suffix){};
 }

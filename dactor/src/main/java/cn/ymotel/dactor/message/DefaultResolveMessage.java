@@ -6,6 +6,7 @@
  */
 package cn.ymotel.dactor.message;
 
+import cn.ymotel.dactor.Constants;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,20 +55,27 @@ public class DefaultResolveMessage {
     }
 
     private void init(Message message, HttpServletRequest request, HttpServletResponse response) {
-        Map map = new HashMap();
+        Map parameterMap = new HashMap();
         for (java.util.Enumeration enum1 = request.getParameterNames(); enum1.hasMoreElements(); ) {
             String obj = (String) enum1.nextElement();
 
             String[] values = request.getParameterValues(obj);
             if (values == null) {
-                map.put(obj, null);
+                parameterMap.put(obj, null);
 
             } else if (values.length == 1) {
-                map.put(obj, values[0]);
+                parameterMap.put(obj, values[0]);
             } else {
-                map.put(obj, values);
+                parameterMap.put(obj, values);
             }
 
+        }
+       Object obj= request.getAttribute(Constants.EXPARAMETER);
+        if(obj==null){
+
+        }else
+        if(obj instanceof  Map){
+            parameterMap.putAll((Map)obj);
         }
 
 
@@ -95,12 +103,14 @@ public class DefaultResolveMessage {
                     logger.trace("init(Message, HttpServletRequest, HttpServletResponse)"); //$NON-NLS-1$
                 }
             }
-            map.putAll(rtnMap);
+            if(rtnMap!=null) {
+                parameterMap.putAll(rtnMap);
+            }
         }
 
 
-        ((DefaultMessage) message).setContext(map);
+        ((DefaultMessage) message).setContext(parameterMap);
 
-        message.setOrigSource(map);
+        message.setOrigSource(parameterMap);
     }
 }

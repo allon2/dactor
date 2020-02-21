@@ -30,6 +30,7 @@ public interface MessageDispatcher {
      * @param message  需要处理的消息
      * @param actorcfg 消息对应的配置
      * @throws Exception 抛出异常
+     * @return  是否可被执行
      * @version 1.0
      * @since 1.0
      */
@@ -43,6 +44,7 @@ public interface MessageDispatcher {
      * @param actorcfg 消息对应的配置
      * @param blocked  是否阻塞
      * @throws Exception 抛出异常
+     * @return  是否可被执行
      * @version 1.0
      * @since 1.0
      */

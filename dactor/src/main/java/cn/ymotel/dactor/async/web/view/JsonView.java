@@ -6,6 +6,9 @@
  */
 package cn.ymotel.dactor.async.web.view;
 
+import cn.ymotel.dactor.Constants;
+import cn.ymotel.dactor.exception.DActorException;
+import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.message.ServletMessage;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializeConfig;
@@ -14,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * {type specification, must edit}
@@ -34,7 +38,7 @@ public class JsonView extends StreamView {
     private static final Log logger = LogFactory.getLog(JsonView.class);
 
 
-    private String content = "_Content";
+    private String content =Constants.CONTENT;
 
     /**
      * @return the content
@@ -70,6 +74,10 @@ public class JsonView extends StreamView {
     public void renderInner(ServletMessage message, String viewName) {
 
         Object jsonObject = message.getContext().get(content);
+        jsonObject=JsonUtil.AppendHead(message,jsonObject);
+
+
+
         String jsonString = null;
         if (jsonObject instanceof String) {
             jsonString = (String) jsonObject;

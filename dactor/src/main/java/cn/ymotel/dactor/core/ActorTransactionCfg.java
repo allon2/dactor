@@ -6,12 +6,16 @@
  */
 package cn.ymotel.dactor.core;
 
+import javafx.application.Application;
 import ognl.Node;
 import ognl.Ognl;
 import ognl.OgnlContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.*;
 
@@ -27,7 +31,7 @@ import java.util.*;
  * @version 1.0
  * @since 1.0
  */
-public class ActorTransactionCfg implements InitializingBean {
+public class ActorTransactionCfg implements InitializingBean, ApplicationContextAware {
     /**
      * Logger for this class
      */
@@ -124,7 +128,7 @@ public class ActorTransactionCfg implements InitializingBean {
 
     private String beginBeanId;
     private String endBeanId;
-    private String[] urlPattern;
+    private String urlPattern;
     private Map steps;
 
     /**
@@ -157,17 +161,11 @@ public class ActorTransactionCfg implements InitializingBean {
     }
 
 
-    /**
-     * @return the urlPattern
-     */
-    public String[] getUrlPattern() {
+    public String getUrlPattern() {
         return urlPattern;
     }
 
-    /**
-     * @param urlPattern the urlPattern to set
-     */
-    public void setUrlPattern(String[] urlPattern) {
+    public void setUrlPattern(String urlPattern) {
         this.urlPattern = urlPattern;
     }
 
@@ -214,11 +212,33 @@ public class ActorTransactionCfg implements InitializingBean {
         this.asyncSteps = asyncSteps;
     }
 
+    /**
+     * 域名，用来解决多域名，相同路径，但处理代码不同的情况
+     */
+    private String domain=null;
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     @Override
     public void afterPropertiesSet() throws Exception {
+        ActorGlobalCfg actorGlobalCfg= applicationContext.getBean(ActorGlobalCfg.class);
+        if(actorGlobalCfg!=null){
+            this.setGlobal(actorGlobalCfg);
+        }
+//        System.out.println(this.getId());
+        UrlMapping.addMapping(this.getUrlPattern(),this);
+
+
+
         if (this.getBeginBeanId() == null || this.getBeginBeanId().trim().equals("")) {
 
             this.setBeginBeanId((String) this.getGlobal().getParams().get("beginBeanId"));
@@ -386,7 +406,12 @@ public class ActorTransactionCfg implements InitializingBean {
                 + ", handleException=" + handleException + ", id=" + id
                 + ", chain=" + chain + ", global=" + global + ", beginBeanId="
                 + beginBeanId + ", endBeanId=" + endBeanId + ", urlPattern="
-                + Arrays.toString(urlPattern) + ", steps=" + steps
+                + urlPattern + ", steps=" + steps
                 + ", results=" + results + "]";
+    }
+    private ApplicationContext applicationContext;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext=applicationContext;
     }
 }

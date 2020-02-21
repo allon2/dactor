@@ -7,8 +7,10 @@
 package cn.ymotel.dactor.spring.beandef;
 
 import cn.ymotel.dactor.core.ActorChainCfg;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.ManagedList;
@@ -93,7 +95,7 @@ public class ActorChainCfgBeanDefinitionParser extends
 
 //      RootBeanDefinition beanDef = new RootBeanDefinition();
 
-        String actorId = element.getAttribute("id");
+        String actorId =NameSpaceUtil.getNameSpaceActorId(element);
 
 //      Map params=new HashMap();
 
@@ -120,11 +122,15 @@ public class ActorChainCfgBeanDefinitionParser extends
 
         builder.addPropertyValue("id", actorId);
 
-        BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getRawBeanDefinition(), actorId);
-
-        BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
+//        BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getRawBeanDefinition(), actorId);
+//
+//        BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
 
     }
 
-
+    @Override
+    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {
+      return NameSpaceUtil.getNameSpaceActorId(element);
+//        return super.resolveId(element, definition, parserContext);
+    }
 }

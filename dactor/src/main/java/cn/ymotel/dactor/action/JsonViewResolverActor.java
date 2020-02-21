@@ -1,5 +1,7 @@
 package cn.ymotel.dactor.action;
 
+import cn.ymotel.dactor.async.web.view.JsonUtil;
+import cn.ymotel.dactor.async.web.view.JsonView;
 import cn.ymotel.dactor.async.web.view.StreamView;
 import cn.ymotel.dactor.exception.DActorException;
 import cn.ymotel.dactor.message.ServletMessage;
@@ -9,7 +11,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@Deprecated
 public class JsonViewResolverActor implements Actor {
     /**
      * Logger for this class
@@ -62,41 +64,8 @@ public class JsonViewResolverActor implements Actor {
             jsonObject = new HashMap();
             message.getContext().put(view.getContent(), jsonObject);
         }
+         JsonUtil.AppendHead(message,jsonObject);
 
-        if (jsonObject instanceof Map) {
-            Map rtnMap=(Map)jsonObject;
-            /**
-             * 兼容上下文中有直接
-             */
-            if(rtnMap.containsKey("errcode")){
-//                if(rtnMap.get("errcode").equals("0")){
-//                    //成功
-//                }
-//                //有错误信息
-
-            }else
-            if (message.getException() == null) {
-                rtnMap.put("errcode", "0");
-                rtnMap.put("errmsg", "成功");
-
-            } else if (message.getException() instanceof DActorException) {
-                DActorException ex = (DActorException) message.getException();
-                rtnMap.put("errcode", ex.getErrorCode());//一般错误
-                rtnMap.put("errmsg", ex.getMessage());
-
-            } else {
-                rtnMap.put("errcode", "10000");//一般错误
-                rtnMap.put("errmsg", message.getException().getMessage());
-            }
-            if (message.getException() != null) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("HandleMessage(Message)"); //$NON-NLS-1$
-                }
-
-            }
-
-
-        }
 
 
         try {

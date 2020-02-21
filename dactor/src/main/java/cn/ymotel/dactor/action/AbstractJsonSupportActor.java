@@ -1,5 +1,6 @@
 package cn.ymotel.dactor.action;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.message.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,7 +22,7 @@ public class AbstractJsonSupportActor implements Actor, ApplicationContextAware 
         try {
             Object obj = Execute(message);
             if (obj != null) {
-                message.getContext().put("_Content", obj);
+                message.getContext().put(Constants.CONTENT, obj);
             }
         } catch (Throwable e) {
             if (logger.isErrorEnabled()) {

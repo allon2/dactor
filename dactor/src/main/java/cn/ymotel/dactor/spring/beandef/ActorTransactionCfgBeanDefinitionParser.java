@@ -7,7 +7,9 @@
 package cn.ymotel.dactor.spring.beandef;
 
 import cn.ymotel.dactor.core.ActorTransactionCfg;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -59,16 +61,17 @@ public class ActorTransactionCfgBeanDefinitionParser extends
 //		Map condtions=new HashMap();
         List condtions = new ArrayList();
 
-        String actorId = element.getAttribute("id");
+        String actorId = NameSpaceUtil.getNameSpaceActorId(element);
+        if (StringUtils.hasText(element.getAttribute("id"))) {
+            builder.addPropertyValue("id", actorId);
 
+        }else{
 
-//     String urlPattern="";
-//		
-//		if(actorId.indexOf("/")>=0){
-//			urlPattern=actorId.substring(actorId.indexOf("/"));
-////			builder.addPropertyValue(URLPATTERN, urlPattern);
-//			actorId=actorId.substring(0,actorId.indexOf("/"));
-//		}
+            actorId=  parserContext.getReaderContext().generateBeanName(builder.getRawBeanDefinition());
+//            actorId= resolveId(element, builder.getRawBeanDefinition(), parserContext);
+            builder.addPropertyValue("id", actorId);
+            element.setAttribute("id",actorId);
+        }
 
         if (StringUtils.hasText(element.getAttribute("beginBeanId"))) {
             builder.addPropertyValue("beginBeanId", element.getAttribute("beginBeanId"));
@@ -78,7 +81,8 @@ public class ActorTransactionCfgBeanDefinitionParser extends
         }
 
         if (StringUtils.hasText(element.getAttribute("urlPattern"))) {
-            builder.addPropertyValue("urlPattern", element.getAttribute("urlPattern").split("/"));
+            builder.addPropertyValue("urlPattern", element.getAttribute("urlPattern"));
+
         }
 
         if (StringUtils.hasText(element.getAttribute("handleException"))) {
@@ -98,14 +102,22 @@ public class ActorTransactionCfgBeanDefinitionParser extends
             builder.addPropertyReference("parent", element.getAttribute("parent"));
         }
         ;
+        {
+            String domain = getDomain(element);
+            if (StringUtils.hasText(domain)) {
+                builder.addPropertyReference("domain", domain);
+
+            }
+        }
 
 
 //      Map params=new HashMap();
 
 //		BeanDefinitionHolder hodler=new BeanDefinitionHolder();
         org.w3c.dom.NodeList list = element.getChildNodes();
-        builder.addPropertyReference("global", "ActorGlobal");
-        builder.addPropertyValue("id", actorId);
+//        builder.addPropertyReference("global", "ActorGlobal");
+
+
 
 //		System.out.println(element+"----"+list.getLength());
         for (int i = 0; i < list.getLength(); i++) {
@@ -142,12 +154,27 @@ public class ActorTransactionCfgBeanDefinitionParser extends
         }
 
 
-//  	builder.addPropertyValue("chain", chain);
+//        BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getRawBeanDefinition(), actorId);
+        System.out.println("actorId"+actorId);
+//        parserContext.getRegistry().registerBeanDefinition(actorId,builder.getRawBeanDefinition());
+//        BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
 
-        BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getRawBeanDefinition(), actorId);
+    }
+    public String getDomain(Element element){
+        Element node=(Element) element.getParentNode();
+        String domain=element.getAttribute("domain");
+        String pdomain=node.getAttribute("domain");
+        if(domain==null||domain.trim().equals(""))
+        {}else{
+            return domain;
+        }
+        return pdomain;
 
-        BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
-
+    }
+    @Override
+    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {
+       return NameSpaceUtil.getNameSpaceActorId(element);
+//        return super.resolveId(element, definition, parserContext);
     }
 
     public Map getResults(Element element, ParserContext parserContext) {

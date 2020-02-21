@@ -6,12 +6,15 @@
  */
 package cn.ymotel.dactor.action;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.async.web.view.HttpView;
 import cn.ymotel.dactor.message.ServletMessage;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.message.SpringControlMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +31,7 @@ import java.util.Map;
  * @version 1.0
  * @since 1.0
  */
-public class ViewResolveActor implements Actor {
+public class ViewResolveActor implements Actor, InitializingBean {
     /**
      * Logger for this class
      */
@@ -84,6 +87,11 @@ public class ViewResolveActor implements Actor {
             result = (String) message.getControlMessage().getProcessStructure().getActorTransactionCfg().getResults().get("success" + message.getControlMessage().getState());
             ;
         }
+        if(result==null){
+            //尝试使用后缀
+            HttpView view=suffixMap.get(message.getContext().get(Constants.SUFFIX));
+            view.render(message,null);
+        }
 //			String result=WorkFlowData.getResults(message.getControlMessage().getSourceId(),"success"+message.getControlMessage().getState());
         String[] views = result.split(":");
         String[] resolverNames = new String[2];
@@ -117,5 +125,20 @@ public class ViewResolveActor implements Actor {
         }
         return message;
     }
+    private Map<String,HttpView> suffixMap=new HashMap();
+    @Override
+    public void afterPropertiesSet() throws Exception {
 
+        for(java.util.Iterator iter=viewMap.entrySet().iterator();iter.hasNext();){
+            Map.Entry entry=(Map.Entry)iter.next();
+            HttpView view=(HttpView)entry.getValue();
+            if(view.getSuffix()!=null){
+                String suffix=view.getSuffix();
+                if(suffix.startsWith(".")){
+                    suffix=suffix.substring(1);
+                }
+                suffixMap.put(suffix,view);
+            }
+        }
+    }
 }

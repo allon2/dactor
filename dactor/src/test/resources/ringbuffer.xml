@@ -2,16 +2,16 @@
 
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:actor="http://www.ymotel.cn/schema/dactor"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:actorCfg="http://www.ymotel.cn/schema/dactor"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd">
 
 
     <bean id="MessageRingBufferDispatcher" class="cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher">
    </bean>
-    <actor:global id="actorglobal">
-        <actor:param name="beginBeanId" value="beginActor"/>
-        <actor:param name="endBeanId" value="endActor"/>
-    </actor:global>
+    <actorCfg:global id="actorglobal">
+        <actorCfg:param name="beginBeanId" value="beginActor"/>
+        <actorCfg:param name="endBeanId" value="endActor"/>
+    </actorCfg:global>
     <bean id="beginActor" class="cn.ymotel.dactor.action.BeginActor"></bean>
     <bean id="FinishActor" class="cn.ymotel.dactor.action.FinishActor"></bean>
 

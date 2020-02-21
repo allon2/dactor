@@ -1,6 +1,8 @@
 package cn.ymotel.dactor.action.netty.aysnsocket;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.action.AbstractJsonSupportActor;
+import cn.ymotel.dactor.action.Actor;
 import cn.ymotel.dactor.exception.DActorException;
 import cn.ymotel.dactor.message.Message;
 import com.alibaba.fastjson.JSON;
@@ -10,14 +12,14 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TcpServerActor extends AbstractJsonSupportActor {
+public class TcpServerActor implements Actor {
     @Override
-    public Object Execute(Message message) throws Exception {
+    public Object HandleMessage(Message message) throws Exception {
 //        System.out.println("in server"+message.getContext());
         ChannelHandlerContext ctx=(ChannelHandlerContext)message.getControlData().get("_ChannelHandlerContext");
         Map obj=null;
-        if(message.getContext().get("_Content")!=null){
-            obj=(Map)message.getContext().get("_Content");
+        if(message.getContext().get(Constants.CONTENT)!=null){
+            obj=(Map)message.getContext().get(Constants.CONTENT);
         }else{
             obj=message.getContext();
         }
@@ -41,5 +43,6 @@ public class TcpServerActor extends AbstractJsonSupportActor {
         ctx.writeAndFlush(JSON.toJSON(rtnMap)+"\r\n").addListener(ChannelFutureListener.CLOSE);
     return null;
     }
+
 
 }

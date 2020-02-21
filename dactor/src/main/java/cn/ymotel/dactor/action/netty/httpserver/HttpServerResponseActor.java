@@ -1,6 +1,8 @@
 package cn.ymotel.dactor.action.netty.httpserver;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.action.AbstractJsonSupportActor;
+import cn.ymotel.dactor.action.Actor;
 import cn.ymotel.dactor.exception.DActorException;
 import cn.ymotel.dactor.message.Message;
 import com.alibaba.fastjson.JSON;
@@ -18,13 +20,13 @@ import java.util.Map;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
 
-public class HttpServerResponseActor extends AbstractJsonSupportActor {
+public class HttpServerResponseActor  implements Actor {
     @Override
-    public Object Execute(Message message) throws Exception {
+    public Object HandleMessage(Message message) throws Exception {
         ChannelHandlerContext ctx=(ChannelHandlerContext)message.getControlData().get("_ChannelHandlerContext");
         Map obj=null;
-        if(message.getContext().get("_Content")!=null){
-            obj=(Map)message.getContext().get("_Content");
+        if(message.getContext().get(Constants.CONTENT)!=null){
+            obj=(Map)message.getContext().get(Constants.CONTENT);
         }else{
             obj=message.getContext();
         }
@@ -53,7 +55,7 @@ public class HttpServerResponseActor extends AbstractJsonSupportActor {
 
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 
-        return message;
+        return null;
     }
     private FullHttpResponse responseOK(HttpResponseStatus status, ByteBuf content) {
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, content);
@@ -63,4 +65,6 @@ public class HttpServerResponseActor extends AbstractJsonSupportActor {
         }
         return response;
     }
+
+
 }
