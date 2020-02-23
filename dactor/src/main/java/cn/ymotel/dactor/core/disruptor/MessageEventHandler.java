@@ -7,6 +7,7 @@
 package cn.ymotel.dactor.core.disruptor;
 
 import cn.ymotel.dactor.action.Actor;
+import cn.ymotel.dactor.core.ContextThreadLocal;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.spring.SpringUtils;
 import cn.ymotel.dactor.workflow.ActorProcessStructure;
@@ -113,6 +114,8 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
         }
 
         try {
+            ContextThreadLocal.putMessage(message);
+
             Object obj = actor.HandleMessage(message);
             if (struc.getActorTransactionCfg().getBeginBeanId().equals(struc.getFromBeanId())) {
                 struc.setBeginExecute(true);
@@ -151,6 +154,7 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
         } finally {
 //            System.out.println("handler--event");
             sentinel.getProcessingConsumerNumber().decrementAndGet();
+            ContextThreadLocal.cleanMessage();
 //            consumercount.decrementAndGet();
         }
 
