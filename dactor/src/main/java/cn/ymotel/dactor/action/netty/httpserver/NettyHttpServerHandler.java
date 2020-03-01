@@ -1,5 +1,6 @@
 package cn.ymotel.dactor.action.netty.httpserver;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultMessage;
@@ -59,7 +60,7 @@ public class NettyHttpServerHandler extends SimpleChannelInboundHandler<FullHttp
             message.getContext().putAll(params);
         }
         message.getControlData().put("_ChannelHandlerContext", channelHandlerContext);
-        message.getControlData().put("transport","http");
+        message.getControlData().put(Constants.TRANSPORT,Constants.TRANSPORT_NETTY_HTTP);
         if(applicationContext==null){
             channelHandlerContext.writeAndFlush( responseOK(HttpResponseStatus.OK, "")).addListener(ChannelFutureListener.CLOSE);
             return ;

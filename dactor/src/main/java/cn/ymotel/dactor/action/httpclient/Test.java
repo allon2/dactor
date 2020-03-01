@@ -57,7 +57,6 @@ public class Test {
 
                 public void completed(final HttpResponse response) {
 
-//                  System.out.println(httpget.getRequestLine() + "->" + response.getStatusLine());
                 }
 
                 public void failed(final Exception ex) {

@@ -44,9 +44,7 @@ public abstract class AbstractSupportActor implements Actor {
         return message;
     }
 
-    public void Execute(Message message) throws Exception {
-        //子类可继承
-    }
+
 
     ;
 

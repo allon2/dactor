@@ -154,9 +154,9 @@ public abstract class AbstractParserActor extends AbstractSupportActor {
      * @see AbstractSupportActor#Execute(Message)
      */
     @Override
-    public void Execute(Message message) throws Exception {
+    public Object Execute(Message message) throws Exception {
         if (!message.getContext().containsKey(fromKey)) {
-            return;
+            return null;
         }
         Object prepareMsg = message.getContext().get(this.getFromKey());
         Map obj = handleInner(message, prepareMsg);
@@ -183,7 +183,7 @@ public abstract class AbstractParserActor extends AbstractSupportActor {
         if (cleanSource) {
             message.getContext().remove(fromKey);
         }
-
+        return null;
     }
 
     public abstract Map handleInner(Message message, Object prepareMsg);

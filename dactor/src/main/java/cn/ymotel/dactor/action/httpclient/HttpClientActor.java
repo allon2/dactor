@@ -249,7 +249,6 @@ public class HttpClientActor implements Actor {
                     message.setException(e);
                     message.getControlMessage().getMessageDispatcher().sendMessage(message);
                 }
-//                  System.out.println(httpget.getRequestLine() + "->" + response.getStatusLine());
             }
 
             public void failed(final Exception ex) {
@@ -259,7 +258,6 @@ public class HttpClientActor implements Actor {
                 message.setException(ex);
                 message.getControlMessage().getMessageDispatcher().sendMessage(message);
 
-//                  System.out.println(httpget.getRequestLine() + "->" + ex);
             }
 
             public void cancelled() {
@@ -267,7 +265,6 @@ public class HttpClientActor implements Actor {
                 message.setException(exception);
                 message.getControlMessage().getMessageDispatcher().sendMessage(message);
 
-//                  System.out.println(httpget.getRequestLine() + " cancelled");
             }
 
         });

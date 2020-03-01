@@ -74,6 +74,17 @@ public class JsonView extends StreamView {
     public void renderInner(ServletMessage message, String viewName) {
 
         Object jsonObject = message.getContext().get(content);
+        if(jsonObject==null){
+            try {
+                message.getAsyncContext().getResponse().getWriter().print("");
+                message.getAsyncContext().getResponse().getWriter().flush();
+                message.getAsyncContext().complete();
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
         jsonObject=JsonUtil.AppendHead(message,jsonObject);
 
 
@@ -93,9 +104,7 @@ public class JsonView extends StreamView {
             jsonString = JSON.toJSONString(jsonObject, mapping);
         }
 
-        if (logger.isInfoEnabled()) {
-            logger.info("jsonString" + jsonObject.getClass() + "-----" + jsonString + message.getContext()); //$NON-NLS-1$ //$NON-NLS-2$
-        }
+
 
         try {
 

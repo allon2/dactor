@@ -2,6 +2,7 @@ package cn.ymotel.dactor.async.web;
 
 import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.core.ActorTransactionCfg;
+import cn.ymotel.dactor.core.MessageDispatcher;
 import cn.ymotel.dactor.core.UrlMapping;
 import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
@@ -21,6 +22,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -200,24 +202,33 @@ public class AsyncServletFilter implements Filter {
         Map.Entry matchentry = null;
         Map mapping = UrlMapping.getMapping();
         String serverName = request.getServerName();
+        Comparator comparator= antPathMatcher.getPatternComparator(UrlPath);
+
         for (java.util.Iterator iter = mapping.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
-            if (UrlPath.equals("/") && entry.getKey().equals("/")) {
-                matchentry = entry;
-                if (matchDomain(entry, serverName)) {
-                    break;
-                }
+            if (!matchDomain(entry, serverName)) {
+                continue;
             }
-            //取key最长的返回
+//                if (UrlPath.equals("/") && entry.getKey().equals("/")) {
+//                matchentry = entry;
+//                    break;
+//
+//            }
+
             if (antPathMatcher.match((String) entry.getKey(), UrlPath)) {
-                if (matchDomain(entry, serverName)) {
                     if (matchentry == null) {
                         matchentry = entry;
                     } else {
-                        if (((String) matchentry.getKey()).length() < ((String) entry.getKey()).length()) {
-                            matchentry = entry;
+                        //路由优先级
+
+                        int i=comparator.compare(entry.getKey(),matchentry.getKey());
+                        if(i<0){
+                            matchentry=entry;
                         }
-                    }
+//                        if (((String) matchentry.getKey()).length() < ((String) entry.getKey()).length()) {
+//                            matchentry = entry;
+//                        }
+
                 }
 
             }
@@ -229,8 +240,12 @@ public class AsyncServletFilter implements Filter {
         return matchentry.getValue();
     }
     private boolean matchDomain(Map.Entry  entry, String serverName) {
-        ActorTransactionCfg cfg=(ActorTransactionCfg) entry.getValue();
-        return matchDomain(cfg,serverName);
+        if(entry.getValue() instanceof  ActorTransactionCfg) {
+
+            ActorTransactionCfg cfg = (ActorTransactionCfg) entry.getValue();
+            return matchDomain(cfg, serverName);
+        }
+        return true;
     }
 
     private boolean matchDomain(ActorTransactionCfg cfg, String serverName) {
@@ -284,14 +299,26 @@ public class AsyncServletFilter implements Filter {
 
     }
 
-    public MessageRingBufferDispatcher getDispatcher(ServletContext sc) {
+    public MessageDispatcher getDispatcher(ServletContext sc) {
 
 
         if (sc.getAttribute(DISPATCHER) != null) {
-            return (MessageRingBufferDispatcher) sc.getAttribute(DISPATCHER);
+            return (MessageDispatcher) sc.getAttribute(DISPATCHER);
         }
-        MessageRingBufferDispatcher dispatcher = (MessageRingBufferDispatcher) SpringUtils.getCacheBean(this.getApplicationContext(), "MessageRingBufferDispatcher");
-        sc.setAttribute(DISPATCHER, dispatcher);
+        Map dispatcherMap=this.getApplicationContext().getBeansOfType(MessageDispatcher.class);
+        /**
+         * 取第一个
+         */
+        MessageDispatcher dispatcher=null;
+        for(java.util.Iterator iter=dispatcherMap.entrySet().iterator();iter.hasNext();){
+            Map.Entry entry=(Map.Entry)iter.next();
+              dispatcher=(MessageDispatcher) entry.getValue();
+              sc.setAttribute(DISPATCHER, dispatcher);
+
+            break;
+        }
+//        MessageDispatcher dispatcher = (MessageDispatcher) SpringUtils.getCacheBean(this.getApplicationContext(), "MessageRingBufferDispatcher");
+//        sc.setAttribute(DISPATCHER, dispatcher);
 
         return dispatcher;
 

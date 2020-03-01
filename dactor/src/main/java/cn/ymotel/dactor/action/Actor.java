@@ -6,6 +6,7 @@
  */
 package cn.ymotel.dactor.action;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.message.Message;
 
 /**
@@ -21,7 +22,27 @@ import cn.ymotel.dactor.message.Message;
  * @since 1.0
  */
 public interface Actor {
-    public Object HandleMessage(Message message) throws Exception;
+    /**
+     *
+     * @param message
+     * @return 返回NuLL值，会一直等待异步返回，并做处理
+     * @throws Exception
+     */
+    default  public Object HandleMessage(Message message) throws java.lang.Throwable{
+        try {
+            Object obj = Execute(message);
+            if (obj != null) {
+                message.getContext().put(Constants.CONTENT, obj);
+            }
+        } catch (Throwable e) {
 
+            message.setException(e);
+        }
+        return message;
+    };
+
+    default public Object Execute(Message message) throws java.lang.Throwable{
+        return null;
+    }
 
 }

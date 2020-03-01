@@ -61,7 +61,7 @@ public class ActorTransactionCfgBeanDefinitionParser extends
 //		Map condtions=new HashMap();
         List condtions = new ArrayList();
 
-        String actorId = NameSpaceUtil.getNameSpaceActorId(element);
+        String actorId = element.getAttribute("id");
         if (StringUtils.hasText(element.getAttribute("id"))) {
             builder.addPropertyValue("id", actorId);
 
@@ -155,7 +155,7 @@ public class ActorTransactionCfgBeanDefinitionParser extends
 
 
 //        BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getRawBeanDefinition(), actorId);
-        System.out.println("actorId"+actorId);
+//        System.out.println("actorId"+actorId);
 //        parserContext.getRegistry().registerBeanDefinition(actorId,builder.getRawBeanDefinition());
 //        BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
 
@@ -171,11 +171,11 @@ public class ActorTransactionCfgBeanDefinitionParser extends
         return pdomain;
 
     }
-    @Override
-    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {
-       return NameSpaceUtil.getNameSpaceActorId(element);
-//        return super.resolveId(element, definition, parserContext);
-    }
+//    @Override
+//    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {
+//       return NameSpaceUtil.getNameSpaceActorId(element);
+////        return super.resolveId(element, definition, parserContext);
+//    }
 
     public Map getResults(Element element, ParserContext parserContext) {
         Map map = new HashMap();

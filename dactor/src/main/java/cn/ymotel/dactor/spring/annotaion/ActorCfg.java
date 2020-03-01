@@ -19,7 +19,7 @@ public @interface ActorCfg {
     String  id() default "";
 
     String urlPatterns()  default "";
-    String  chain() default "";
+    String  chain() default "defaultchain";
 
     String  parent() default "";
     String  domain() default "";

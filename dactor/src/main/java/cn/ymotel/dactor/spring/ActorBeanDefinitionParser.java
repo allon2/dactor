@@ -41,7 +41,6 @@ public class ActorBeanDefinitionParser extends AbstractSingleBeanDefinitionParse
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
 
-//		 System.out.println(str);
 
         super.doParse(element, parserContext, builder);
     }

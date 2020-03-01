@@ -8,6 +8,7 @@ package cn.ymotel.dactor.async.web;
 
 import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.core.ActorTransactionCfg;
+import cn.ymotel.dactor.core.MessageDispatcher;
 import cn.ymotel.dactor.core.UrlMapping;
 import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
@@ -293,16 +294,28 @@ public class AsyncServlet extends FrameworkServlet {
      */
     private static final String DISPATCHER = WebApplicationContext.class.getName() + ".dispatchers";
 
-    public MessageRingBufferDispatcher getDispatcher(ServletContext sc) {
+    public MessageDispatcher getDispatcher(ServletContext sc) {
 
 
         if (sc.getAttribute(DISPATCHER) != null) {
             return (MessageRingBufferDispatcher) sc.getAttribute(DISPATCHER);
         }
-        MessageRingBufferDispatcher dispatcher = (MessageRingBufferDispatcher) SpringUtils.getCacheBean(this.getWebApplicationContext(),"MessageRingBufferDispatcher");
-        sc.setAttribute(DISPATCHER, dispatcher);
+        Map dispatcherMap=this.getWebApplicationContext().getBeansOfType(MessageDispatcher.class);
+        /**
+         * 取第一个
+         */
+        MessageDispatcher dispatcher=null;
+        for(java.util.Iterator iter=dispatcherMap.entrySet().iterator();iter.hasNext();){
+            Map.Entry entry=(Map.Entry)iter.next();
+            dispatcher=(MessageDispatcher) entry.getValue();
+            sc.setAttribute(DISPATCHER, dispatcher);
+
+            break;
+        }
 
         return dispatcher;
+
+
 
 
     }

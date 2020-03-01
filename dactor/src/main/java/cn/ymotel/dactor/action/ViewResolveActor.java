@@ -55,6 +55,10 @@ public class ViewResolveActor implements Actor, InitializingBean {
         this.viewMap = viewMap;
     }
 
+    public void setSuffixMap(Map<String, HttpView> suffixMap) {
+        this.suffixMap = suffixMap;
+    }
+
     /* (non-Javadoc)
      * @see com.dragon.actor.Actor#HandleMessage(com.dragon.actor.Message)
      */
@@ -62,37 +66,53 @@ public class ViewResolveActor implements Actor, InitializingBean {
     public Object HandleMessage(Message message) throws Exception {
 
         if (message instanceof ServletMessage) {
-//			((LocalServletMessage)message).getAsyncContext().getRequest().setAttribute("_Message", message);
-
-            Map dataMap = (Map) message.getContext();
-            if (((ServletMessage) message).getAsyncContext().getResponse().isCommitted()) {
+            ServletMessage servletMessage=(ServletMessage)message;
+            if (servletMessage.getAsyncContext().getResponse().isCommitted()) {
+                return message;
             } else {
+                Map dataMap = message.getContext();
+
                 for (java.util.Iterator iter = dataMap.entrySet().iterator(); iter.hasNext(); ) {
                     Map.Entry entry = (Map.Entry) iter.next();
-                    ((ServletMessage) message).getAsyncContext().getRequest().setAttribute((String) entry.getKey(), entry.getValue());
+                    servletMessage.getAsyncContext().getRequest().setAttribute((String) entry.getKey(), entry.getValue());
                 }
                 if (message.getException() != null) {
-                    ((ServletMessage) message).getAsyncContext().getRequest().setAttribute("_EXCEPTION", message.getException());
+                    servletMessage.getAsyncContext().getRequest().setAttribute("_EXCEPTION", message.getException());
                 }
-
-
             }
         }
-        String result = null;
 
-
-        result = (String) ((SpringControlMessage) message.getControlMessage()).getSourceCfg().getResults().get("success" + message.getControlMessage().getState());
-
-        if (result == null) {
-            result = (String) message.getControlMessage().getProcessStructure().getActorTransactionCfg().getResults().get("success" + message.getControlMessage().getState());
-            ;
-        }
+        String result=renderResultView(message);
         if(result==null){
-            //尝试使用后缀
-            HttpView view=suffixMap.get(message.getContext().get(Constants.SUFFIX));
-            view.render(message,null);
+            //
+            String suffix=(String)message.getContext().get(Constants.SUFFIX);
+            //优先使用后缀模式
+            if(suffix!=null) {
+                HttpView view = suffixMap.get(suffix);
+                if (view != null) {
+                    view.render(message, null);
+                    return message;
+                }
+            }
         }
-//			String result=WorkFlowData.getResults(message.getControlMessage().getSourceId(),"success"+message.getControlMessage().getState());
+        String[] resolverNames = getResolverNames(result);
+        HttpView view = this.getViewMap().get(resolverNames[0]);
+        if (view == null) {
+
+            ((ServletMessage)message).getAsyncContext().complete();
+
+            System.err.println("can't find view");
+            return message;
+        }
+        try {
+            view.render(message, resolverNames[1]);
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+        return message;
+    }
+
+    private String[] getResolverNames(String result) {
         String[] views = result.split(":");
         String[] resolverNames = new String[2];
         if (views.length == 1) {
@@ -109,36 +129,38 @@ public class ViewResolveActor implements Actor, InitializingBean {
             //	resolverNames[1] = resolverNames[1]; // a bug 2004/10/18 larry
             resolverNames[1] = views[1];
         }
-        HttpView view = this.getViewMap().get(resolverNames[0]);
-        if (view == null) {
-            view = this.getViewMap().get("default");
+        return resolverNames;
+    }
+
+    private boolean renderDefaultView(Message message){
+        HttpView view = this.getViewMap().get("default");
+        return false;
+    }
+    private String  renderResultView(Message message){
+        String result = null;
+
+
+        result = (String) ((SpringControlMessage) message.getControlMessage()).getSourceCfg().getResults().get("success" + message.getControlMessage().getState());
+
+        if (result == null) {
+            result = (String) message.getControlMessage().getProcessStructure().getActorTransactionCfg().getResults().get("success" + message.getControlMessage().getState());
         }
-        try {
-            view.render(message, resolverNames[1]);
-        } catch (Exception e) {
-            if (logger.isTraceEnabled()) {
-                logger.trace("HandleMessage(Message) - viewResolver-----" + ((ServletMessage) message) + "----" + ((ServletMessage) message).getAsyncContext()); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            if (logger.isTraceEnabled()) {
-                logger.trace("HandleMessage(Message)"); //$NON-NLS-1$
-            }
-        }
-        return message;
+        return result;
     }
     private Map<String,HttpView> suffixMap=new HashMap();
     @Override
     public void afterPropertiesSet() throws Exception {
 
-        for(java.util.Iterator iter=viewMap.entrySet().iterator();iter.hasNext();){
-            Map.Entry entry=(Map.Entry)iter.next();
-            HttpView view=(HttpView)entry.getValue();
-            if(view.getSuffix()!=null){
-                String suffix=view.getSuffix();
-                if(suffix.startsWith(".")){
-                    suffix=suffix.substring(1);
-                }
-                suffixMap.put(suffix,view);
-            }
-        }
+//        for(java.util.Iterator iter=viewMap.entrySet().iterator();iter.hasNext();){
+//            Map.Entry entry=(Map.Entry)iter.next();
+//            HttpView view=(HttpView)entry.getValue();
+//            if(view.getSuffix()!=null){
+//                String suffix=view.getSuffix();
+//                if(suffix.startsWith(".")){
+//                    suffix=suffix.substring(1);
+//                }
+//                suffixMap.put(suffix,view);
+//            }
+//        }
     }
 }

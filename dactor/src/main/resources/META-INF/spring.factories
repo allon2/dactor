@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  cn.ymotel.dactor.springboot.DactorAutoConfiguration,\
+  cn.ymotel.dactor.springboot.DactorServletAutoConfiguration

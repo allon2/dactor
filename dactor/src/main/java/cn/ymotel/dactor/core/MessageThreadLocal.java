@@ -5,7 +5,7 @@ import cn.ymotel.dactor.message.Message;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContextThreadLocal {
+public class MessageThreadLocal {
     private static java.lang.ThreadLocal<Map> context=new ThreadLocal<Map>(){
         @Override
         protected Map initialValue() {

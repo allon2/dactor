@@ -1,5 +1,6 @@
 package cn.ymotel.dactor.action.netty.aysnsocket;
 
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultMessage;
@@ -47,6 +48,8 @@ public class TcpServerHandler extends SimpleChannelInboundHandler implements App
         Map data=(Map)JSON.parse((String)msg);
         message.getContext().putAll(data);
         message.getControlData().put("_ChannelHandlerContext", ctx);
+        message.getControlData().put(Constants.TRANSPORT,Constants.TRANSPORT_NETTY_TCP);
+
         String transactionId = (String)data.get("actorId");
         ActorTransactionCfg cfg=(ActorTransactionCfg) SpringUtils.getCacheBean(applicationContext,transactionId);
 //

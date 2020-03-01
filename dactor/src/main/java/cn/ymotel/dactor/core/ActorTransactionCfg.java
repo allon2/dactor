@@ -234,7 +234,6 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
         if(actorGlobalCfg!=null){
             this.setGlobal(actorGlobalCfg);
         }
-//        System.out.println(this.getId());
         UrlMapping.addMapping(this.getUrlPattern(),this);
 
 

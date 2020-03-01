@@ -60,6 +60,20 @@ public abstract class AbstractView implements HttpView {
         renderInner(lMessage, viewName);
 
     }
+    /**
+     * @return the suffix
+     */
+    public String getSuffix() {
+        return suffix;
+    }
+
+    /**
+     * @param suffix the suffix to set
+     */
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+    private String suffix;
 
     public abstract void renderInner(ServletMessage message, String viewName);
 

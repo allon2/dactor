@@ -25,7 +25,6 @@ public class ActorCfgBeanFactoryPostProcessor implements BeanDefinitionRegistryP
             ActorCfg actorCfg = AnnotationUtils.findAnnotation(beanType,
                     ActorCfg.class);
             if (actorCfg != null) {
-//                System.out.println("ss-"+s);
                 RootBeanDefinition rootBeanDefinition = new RootBeanDefinition();
                 rootBeanDefinition.setBeanClass(ActorTransactionCfg.class);
                  String name = beanNameGenerator.generateBeanName(rootBeanDefinition,registry);

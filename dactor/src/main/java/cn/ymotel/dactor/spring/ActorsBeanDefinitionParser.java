@@ -8,13 +8,13 @@ import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 import java.util.List;
 
 public class ActorsBeanDefinitionParser implements BeanDefinitionParser {
+    public static final String DACTOR_SCHEMA = "http://www.ymotel.cn/schema/dactor";
     private NamespaceHandlerSupport handler;
 
     public NamespaceHandlerSupport getHandler() {
@@ -25,47 +25,47 @@ public class ActorsBeanDefinitionParser implements BeanDefinitionParser {
         this.handler = handler;
     }
 
-//	@Override
-//	protected boolean shouldGenerateId() {
-//	  return true;
-//	}
+    private void appendIdNameSpace(Element elt,String namespace){
+        if(namespace==null||namespace.trim().equals("")){
+            return ;
+        }
+        String id=elt.getAttribute("id");
+        if(id==null||id.trim().equals("")){
+            return ;
+        }
+        /**
+         * 已经追加过的，不再追加
+         */
+        if(id.startsWith(namespace+".")){
+            return ;
+        }
+        elt.setAttribute("id", namespace + "." + id);
 
+
+    }
     //	@Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
-//        String namespace = element.getAttribute("namespace");
-//        List<Element> childElts = DomUtils.getChildElements(element);
-//        for (Element elt : childElts) {
-//
-////            if (namespace != null && !namespace.trim().equals("")) {
-////                if(StringUtils.hasText(elt.getAttribute("id"))){
-////                    elt.setAttribute("id", namespace + "." + elt.getAttribute("id"));
-////
-////                }
-////                //不填写，不加命名空间
-////            }
-//
-//
-//
-//                HandleBean(elt, parserContext);
-//
-//
-//
-//        }
+        String namespace = element.getAttribute("namespace");
+        List<Element> childElts = DomUtils.getChildElements(element);
+        for (Element elt : childElts) {
+            appendIdNameSpace(elt,namespace);
+                HandleBean(elt, parserContext);
+
+
+
+        }
         return null;
 
 
     }
 
     public void HandleBean(Element elt, ParserContext parserContext) {
+        String namespaceURI= parserContext.getDelegate().getNamespaceURI(elt);
 
-        if (elt.getLocalName().equals("bean") && parserContext.getDelegate().isDefaultNamespace(elt)) {
-        }
-
-        else {
-            handler.parse(elt, parserContext);
-
-            return;
-        }
+        if(DACTOR_SCHEMA.equals(namespaceURI)){
+           handler.parse(elt, parserContext);
+            return ;
+       }
 
 
         BeanDefinitionHolder bdHolder = parserContext.getDelegate().parseBeanDefinitionElement(elt);

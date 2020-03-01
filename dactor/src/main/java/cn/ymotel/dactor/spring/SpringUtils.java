@@ -59,10 +59,5 @@ public class SpringUtils {
         }
 
     }
-    public static void main(String[] args){
-        System.out.println(cachedBean);
-        Map t=new HashMap();
-        t.put("k",null);
-        cachedBean.put("k","");
-    }
+
 }

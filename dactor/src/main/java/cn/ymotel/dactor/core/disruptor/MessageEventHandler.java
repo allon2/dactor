@@ -7,7 +7,7 @@
 package cn.ymotel.dactor.core.disruptor;
 
 import cn.ymotel.dactor.action.Actor;
-import cn.ymotel.dactor.core.ContextThreadLocal;
+import cn.ymotel.dactor.core.MessageThreadLocal;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.spring.SpringUtils;
 import cn.ymotel.dactor.workflow.ActorProcessStructure;
@@ -18,8 +18,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import java.util.concurrent.*;
 
 /**
  * {type specification, must edit}
@@ -102,11 +100,6 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
      */
     private void handleEvent(ActorProcessStructure struc, Message message,Actor actor ) {
         sentinel.getProcessingConsumerNumber().incrementAndGet();
-//        consumercount.getAndIncrement();
-//        System.out.println(consumercount.get());
-//        Actor actor = (Actor) appcontext.getBean(struc.getFromBeanId());
-
-//        System.out.println("beanId--" + struc.getFromBeanId() + "--Id--" + struc.getActorTransactionCfg().getId());
 
         ;
         if(logger.isDebugEnabled()) {
@@ -114,7 +107,7 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
         }
 
         try {
-            ContextThreadLocal.putMessage(message);
+            MessageThreadLocal.putMessage(message);
 
             Object obj = actor.HandleMessage(message);
             if (struc.getActorTransactionCfg().getBeginBeanId().equals(struc.getFromBeanId())) {
@@ -136,6 +129,7 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
 //                });
             }
         } catch (Throwable exception) {
+            exception.printStackTrace();
 
             message.setException(exception);
             if (struc.getActorTransactionCfg().getBeginBeanId().equals(struc.getFromBeanId())) {
@@ -149,12 +143,10 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
 //            executor.submit((() ->   dispatcher.sendMessage(message)));
 
             dispatcher.sendMessage(message);
-//				dispatcher.sendMessage(message);
 
         } finally {
-//            System.out.println("handler--event");
             sentinel.getProcessingConsumerNumber().decrementAndGet();
-            ContextThreadLocal.cleanMessage();
+            MessageThreadLocal.cleanMessage();
 //            consumercount.decrementAndGet();
         }
 
@@ -179,8 +171,7 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
         if (struc.getFromBeanId() == null || struc.getFromBeanId().trim().equals("")) {
             return;
         }
-
-        Actor actor = (Actor) SpringUtils.getCacheBean(appcontext,struc.getFromBeanId());
+                Actor actor = (Actor) SpringUtils.getCacheBean(appcontext,struc.getFromBeanId());
 
         handleEvent(struc, message,actor);
 

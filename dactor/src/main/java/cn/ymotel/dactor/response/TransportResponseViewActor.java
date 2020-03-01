@@ -22,6 +22,10 @@ public class TransportResponseViewActor implements Actor,Constants, ApplicationC
 //        transportMap.put("http_servlet",new ViewResolveActor())
     }
 
+    public Map<String, Object> getTransportMap() {
+        return transportMap;
+    }
+
     public void setTransportMap(Map transportMap) {
         this.transportMap = transportMap;
     }
@@ -32,7 +36,7 @@ public class TransportResponseViewActor implements Actor,Constants, ApplicationC
     }
 
     @Override
-    public Object HandleMessage(Message message) throws Exception {
+    public Object HandleMessage(Message message) throws java.lang.Throwable {
        String transport=(String) message.getControlData().get(Constants.TRANSPORT);
        if(transport==null){
            if(defaultViewActor!=null) {

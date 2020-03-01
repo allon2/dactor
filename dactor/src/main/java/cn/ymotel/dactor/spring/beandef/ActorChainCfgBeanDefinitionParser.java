@@ -95,7 +95,7 @@ public class ActorChainCfgBeanDefinitionParser extends
 
 //      RootBeanDefinition beanDef = new RootBeanDefinition();
 
-        String actorId =NameSpaceUtil.getNameSpaceActorId(element);
+        String actorId =element.getAttribute("id");
 
 //      Map params=new HashMap();
 
@@ -128,9 +128,9 @@ public class ActorChainCfgBeanDefinitionParser extends
 
     }
 
-    @Override
-    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {
-      return NameSpaceUtil.getNameSpaceActorId(element);
-//        return super.resolveId(element, definition, parserContext);
-    }
+//    @Override
+//    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {
+//      return NameSpaceUtil.getNameSpaceActorId(element);
+////        return super.resolveId(element, definition, parserContext);
+//    }
 }

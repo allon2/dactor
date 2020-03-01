@@ -42,17 +42,10 @@ public class AnnotationBean implements ApplicationContextAware, InitializingBean
          * 无此方法，无法执行ActorTransactionCfg的afterPropertiesSet方法
          */
         Map t=applicationContext.getBeansOfType(ActorTransactionCfg.class);
-//        System.out.println(t);
-
-//        DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(parserContext.getRegistry());
-//        beanFactory.registerBeanDefinition();
     }
     public void beanBuilder(ActorCfg actorCfg, String beanid, GenericApplicationContext context){
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ActorTransactionCfg.class);
-//        RootBeanDefinition rootBeanDefinition = new RootBeanDefinition();
-//        rootBeanDefinition.setBeanClass(ActorTransactionCfg.class);
-//        builder.addPropertyValue("beginBeanId", "ttt");
-//        System.out.println("addPropertyValuu=e");
+
          builder.addPropertyValue("beginBeanId", beanid);
          if(StringUtils.hasText(actorCfg.urlPatterns())) {
              builder.addPropertyValue("urlPattern", actorCfg.urlPatterns());
@@ -77,12 +70,9 @@ public class AnnotationBean implements ApplicationContextAware, InitializingBean
         builder.addPropertyValue("domain", actorCfg.domain());
 
         builder.setLazyInit(false);
-//        BeanDefinitionHolder holder = new BeanDefinitionHolder(builder.getRawBeanDefinition(), cfgid);
-//        BeanDefinitionReaderUtils.registerBeanDefinition(holder, parserContext.getRegistry());
-        System.out.println("in annotaton");
+//        System.out.println("in annotaton");
         parserContext.getRegistry().registerBeanDefinition(cfgid, builder.getRawBeanDefinition());
 
-//        context.registerBeanDefinition(cfgid, builder.getRawBeanDefinition());
 
     }
     private static DefaultListableBeanFactory unwrapDefaultListableBeanFactory(BeanDefinitionRegistry registry) {
