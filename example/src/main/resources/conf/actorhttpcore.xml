@@ -54,16 +54,7 @@
     </actor:global>
 
 
-    <actor:chain id="unLoginChain">
-        <list>
-            <ref bean="actorhttpcore"></ref>
-            <ref bean="actorhttpcore"></ref>
-
-        </list>
-
-
-
-    </actor:chain>
+<!--    <actor:annotation/>-->
     <actor:actor id="actorhttpcore" handleException="true"  endBeanId="FinishActor" >
 
         <actor:steps>

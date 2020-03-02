@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:actor="http://www.ymotel.cn/schema/dactor"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd">
+
+<!--    <actor:chain id="tcpchain">-->
+
+<!--        <list>-->
+<!--            <ref bean="actorhttpcore"></ref>-->
+
+<!--        </list>-->
+<!--    </actor:chain>-->
+
+<!--    <actor:actor id="actorhttpcore" handleException="true"   endBeanId="TransportResponseViewActor" >-->
+<!--        <actor:steps>-->
+<!--            <actor:step  fromBeanId="beginActor"  conditon="" toBeanId="placeholderActor"/>-->
+<!--        </actor:steps>-->
+
+<!--    </actor:actor>-->
+
+
+</beans>

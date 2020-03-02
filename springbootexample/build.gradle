@@ -1,0 +1,64 @@
+buildscript {
+  ext {
+    springBootVersion = '2.2.4.RELEASE'
+  }
+  repositories {
+    jcenter()
+    maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
+    maven { url 'https://repo.spring.io/milestone' }
+
+  }
+  dependencies {
+//    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+
+  }
+}
+plugins {
+  id 'org.springframework.boot' version '2.3.0.M2'
+  id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+  id 'java'
+  id 'war'
+
+}
+//apply plugin: 'java'
+
+//apply plugin: 'org.springframework.boot'
+//apply plugin: 'io.spring.dependency-management'
+description = ''
+
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+
+group = 'cn.ymotel'
+version = '1.0.0'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+javadoc.options.encoding 'UTF-8'
+
+
+repositories {
+  maven { url "http://maven.aliyun.com/nexus/content/groups/public" }
+  jcenter()
+  maven { url 'https://repo.spring.io/milestone' }
+
+}
+
+
+dependencies {
+
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  compile group: 'taglibs', name: 'standard', version:'1.1.2'
+  compile group: 'jstl', name: 'jstl', version:'1.2'
+  compile project(':dactor')
+//  compile project(':dactor-springboot-starter')
+
+
+}
+war {
+  archiveName 'example.war'
+}

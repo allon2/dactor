@@ -20,15 +20,26 @@
             org.springframework.web.context.request.RequestContextListener
         </listener-class>
     </listener>
-
-
-    <!-- Processes application requests -->
-    <servlet>
-        <servlet-name>MainServlet</servlet-name>
-        <servlet-class>cn.ymotel.dactor.async.web.AsyncServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+    <filter>
+        <filter-name>AsyncServletFilter</filter-name>
+        <filter-class>cn.ymotel.dactor.async.web.AsyncServletFilter</filter-class>
         <async-supported>true</async-supported>
-    </servlet>
+
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AsyncServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+
+    </filter-mapping>
+
+<!--    &lt;!&ndash; Processes application requests &ndash;&gt;-->
+<!--    <servlet>-->
+<!--        <servlet-name>MainServlet</servlet-name>-->
+<!--        <servlet-class>cn.ymotel.dactor.async.web.AsyncServlet</servlet-class>-->
+<!--        <load-on-startup>1</load-on-startup>-->
+<!--        <async-supported>true</async-supported>-->
+<!--    </servlet>-->
 
 
     <filter>
@@ -62,10 +73,10 @@
 
 
 
-    <servlet-mapping>
-        <servlet-name>MainServlet</servlet-name>
-        <url-pattern>*.do</url-pattern>
-    </servlet-mapping>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>MainServlet</servlet-name>-->
+<!--        <url-pattern>*.do</url-pattern>-->
+<!--    </servlet-mapping>-->
 
 
     <filter-mapping>
@@ -76,10 +87,10 @@
 
 
 
-    <servlet-mapping>
-        <servlet-name>MainServlet</servlet-name>
-        <url-pattern>*.json</url-pattern>
-    </servlet-mapping>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>MainServlet</servlet-name>-->
+<!--        <url-pattern>*.json</url-pattern>-->
+<!--    </servlet-mapping>-->
 
 
 </web-app>

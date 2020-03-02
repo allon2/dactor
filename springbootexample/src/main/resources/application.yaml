@@ -1,0 +1,16 @@
+server:
+  port: 8080
+spring:
+  cloud:
+    consul:
+      discovery:
+        service-name: dactor
+        health-check-path: /health
+  application:
+    name: dactor
+#日志
+logging:
+  level:
+
+    root: INFO
+#  path: ./logs
