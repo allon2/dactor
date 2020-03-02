@@ -78,7 +78,7 @@ bintray {
         name = PROJ_NAME
         licenses = ['Apache-2.0']
         vcsUrl = PROJ_VCSURL
-        labels = ['java', 'spring', 'async']
+        labels = ['java', 'spring', 'async','dactor']
         version {
             gpg {
                 sign = true //Determines whether to GPG sign the files. The default is false
