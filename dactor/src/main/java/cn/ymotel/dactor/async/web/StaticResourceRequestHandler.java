@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * 默认在SpringBoot中使用
+ */
 public class StaticResourceRequestHandler implements HttpRequestHandler {
     private UrlPathHelper urlPathHelper=new UrlPathHelper();
     private static final Log logger = LogFactory.getLog(StaticResourceRequestHandler.class);

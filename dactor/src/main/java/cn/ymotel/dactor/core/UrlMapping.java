@@ -33,7 +33,7 @@ public class UrlMapping {
     public static Map getMapping(){
         return Urlmapping;
     }
-    public static void addstaticpath(String urlpath){
-
+    public static void addStaticPath(String urlpath){
+        Urlmapping.put(urlpath,new StaticResourceRequestHandler());
     }
 }
