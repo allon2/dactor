@@ -73,12 +73,14 @@ bintray {
     key = properties.getProperty("bintray.apikey")//Api key，见下文
     publications = ['MyPublication']//关联到上文maven publication的名字
     publish = true//如果false，还需要到网页上手动发布
+
     pkg {
         repo = properties.getProperty("bintray.repo")
         name = PROJ_NAME
         licenses = ['Apache-2.0']
         vcsUrl = PROJ_VCSURL
         labels = ['java', 'spring', 'async','dactor']
+
         version {
             gpg {
                 sign = true //Determines whether to GPG sign the files. The default is false
