@@ -34,11 +34,15 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 - 7、J2EE支持数据流输出,动态文件下载、动态图片输出、跳转和可根据配置动态输出
  环境要求  
   JDK 1.8  
-  Spring FrameWork 4.3.22.RELEASE +  
+  Spring FrameWork 5.2.4.RELEASE +  
   Servlet 3.0+(因为需要使用Servlet的异步功能)  
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note  
+1.0.18版本  
+    1:支持SpringBoot,只需要引用jar包，即可在springboot中自动启用，进一步简化代码配置
+​    2:服务可优雅停止  
+​    3：依赖升级为最新版本  
 1.0.15版本  
 ​    1:解决在队列满的情况下，程序无法响应问题    
 1.0.14版本  
@@ -102,13 +106,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.15</version>
+    <version>1.0.18</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.15'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.0.18'
 
 ```
 
