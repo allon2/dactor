@@ -43,7 +43,7 @@ public interface Message {
     public Object getOrigSource();
 
 
-    public void setOrigSource(Object obj);
+    public void setOrigSource(Object key);
 
     /**
      * 保存上下文的内容
@@ -53,6 +53,8 @@ public interface Message {
      * @since 1.0
      */
     public Map getContext();
+
+    public <T> T getContextData(Object obj);
 
     /**
      * @return 得到忽略大小写的Map
@@ -97,6 +99,8 @@ public interface Message {
      * @return 控制数据
      */
     public Map getControlData();
+    public <T> T getControlData(Object obj);
+
 
     /**
      * @return 得到忽略大小写的Map

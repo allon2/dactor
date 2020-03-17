@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @param <T> event implementation storing the details for the work to processed.
  */
 public final class WorkProcessorExt<T>
-    implements EventProcessor
+        implements EventProcessor
 {
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final Sequence sequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
@@ -58,11 +58,11 @@ public final class WorkProcessorExt<T>
      *                         as {@link Sequencer#INITIAL_CURSOR_VALUE}
      */
     public WorkProcessorExt(
-        final RingBuffer<T> ringBuffer,
-        final SequenceBarrier sequenceBarrier,
-        final WorkHandler<? super T> workHandler,
-        final ExceptionHandler<? super T> exceptionHandler,
-        final Sequence workSequence)
+            final RingBuffer<T> ringBuffer,
+            final SequenceBarrier sequenceBarrier,
+            final WorkHandler<? super T> workHandler,
+            final ExceptionHandler<? super T> exceptionHandler,
+            final Sequence workSequence)
     {
         this.ringBuffer = ringBuffer;
         this.sequenceBarrier = sequenceBarrier;
@@ -77,6 +77,10 @@ public final class WorkProcessorExt<T>
 
         timeoutHandler = (workHandler instanceof TimeoutHandler) ? (TimeoutHandler) workHandler : null;
     }
+    public void haltLater()
+    {
+        running.set(false);
+    }
 
     @Override
     public Sequence getSequence()
@@ -88,7 +92,7 @@ public final class WorkProcessorExt<T>
     public void halt()
     {
         running.set(false);
-//        sequenceBarrier.alert();
+        sequenceBarrier.alert();
     }
 
     @Override

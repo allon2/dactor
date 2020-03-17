@@ -66,7 +66,7 @@ public class WorkProcessorManager {
     public void decrOneConsumer(){
         WorkProcessorExt<MessageEvent> tprocessor= processorList.get(0);
 
-        tprocessor.halt();
+        tprocessor.haltLater();
 //        try {
 //            workHandlerMap.get(tprocessor).awaitShutdown();
 //        } catch (InterruptedException e) {
@@ -84,7 +84,14 @@ public class WorkProcessorManager {
     }
     public void shutdown(){
                 while(processorList.size()>0){
-                    decrOneConsumer();
+                    WorkProcessorExt<MessageEvent> tprocessor= processorList.get(0);
+
+                    tprocessor.halt();
+
+                    ringBuffer.removeGatingSequence(tprocessor.getSequence());
+
+//            workHandlerMap.remove(tprocessor);
+                    processorList.remove(tprocessor);
                 }
 
     }

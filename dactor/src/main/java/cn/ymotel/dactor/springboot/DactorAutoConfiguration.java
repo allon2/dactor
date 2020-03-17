@@ -69,9 +69,9 @@ public class DactorAutoConfiguration {
     public PlaceholderActor getPlaceholderActor(){
         return new PlaceholderActor();
     }
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
-    public MessageDispatcher getMessageDispatcher(){
+    public MessageRingBufferDispatcher getMessageDispatcher(){
         MessageRingBufferDispatcher messageDispatcher=new MessageRingBufferDispatcher();
         messageDispatcher.setChecktime(properties.getChecktime());
         messageDispatcher.setMaxsize(properties.getThreadmin());

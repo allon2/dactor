@@ -70,6 +70,11 @@ public class DefaultMessage implements Message {
         return context;
     }
 
+    @Override
+    public <T> T getContextData(Object key) {
+        return (T) context.get(key);
+    }
+
     public void setContext(Map context) {
         this.context = context;
     }
@@ -186,7 +191,10 @@ public class DefaultMessage implements Message {
     public Map getControlData() {
         return controlMap;
     }
-
+    @Override
+    public <T> T getControlData(Object key) {
+        return (T) controlMap.get(key);
+    }
     @Override
     public Map getCaseInsensitivegetControlData() {
         return new CaseInsensitiveMap(controlMap);

@@ -21,14 +21,14 @@ import cn.ymotel.dactor.message.Message;
  * @version 1.0
  * @since 1.0
  */
-public interface Actor {
+public interface Actor<T extends  Message> {
     /**
      *
      * @param message
      * @return 返回NuLL值，会一直等待异步返回，并做处理
      * @throws Exception
      */
-    default  public Object HandleMessage(Message message) throws java.lang.Throwable{
+    default  public Object HandleMessage(T message) throws java.lang.Throwable{
         try {
             Object obj = Execute(message);
             if (obj != null) {
@@ -41,7 +41,7 @@ public interface Actor {
         return message;
     };
 
-    default public Object Execute(Message message) throws java.lang.Throwable{
+    default  public Object Execute(T message) throws java.lang.Throwable{
         return null;
     }
 

@@ -151,7 +151,7 @@ public class AsyncServletFilter implements Filter {
             if (!b) {
                 //队列满
                 ((HttpServletResponse) asyncContext.getResponse()).sendError(errorcode);
-                asyncContext.complete();
+//                asyncContext.complete();
 
                 return;
             }
