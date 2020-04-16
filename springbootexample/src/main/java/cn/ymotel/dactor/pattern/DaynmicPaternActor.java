@@ -1,4 +1,4 @@
-package cn.ymotel.dactor.springbootauto;
+package cn.ymotel.dactor.pattern;
 
 import cn.ymotel.dactor.action.Actor;
 import cn.ymotel.dactor.core.DyanmicUrlPattern;
@@ -8,6 +8,9 @@ import cn.ymotel.dactor.spring.annotaion.ActorCfg;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 动态Pattern，通过自身继承接口实现
+ */
 @ActorCfg()
 public class DaynmicPaternActor implements Actor, DyanmicUrlPattern {
 

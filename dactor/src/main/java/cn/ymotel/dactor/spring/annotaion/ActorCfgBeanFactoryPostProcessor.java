@@ -75,10 +75,8 @@ public class ActorCfgBeanFactoryPostProcessor implements BeanDefinitionRegistryP
                 urlPatternList.add(new RuntimeBeanReference(beanid));
 
             } else {
-
-
                 for (int i = 0; i < actorCfg.urlPatternClass().length; i++) {
-                    BeanDefinitionBuilder UrlPatternbuilder = BeanDefinitionBuilder.rootBeanDefinition(DyanmicUrlPattern.class);
+                    BeanDefinitionBuilder UrlPatternbuilder = BeanDefinitionBuilder.rootBeanDefinition(actorCfg.urlPatternClass()[i]);
                     String UrlPatternname = beanNameGenerator.generateBeanName(UrlPatternbuilder.getRawBeanDefinition(), registry);
                     defaultListableBeanFactory.registerBeanDefinition(UrlPatternname, UrlPatternbuilder.getRawBeanDefinition());
                     urlPatternList.add(new RuntimeBeanReference(UrlPatternname));

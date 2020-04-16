@@ -26,5 +26,5 @@ public @interface ActorCfg {
     String  data()  default "";
     String eval() default "";
     long timeout() default  -1;
-    Class<DyanmicUrlPattern>[] urlPatternClass() default {};
+    Class<? extends DyanmicUrlPattern>[] urlPatternClass() default {};
 }

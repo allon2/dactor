@@ -271,6 +271,7 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
                 }
                 this.setUrlPattern((String[]) urlPatternList.toArray(new String[0]));
             }
+            UrlMapping.addMapping(this.getUrlPattern(),this);
         }
         if(dyanmicUrlPatterns!=null) {
             for (int i = 0; i < dyanmicUrlPatterns.size(); i++) {
@@ -280,7 +281,6 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
                 }
             }
         }
-        UrlMapping.addMapping(this.getUrlPattern(),this);
 
 
 
