@@ -39,7 +39,7 @@ public class ActorCfgBeanFactoryPostProcessor implements BeanDefinitionRegistryP
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ActorTransactionCfg.class);
 
         builder.addPropertyValue("beginBeanId", beanid);
-        if(actorCfg.urlPatterns()==null&&actorCfg.urlPatterns().length!=0) {
+        if(actorCfg.urlPatterns()!=null&&actorCfg.urlPatterns().length!=0) {
             builder.addPropertyValue("urlPattern", actorCfg.urlPatterns());
         }
         if(StringUtils.hasText(actorCfg.chain())) {
