@@ -28,6 +28,21 @@ import java.util.Map;
  */
 public class DefaultMessage implements Message {
     private java.util.Date startDate = new java.util.Date();
+    private Map attributes=new HashMap();
+
+    public Map getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public <T> T  getAttribute(Object key) {
+        return (T)attributes.get(key);
+    }
+    @Override
+    public <T> T getAttribute(Object key,T defaultValue) {
+        return (T)attributes.getOrDefault(key,defaultValue);
+    }
+
 
     public DefaultMessage() {
         super();
@@ -73,6 +88,11 @@ public class DefaultMessage implements Message {
     @Override
     public <T> T getContextData(Object key) {
         return (T) context.get(key);
+    }
+
+    @Override
+    public <T> T getContextData(Object obj, T defaultValue) {
+            return (T) context.getOrDefault(obj,defaultValue);
     }
 
     public void setContext(Map context) {

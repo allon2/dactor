@@ -20,8 +20,8 @@ import cn.ymotel.dactor.message.Message;
  * @version 1.0
  * @since 1.0
  */
-public interface HttpView {
-    public void render(Message message, String viewName);
+public interface HttpView<T extends  Message> {
+    public void render(T message, String viewName);
     /**
      * @return the contentType
      */

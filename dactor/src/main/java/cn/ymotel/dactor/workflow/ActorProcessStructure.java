@@ -8,6 +8,8 @@ package cn.ymotel.dactor.workflow;
 
 import cn.ymotel.dactor.core.ActorTransactionCfg;
 
+import java.util.Map;
+
 /**
  * {type specification, must edit}
  *
@@ -85,6 +87,15 @@ public class ActorProcessStructure {
         this.actorTransactionCfg = actorTransactionCfg;
     }
 
+    private Map stepMap;
+
+    public Map getStepMap() {
+        return stepMap;
+    }
+
+    public void setStepMap(Map stepMap) {
+        this.stepMap = stepMap;
+    }
 
     public boolean isBeginExecute() {
         return isBeginExecute;

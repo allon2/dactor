@@ -2,10 +2,7 @@ package cn.ymotel.dactor.springboot;
 
 import cn.ymotel.dactor.action.ViewResolveActor;
 import cn.ymotel.dactor.async.web.AsyncServletFilter;
-import cn.ymotel.dactor.async.web.view.DownloadView;
-import cn.ymotel.dactor.async.web.view.JsonView;
-import cn.ymotel.dactor.async.web.view.StreamView;
-import cn.ymotel.dactor.async.web.view.UrlView;
+import cn.ymotel.dactor.async.web.view.*;
 import cn.ymotel.dactor.response.TransportResponseViewActor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -86,6 +83,10 @@ public AsyncServletFilter asyncServletFilter() {
         view.setSuffix(".jsp");
         return view;
     }
+    private ZipView getZipView(){
+        ZipView view=new ZipView();
+        return view;
+    }
     private UrlView getForwardView(){
         UrlView view=new UrlView();
         view.setSuffix(".do");
@@ -115,6 +116,7 @@ public AsyncServletFilter asyncServletFilter() {
         viewMap.put("stream",new StreamView());
         viewMap.put("csv",new cn.ymotel.dactor.async.web.view.CsvView());
         viewMap.put("img",getStreamView("images/*"));
+        viewMap.put("zip",getZipView());
 
         Map suffixViewMap=new HashMap();
         suffixViewMap.put("json",getJsonView());

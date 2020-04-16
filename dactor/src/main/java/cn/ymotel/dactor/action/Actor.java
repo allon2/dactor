@@ -6,8 +6,11 @@
  */
 package cn.ymotel.dactor.action;
 
+import cn.ymotel.dactor.ActorUtils;
 import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.message.Message;
+
+import java.util.Map;
 
 /**
  * {type specification, must edit}
@@ -32,7 +35,9 @@ public interface Actor<T extends  Message> {
         try {
             Object obj = Execute(message);
             if (obj != null) {
-                message.getContext().put(Constants.CONTENT, obj);
+               String key= ActorUtils.getDataKey(message,Constants.CONTENT);
+
+                message.getContext().put(key, obj);
             }
         } catch (Throwable e) {
 
@@ -41,8 +46,12 @@ public interface Actor<T extends  Message> {
         return message;
     };
 
+
+
     default  public Object Execute(T message) throws java.lang.Throwable{
         return null;
     }
+
+
 
 }

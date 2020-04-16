@@ -126,7 +126,6 @@ public class ViewResolveActor implements Actor, InitializingBean {
             }
         } else if (views.length == 2) {
             resolverNames[0] = views[0];
-            //	resolverNames[1] = resolverNames[1]; // a bug 2004/10/18 larry
             resolverNames[1] = views[1];
         }
         return resolverNames;
@@ -140,7 +139,7 @@ public class ViewResolveActor implements Actor, InitializingBean {
         String result = null;
 
 
-        result = (String) ((SpringControlMessage) message.getControlMessage()).getSourceCfg().getResults().get("success" + message.getControlMessage().getState());
+        result = (String) message.getControlMessage().getSourceCfg().getResults().get("success" + message.getControlMessage().getState());
 
         if (result == null) {
             result = (String) message.getControlMessage().getProcessStructure().getActorTransactionCfg().getResults().get("success" + message.getControlMessage().getState());

@@ -116,7 +116,6 @@ public class RingBufferManager implements InitializingBean, ApplicationContextAw
         try {
             seq = ringBuffer.tryNext();
         } catch (InsufficientCapacityException e) {
-            e.printStackTrace();
             if(!blocked) {
                 return false;
             }else{

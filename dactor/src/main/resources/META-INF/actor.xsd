@@ -79,6 +79,7 @@
             <xs:attribute name="urlPattern" type="xs:string"/>
             <xs:attribute name="handleException" type="xs:string"/>
             <xs:attribute name="domain" type="xs:string"/>
+            <xs:attribute name="timeout" type="xs:string"/>
 
         </xs:complexType>
     </xs:element>
@@ -116,6 +117,7 @@
             <xs:attribute name="toBeanId" use="required" type="xs:string"/>
             <xs:attribute name="after" type="xs:string"/>
             <xs:attribute name="async" type="xs:boolean" default="false"/>
+            <xs:attribute name="data" type="xs:string"/>
             <xs:attribute name="xpoint"/>
             <xs:attribute name="ypont"/>
         </xs:complexType>

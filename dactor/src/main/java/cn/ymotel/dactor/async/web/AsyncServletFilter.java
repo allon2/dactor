@@ -2,12 +2,12 @@ package cn.ymotel.dactor.async.web;
 
 import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.core.ActorTransactionCfg;
+import cn.ymotel.dactor.core.DyanmicUrlPattern;
 import cn.ymotel.dactor.core.MessageDispatcher;
 import cn.ymotel.dactor.core.UrlMapping;
-import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
 import cn.ymotel.dactor.message.Message;
-import cn.ymotel.dactor.spring.SpringUtils;
+import cn.ymotel.dactor.ActorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.AntPathMatcher;
@@ -18,13 +18,15 @@ import org.springframework.web.servlet.support.JstlUtils;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
+
+import static cn.ymotel.dactor.core.UrlMapping.getDynamicMapping;
 
 //@WebFilter(
 //        filterName = "AsyncServletFilter",
@@ -69,7 +71,7 @@ public class AsyncServletFilter implements Filter {
         }
         urlPathHelper.setAlwaysUseFullPath(true);
 
-        defaultResolveMessage = (DefaultResolveMessage) SpringUtils.getCacheBean(this.getApplicationContext(), "DefaultResolveMessage");
+        defaultResolveMessage = (DefaultResolveMessage) ActorUtils.getCacheBean(this.getApplicationContext(), "DefaultResolveMessage");
         if (defaultResolveMessage == null) {
             defaultResolveMessage = new DefaultResolveMessage();
         }
@@ -101,12 +103,11 @@ public class AsyncServletFilter implements Filter {
      */
     public boolean doService(HttpServletRequest request,
                              HttpServletResponse response) throws IOException, ServletException {
-        org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource) SpringUtils.getCacheBean(this.getApplicationContext(), messageSourceId);
+        org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource) ActorUtils.getCacheBean(this.getApplicationContext(), messageSourceId);
         JstlUtils.exposeLocalizationContext(request, messageSource);
 
         String UrlPath = urlPathHelper.getLookupPathForRequest(request);
 
-        ActorTransactionCfg cfg = null;
 
         Object requestHandler = getRequestHandler(request, UrlPath);
         if (requestHandler == null) {
@@ -118,15 +119,32 @@ public class AsyncServletFilter implements Filter {
             return true;
 
         } else if (requestHandler instanceof ActorTransactionCfg) {
+            ActorTransactionCfg cfg = null;
             cfg = (ActorTransactionCfg) requestHandler;
-            HandleAsyncContext(request, response, cfg, UrlPath);
+            HandleAsyncContext(request, response, cfg, UrlPath,null);
             return true;
+        } else if(requestHandler instanceof  MatchPair){
+             MatchPair pair=(MatchPair)requestHandler;
+
+            if (pair.getValue() instanceof HttpRequestHandler) {
+
+                ((HttpRequestHandler) pair.getValue()).handleRequest(request, response);
+                return true;
+
+            }
+            if (pair.getValue() instanceof ActorTransactionCfg) {
+                ActorTransactionCfg cfg = null;
+                cfg = (ActorTransactionCfg) ((MatchPair) requestHandler).getValue();
+                HandleAsyncContext(request, response, cfg, UrlPath,pair.getPattern());
+                return true;
+            }
+
         }
         //其他未处理的情况，应该不会发生
         return false;
     }
 
-    public void HandleAsyncContext(HttpServletRequest request, HttpServletResponse response, ActorTransactionCfg cfg, String UrlPath) throws IOException {
+    public void HandleAsyncContext(HttpServletRequest request, HttpServletResponse response, ActorTransactionCfg cfg, String UrlPath,String matternPattern) throws IOException {
         String suffix = null;
         if (UrlPath.lastIndexOf(".") >= 0) {
             suffix = UrlPath.substring(UrlPath.lastIndexOf(".") + 1);
@@ -135,12 +153,17 @@ public class AsyncServletFilter implements Filter {
         AsyncContext asyncContext = request.startAsync(request, response);
 
         asyncContext.addListener(new DActorAsyncListener());
-        asyncContext.setTimeout(timeout);
+        if(cfg.getTimeout()>0){
+            asyncContext.setTimeout(cfg.getTimeout());
 
+
+        }else {
+            asyncContext.setTimeout(timeout);
+        }
 
         Message message = defaultResolveMessage.resolveContext(asyncContext, request, response);
 
-        Map params = getUrlmap(UrlPath, cfg, request);
+        Map params = getUrlmap(UrlPath, cfg,matternPattern);
 
         message.getContext().putAll(params);
         message.getContext().put(Constants.METHOD, request.getMethod());
@@ -183,10 +206,10 @@ public class AsyncServletFilter implements Filter {
         /**
          * 找不到交易码，直接输出空白结果
          */
-        transactionId = SpringUtils.getBeanFromTranstionId(this.getApplicationContext(), transactionId);
+        transactionId = ActorUtils.getBeanFromTranstionId(this.getApplicationContext(), transactionId);
         if (transactionId != null) {
 
-            Object bean = SpringUtils.getCacheBean(this.getApplicationContext(), transactionId);
+            Object bean = ActorUtils.getCacheBean(this.getApplicationContext(), transactionId);
             if (bean instanceof ActorTransactionCfg) {
                 if(matchDomain((ActorTransactionCfg) bean,request.getServerName())){
                     return bean;
@@ -197,47 +220,65 @@ public class AsyncServletFilter implements Filter {
 
     }
 
-    private Object UrlPatternHandler(String UrlPath, HttpServletRequest request) {
+    private MatchPair UrlPatternHandler(String UrlPath, HttpServletRequest request) {
         //使用UrlPattern进行查找
-        Map.Entry matchentry = null;
+//        Map.Entry matchentry = null;
         Map mapping = UrlMapping.getMapping();
         String serverName = request.getServerName();
         Comparator comparator= antPathMatcher.getPatternComparator(UrlPath);
-
+        MatchPair pair=null;
         for (java.util.Iterator iter = mapping.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry entry = (Map.Entry) iter.next();
             if (!matchDomain(entry, serverName)) {
                 continue;
             }
-//                if (UrlPath.equals("/") && entry.getKey().equals("/")) {
-//                matchentry = entry;
-//                    break;
-//
-//            }
-
             if (antPathMatcher.match((String) entry.getKey(), UrlPath)) {
-                    if (matchentry == null) {
-                        matchentry = entry;
+                    if (pair == null) {
+                        pair=new MatchPair();
+                        pair.setPattern((String)entry.getKey());
+                        pair.setValue(entry.getValue());
                     } else {
                         //路由优先级
-
-                        int i=comparator.compare(entry.getKey(),matchentry.getKey());
+                        int i=comparator.compare(entry.getKey(),pair.getPattern());
                         if(i<0){
-                            matchentry=entry;
+                            pair=new MatchPair();
+                            pair.setPattern((String)entry.getKey());
+                            pair.setValue(entry.getValue());
                         }
-//                        if (((String) matchentry.getKey()).length() < ((String) entry.getKey()).length()) {
-//                            matchentry = entry;
-//                        }
-
                 }
 
             }
             ;
         }
-        if (matchentry == null) {
+
+        for(java.util.Iterator iter=UrlMapping.getDynamicMapping().entrySet().iterator();iter.hasNext();){
+            Map.Entry entry=(Map.Entry)iter.next();
+            if(!matchDomain((ActorTransactionCfg)entry.getValue(),serverName)){
+                continue;
+            };
+           String[] patterns= ((DyanmicUrlPattern)entry.getKey()).getPatterns();
+            for(int i=0;i<patterns.length;i++){
+                if(antPathMatcher.match(patterns[i], UrlPath)){
+                    if (pair == null) {
+                        pair=new MatchPair();
+                        pair.setPattern(patterns[i]);
+                        pair.setValue(entry.getValue());
+                    }
+                    int j=comparator.compare(patterns[i],pair.getPattern());
+                    if(j<0){
+                        pair=new MatchPair();
+                        pair.setPattern(patterns[i]);
+                        pair.setValue(entry.getValue());
+                    }
+                };
+            }
+
+        }
+
+        if (pair == null) {
             return null;
         }
-        return matchentry.getValue();
+        return pair;
     }
     private boolean matchDomain(Map.Entry  entry, String serverName) {
         if(entry.getValue() instanceof  ActorTransactionCfg) {
@@ -263,16 +304,17 @@ public class AsyncServletFilter implements Filter {
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    public Map getUrlmap(String urlPath, ActorTransactionCfg cfg, HttpServletRequest request) {
-
-        if (cfg.getUrlPattern() == null || cfg.getUrlPattern().trim().equals("")) {
+    public Map getUrlmap(String urlPath, ActorTransactionCfg cfg, String matternPattern) {
+        if(matternPattern!=null){
+            return antPathMatcher.extractUriTemplateVariables(matternPattern, urlPath);
+        }
+        if (cfg.getUrlPattern() == null || cfg.getUrlPattern().length==0) {
             return new HashMap();
         }
-        String[] pattern = cfg.getUrlPattern().split(",");
+        String[] pattern = cfg.getUrlPattern();
         for (int i = 0; i < pattern.length; i++) {
             if (antPathMatcher.match(pattern[i], urlPath)) {
                 return antPathMatcher.extractUriTemplateVariables(pattern[i], urlPath);
-
             }
             ;
         }
@@ -324,7 +366,26 @@ public class AsyncServletFilter implements Filter {
 
 
     }
+    public  class MatchPair{
+        private String pattern;
+        private Object value;
 
+        public String getPattern() {
+            return pattern;
+        }
+
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(Object value) {
+            this.value = value;
+        }
+    }
     @Override
     public void destroy() {
 

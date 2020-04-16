@@ -81,7 +81,8 @@ public class ActorTransactionCfgBeanDefinitionParser extends
         }
 
         if (StringUtils.hasText(element.getAttribute("urlPattern"))) {
-            builder.addPropertyValue("urlPattern", element.getAttribute("urlPattern"));
+            String[] urlpatterns=element.getAttribute("urlPattern").split(",");
+            builder.addPropertyValue("urlPattern",urlpatterns );
 
         }
 
@@ -101,6 +102,9 @@ public class ActorTransactionCfgBeanDefinitionParser extends
         if (StringUtils.hasText(element.getAttribute("parent"))) {
             builder.addPropertyReference("parent", element.getAttribute("parent"));
         }
+
+
+
         ;
         {
             String domain = getDomain(element);
@@ -110,7 +114,9 @@ public class ActorTransactionCfgBeanDefinitionParser extends
             }
         }
 
-
+        if (StringUtils.hasText(element.getAttribute("timeout"))) {
+            builder.addPropertyValue("timeout", element.getAttribute("timeout"));
+        }
 //      Map params=new HashMap();
 
 //		BeanDefinitionHolder hodler=new BeanDefinitionHolder();
@@ -249,6 +255,13 @@ public class ActorTransactionCfgBeanDefinitionParser extends
                 property.put("async", el.getAttribute("async"));
                 property.put("after", el.getAttribute("after"));
 
+                if (StringUtils.hasText(el.getAttribute("data"))) {
+                    property.put("data", el.getAttribute("data"));
+
+                }
+                if (StringUtils.hasText( el.getTextContent())) {
+                    property.put("eval", el.getAttribute("eval"));
+                }
                 if(async){
                     //只返回异步交易
                     if("true".equalsIgnoreCase(el.getAttribute("async"))){

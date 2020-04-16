@@ -11,7 +11,7 @@ import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.message.AsyncMessage;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.message.SpringControlMessage;
-import cn.ymotel.dactor.spring.SpringUtils;
+import cn.ymotel.dactor.ActorUtils;
 import ognl.Ognl;
 import ognl.OgnlContext;
 import org.apache.commons.logging.LogFactory;
@@ -180,7 +180,7 @@ WorkFlowProcess {
         if(beanId.equals(strunc.getActorTransactionCfg().getEndBeanId())){
             strunc.setEndExecute(true);
         }
-        Object bean= SpringUtils.getCacheBean(appcontext,beanId);
+        Object bean= ActorUtils.getCacheBean(appcontext,beanId);
         if (bean instanceof ActorTransactionCfg) {
             AppendCfg2Deque((ActorTransactionCfg) bean, deque);
             downdeque.push(deque.pop());
@@ -220,6 +220,7 @@ WorkFlowProcess {
                 if(logger.isDebugEnabled()) {
                     logger.debug("Condtion---" + condtion);
                 }
+                struncture.setStepMap(tmpMap);
                 return toBeanId;
             }
 
@@ -261,7 +262,7 @@ WorkFlowProcess {
 
     }
     private static void SendAsyncMessage(Message message, ApplicationContext appcontext, String toBeanId) {
-        ActorTransactionCfg cfg = (ActorTransactionCfg) SpringUtils.getCacheBean(appcontext,toBeanId);
+        ActorTransactionCfg cfg = (ActorTransactionCfg) ActorUtils.getCacheBean(appcontext,toBeanId);
         AsyncMessage asyncMessage = new AsyncMessage(message.getContext());
         try {
             message.getControlMessage().getMessageDispatcher().startMessage(asyncMessage, cfg, true);

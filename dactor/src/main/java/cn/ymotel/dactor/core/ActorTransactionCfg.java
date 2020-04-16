@@ -37,6 +37,19 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
      */
     private static final Log logger = LogFactory.getLog(ActorTransactionCfg.class);
 
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
+
+    /**
+     * 超时，毫秒数
+     */
+    private long timeout =-1;
+
 
     private ActorTransactionCfg parent;
 
@@ -128,7 +141,7 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
 
     private String beginBeanId;
     private String endBeanId;
-    private String urlPattern;
+    private String[] urlPattern;
     private Map steps;
 
     /**
@@ -161,11 +174,11 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
     }
 
 
-    public String getUrlPattern() {
+    public String[] getUrlPattern() {
         return urlPattern;
     }
 
-    public void setUrlPattern(String urlPattern) {
+    public void setUrlPattern(String[] urlPattern) {
         this.urlPattern = urlPattern;
     }
 
@@ -225,6 +238,16 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
         this.domain = domain;
     }
 
+    private List dyanmicUrlPatterns=new ArrayList<>();
+
+    public List getDyanmicUrlPatterns() {
+        return dyanmicUrlPatterns;
+    }
+
+    public void setDyanmicUrlPatterns(List dyanmicUrlPatterns) {
+        this.dyanmicUrlPatterns = dyanmicUrlPatterns;
+    }
+
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
@@ -233,6 +256,29 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
         ActorGlobalCfg actorGlobalCfg= applicationContext.getBean(ActorGlobalCfg.class);
         if(actorGlobalCfg!=null){
             this.setGlobal(actorGlobalCfg);
+        }
+        {
+            //去除空字符串
+            List urlPatternList = new ArrayList();
+            if(getUrlPattern()!=null) {
+                for (int i = 0; i < getUrlPattern().length; i++) {
+                    String pattern = getUrlPattern()[i];
+                    if (pattern == null || pattern.trim().equals("")) {
+                        continue;
+                    }
+
+                    urlPatternList.add(pattern.trim());
+                }
+                this.setUrlPattern((String[]) urlPatternList.toArray(new String[0]));
+            }
+        }
+        if(dyanmicUrlPatterns!=null) {
+            for (int i = 0; i < dyanmicUrlPatterns.size(); i++) {
+                Object obj = dyanmicUrlPatterns.get(i);
+                if (obj instanceof DyanmicUrlPattern) {
+                    UrlMapping.addDyanmicMapping(((DyanmicUrlPattern) obj), this);
+                }
+            }
         }
         UrlMapping.addMapping(this.getUrlPattern(),this);
 
@@ -328,7 +374,7 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
                     OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
                     //
                     try {
-                        Node node = (Node) Ognl.compileExpression(context, null, value);
+                        Node node =  Ognl.compileExpression(context, null, value);
                         tmpMap.put("conditon", node);
                         continue;
                     } catch (Exception e) {
@@ -359,44 +405,55 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
 //			rtnMap.putAll(tmpMap);
             for (java.util.Iterator iter = tmpMap.entrySet().iterator(); iter.hasNext(); ) {
                 Map.Entry entry = (Map.Entry) iter.next();
+                Object key=entry.getKey();
                 String value = getOverride(entry.getValue());
 
-                if (!entry.getKey().equals("conditon")) {
-
-                    rtnMap.put(entry.getKey(), value);
-                    continue;
-                }
-                if (value == null || value.trim().equals("")) {
-
-                    rtnMap.put(entry.getKey(), value);
-                    continue;
-                }
-
-
-                if (entry.getKey().equals("conditon")) {
-
-//					Message  root = new HashMap();
-                    OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
-//
-                    try {
-                        Node node = (Node) Ognl.compileExpression(context, null, value);
-                        rtnMap.put(entry.getKey(), node);
-                        continue;
-                    } catch (Exception e) {
-                        if (logger.isTraceEnabled()) {
-                            logger.trace("getOverrideList(List)"); //$NON-NLS-1$
-                        }
-                    }
-
-
-                }
-                rtnMap.put(entry.getKey(), value);
+                initStepMap(rtnMap, key, value);
 
 
             }
             rtnList.add(rtnMap);
         }
         return rtnList;
+    }
+
+    private void initStepMap(Map rtnMap, Object key, String value) {
+
+        if (value == null || value.trim().equals("")) {
+
+            rtnMap.put(key, value);
+            return;
+        }
+
+
+        if (key.equals("conditon")) {
+
+            OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
+
+            try {
+                Node node =  Ognl.compileExpression(context, null, value);
+                rtnMap.put(key, node);
+                return;
+            } catch (Exception e) {
+
+            }
+
+        }
+        if (key.equals("eval")) {
+
+
+                OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
+                try {
+                    Node node = Ognl.compileExpression(context, null, value);
+                    rtnMap.put(key, node);
+                    return;
+                } catch (Exception e) {
+
+                }
+
+
+        }
+        rtnMap.put(key, value);
     }
 
     @Override

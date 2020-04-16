@@ -13,7 +13,7 @@ import cn.ymotel.dactor.core.UrlMapping;
 import cn.ymotel.dactor.core.disruptor.MessageRingBufferDispatcher;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
 import cn.ymotel.dactor.message.Message;
-import cn.ymotel.dactor.spring.SpringUtils;
+import cn.ymotel.dactor.ActorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.AntPathMatcher;
@@ -70,7 +70,7 @@ public class AsyncServlet extends FrameworkServlet {
          * Fmt:message可以直接访问MessageSource对应的属性
          */
 
-        org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource)SpringUtils.getCacheBean(this.getWebApplicationContext(),messageSourceId);
+        org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource) ActorUtils.getCacheBean(this.getWebApplicationContext(),messageSourceId);
         JstlUtils.exposeLocalizationContext(request, messageSource);
 
         String UrlPath = urlPathHelper.getLookupPathForRequest(request);
@@ -139,9 +139,9 @@ public class AsyncServlet extends FrameworkServlet {
         /**
          * 找不到交易码，直接输出空白结果
          */
-        transactionId=SpringUtils.getBeanFromTranstionId(this.getWebApplicationContext(),transactionId);
+        transactionId= ActorUtils.getBeanFromTranstionId(this.getWebApplicationContext(),transactionId);
         if(transactionId!=null){
-            return  SpringUtils.getCacheBean(this.getWebApplicationContext(),transactionId);
+            return  ActorUtils.getCacheBean(this.getWebApplicationContext(),transactionId);
          }
         //使用UrlPattern进行查找
         Map.Entry matchentry=null;
@@ -175,10 +175,10 @@ public class AsyncServlet extends FrameworkServlet {
     private AntPathMatcher antPathMatcher=new AntPathMatcher();
     public Map getUrlmap(String urlPath, ActorTransactionCfg cfg, HttpServletRequest request) {
 
-        if (cfg.getUrlPattern() == null||cfg.getUrlPattern().trim().equals("")) {
+        if (cfg.getUrlPattern() == null||cfg.getUrlPattern().length==0) {
             return new HashMap();
         }
-        String[] pattern=cfg.getUrlPattern().split(",");
+        String[] pattern=cfg.getUrlPattern();
         for(int i=0;i<pattern.length;i++) {
             if(antPathMatcher.match(pattern[i],urlPath)){
                 return antPathMatcher.extractUriTemplateVariables(pattern[i], urlPath);
@@ -336,7 +336,7 @@ public class AsyncServlet extends FrameworkServlet {
         urlPathHelper.setAlwaysUseFullPath(true);
 
 
-        defaultResolveMessage = (DefaultResolveMessage)SpringUtils.getCacheBean(this.getWebApplicationContext(),"DefaultResolveMessage") ;
+        defaultResolveMessage = (DefaultResolveMessage) ActorUtils.getCacheBean(this.getWebApplicationContext(),"DefaultResolveMessage") ;
     }
 
 }

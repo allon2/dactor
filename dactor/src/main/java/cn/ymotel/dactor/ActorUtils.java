@@ -1,11 +1,12 @@
-package cn.ymotel.dactor.spring;
+package cn.ymotel.dactor;
 
+import cn.ymotel.dactor.message.Message;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpringUtils {
+public class ActorUtils {
     private static java.util.concurrent.ConcurrentHashMap cachedBean=new java.util.concurrent.ConcurrentHashMap();
 
     /**
@@ -58,6 +59,13 @@ public class SpringUtils {
             }
         }
 
+    }
+    public static String getDataKey(Message message,String defaultKey){
+        Map stempMap= message.getControlMessage().getProcessStructure().getStepMap();
+        if(stempMap==null||stempMap.get("data")==null){
+            return defaultKey;
+        }
+        return (String)stempMap.get("data");
     }
 
 }

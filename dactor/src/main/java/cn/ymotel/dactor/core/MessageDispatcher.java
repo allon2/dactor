@@ -21,6 +21,8 @@ import cn.ymotel.dactor.message.Message;
  * @since 1.0
  */
 public interface MessageDispatcher {
+    public boolean sendMessage(Message message,Object data);
+
     public boolean sendMessage(Message message);
 
     /**

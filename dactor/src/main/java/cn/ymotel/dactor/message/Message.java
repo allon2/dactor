@@ -6,6 +6,7 @@
  */
 package cn.ymotel.dactor.message;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,15 @@ import java.util.Map;
  * @since 1.0
  */
 public interface Message {
+    /**
+     * 在Message准备执行时注入，在Message执行完毕后，清空
+     * @return
+     */
+    public Map getAttributes() ;
+
+    public <T> T  getAttribute(Object key);
+
+    public <T> T getAttribute(Object key,T defaultValue) ;
 
     /**
      * 得到Message放入队列中的时间,用于判断整个交易是否处理超时,在将Message放入Actor之前判断
@@ -55,6 +65,7 @@ public interface Message {
     public Map getContext();
 
     public <T> T getContextData(Object obj);
+    public <T> T getContextData(Object obj,T defaultValue);
 
     /**
      * @return 得到忽略大小写的Map

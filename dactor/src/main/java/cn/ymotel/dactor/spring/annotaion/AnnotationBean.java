@@ -47,7 +47,7 @@ public class AnnotationBean implements ApplicationContextAware, InitializingBean
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ActorTransactionCfg.class);
 
          builder.addPropertyValue("beginBeanId", beanid);
-         if(StringUtils.hasText(actorCfg.urlPatterns())) {
+        if(actorCfg.urlPatterns()==null&&actorCfg.urlPatterns().length!=0) {
              builder.addPropertyValue("urlPattern", actorCfg.urlPatterns());
          }
         if(StringUtils.hasText(actorCfg.chain())) {
@@ -69,6 +69,12 @@ public class AnnotationBean implements ApplicationContextAware, InitializingBean
 
         builder.addPropertyValue("domain", actorCfg.domain());
 
+        if(actorCfg.data()!=null) {
+            builder.addPropertyValue("data", actorCfg.data());
+        }
+        if(actorCfg.eval()!=null) {
+            builder.addPropertyValue("eval", actorCfg.eval());
+        }
         builder.setLazyInit(false);
 //        System.out.println("in annotaton");
         parserContext.getRegistry().registerBeanDefinition(cfgid, builder.getRawBeanDefinition());

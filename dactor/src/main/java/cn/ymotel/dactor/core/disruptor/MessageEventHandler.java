@@ -7,17 +7,22 @@
 package cn.ymotel.dactor.core.disruptor;
 
 import cn.ymotel.dactor.action.Actor;
+import cn.ymotel.dactor.action.Component;
 import cn.ymotel.dactor.core.MessageThreadLocal;
 import cn.ymotel.dactor.message.Message;
-import cn.ymotel.dactor.spring.SpringUtils;
+import cn.ymotel.dactor.ActorUtils;
 import cn.ymotel.dactor.workflow.ActorProcessStructure;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.LifecycleAware;
 import com.lmax.disruptor.WorkHandler;
+import ognl.Ognl;
+import ognl.OgnlContext;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.util.Map;
 
 /**
  * {type specification, must edit}
@@ -109,6 +114,29 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
         try {
             MessageThreadLocal.putMessage(message);
 
+            Map stempMap= struc.getStepMap();
+
+
+
+            if(stempMap==null||stempMap.get("eval")==null||stempMap.get("eval").toString().equals("")){
+
+            }else{
+                ognl.Node node = (ognl.Node) stempMap.get("eval");
+                OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
+                Object obj=node.getAccessor().get(context, message);
+                if(obj==null){
+
+
+
+                }else if(obj instanceof Map){
+
+                    message.getAttributes().clear();
+                    message.getAttributes().putAll((Map)obj);
+                }
+            }
+
+
+
             Object obj = actor.HandleMessage(message);
             if (struc.getActorTransactionCfg().getBeginBeanId().equals(struc.getFromBeanId())) {
                 struc.setBeginExecute(true);
@@ -152,7 +180,34 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
 
 
     }
+    private void fillAttribute(Message message,ActorProcessStructure struc,Actor actor){
+        Map stempMap= struc.getStepMap();
+        message.getAttributes().clear();
+        if(actor instanceof  Component){
+        }else{
+            message.getAttributes().putAll(message.getContext());
+        }
 
+        if(stempMap==null||stempMap.get("eval")==null||stempMap.get("eval").toString().equals("")) {
+
+            return ;
+        }
+        ognl.Node node = (ognl.Node) stempMap.get("eval");
+        OgnlContext context = (OgnlContext) Ognl.createDefaultContext(null);
+        Object obj=node.getAccessor().get(context, message);
+
+        if(obj==null){
+
+
+
+        }else if(obj instanceof Map){
+
+            message.getAttributes().putAll((Map)obj);
+        }
+
+
+
+    }
 
     /* (non-Javadoc)
      * @see com.lmax.disruptor.WorkHandler#onEvent(java.lang.Object)
@@ -171,7 +226,7 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
         if (struc.getFromBeanId() == null || struc.getFromBeanId().trim().equals("")) {
             return;
         }
-                Actor actor = (Actor) SpringUtils.getCacheBean(appcontext,struc.getFromBeanId());
+                Actor actor = (Actor) ActorUtils.getCacheBean(appcontext,struc.getFromBeanId());
 
         handleEvent(struc, message,actor);
 

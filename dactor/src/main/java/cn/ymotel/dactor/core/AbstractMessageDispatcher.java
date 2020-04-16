@@ -6,6 +6,8 @@
  */
 package cn.ymotel.dactor.core;
 
+import cn.ymotel.dactor.ActorUtils;
+import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.message.ControlMessage;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.message.SpringControlMessage;
@@ -40,6 +42,13 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Ap
             throws BeansException {
         this.appcontext = applicationContext;
 
+    }
+
+    @Override
+    public boolean sendMessage(Message message, Object data) {
+       String key= ActorUtils.getDataKey(message, Constants.CONTENT);
+        message.getContext().put(key,data);
+        return sendMessage(message);
     }
 
     public ApplicationContext getApplicationContext() {
@@ -114,6 +123,8 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Ap
         cMsg.init(actorcfg, chain);
 
         message.setControlMessage(cMsg);
+
+
       return  putMessageInDispatcher(message, blocked);
 
 

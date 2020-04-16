@@ -23,12 +23,15 @@ public class DActorAsyncListener implements AsyncListener {
 
     @Override
     public void onError(AsyncEvent asyncEvent) throws IOException {
-//        System.out.println("on Error"+asyncEvent);
-        if (logger.isTraceEnabled()) {
-            logger.trace("onError(AsyncEvent) - onError----" + asyncEvent.getSuppliedRequest().getParameterMap()); //$NON-NLS-1$
+
+        HttpServletResponse response = null;
+        try {
+            asyncEvent.getThrowable().printStackTrace();
+            response = (HttpServletResponse)asyncEvent.getSuppliedResponse();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        HttpServletResponse response =(HttpServletResponse) asyncEvent.getAsyncContext().getResponse();
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //        asyncEvent.getAsyncContext().complete();
 //        ((HttpServletResponse) asyncContext.getResponse()).sendError(errorcode);
 //        PrintWriter out = response.getWriter();
@@ -47,12 +50,8 @@ public class DActorAsyncListener implements AsyncListener {
     @Override
     public void onTimeout(AsyncEvent asyncEvent) throws IOException {
 
-        if (logger.isTraceEnabled()) {
-            logger.trace("onTimeout(AsyncEvent) - timeout----" + asyncEvent.getSuppliedRequest().getParameterMap()); //$NON-NLS-1$
-        }
-//        System.out.println("on TimeOut"+asyncEvent);
 
-        HttpServletResponse response =(HttpServletResponse) asyncEvent.getAsyncContext().getResponse();
+        HttpServletResponse response =(HttpServletResponse)asyncEvent.getSuppliedResponse();;
         response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT);
 //        asyncEvent.getAsyncContext().complete();
 
