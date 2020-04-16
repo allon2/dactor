@@ -2,6 +2,7 @@ package cn.ymotel.dactor;
 
 import cn.ymotel.dactor.async.web.AsyncServletFilter;
 import cn.ymotel.dactor.spring.annotaion.EnableAnnotation;
+import cn.ymotel.dactor.spring.annotaion.StaticResource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 //@ImportResource({"classpath*:/conf/**/*.xml"})
 @SpringBootApplication
 //@EnableAnnotation
+@StaticResource({"/static"})
 public class SpringBootStartUpApplication {
 
 	public static void main(String[] args) {
