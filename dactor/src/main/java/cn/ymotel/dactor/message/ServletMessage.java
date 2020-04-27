@@ -6,8 +6,17 @@
  */
 package cn.ymotel.dactor.message;
 
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -80,5 +89,30 @@ public class ServletMessage extends DefaultMessage {
     @Override
     public void setUser(Object user) {
         request.getSession(true).setAttribute("_USER", user);
+    }
+
+    public byte[] getFileBytes(String fileName) throws IOException {
+        MultipartFile file= ((MultipartHttpServletRequest)AsyncContext.getRequest()).getFile(fileName);
+        return file.getBytes();
+    }
+    public List getFileNames(){
+        List ls=new ArrayList();
+        Iterator<String> iterator= ((MultipartHttpServletRequest)AsyncContext.getRequest()).getFileNames();
+        for(;iterator.hasNext();){
+           ls.add(iterator.next());
+        }
+        return ls;
+    }
+    public List<MultipartFile> getFiles(String name){
+        return ((MultipartHttpServletRequest)AsyncContext.getRequest()).getFiles(name);
+    }
+    public MultipartFile getFile(String name){
+        return ((MultipartHttpServletRequest)AsyncContext.getRequest()).getFile(name);
+    }
+
+
+    public InputStream getFileStream(String fileName) throws IOException {
+        MultipartFile file= ((MultipartHttpServletRequest)AsyncContext.getRequest()).getFile(fileName);
+        return file.getInputStream();
     }
 }

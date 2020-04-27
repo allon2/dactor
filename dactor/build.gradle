@@ -1,7 +1,7 @@
 
 buildscript {
 //    ext {
-//        springBootVersion = '2.2.4.RELEASE'
+//        springBootVersion = '2.2.6.RELEASE'
 //    }
     repositories {
         jcenter()
@@ -37,6 +37,24 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 
 }
+tasks.withType(Javadoc) { //兼容中文
+
+    options.addStringOption('Xdoclint:none','-quiet')
+
+    options.addStringOption('encoding','UTF-8')
+
+    options{
+
+       encoding"UTF-8"
+
+        charSet'UTF-8'
+
+        links"http://docs.oracle.com/javase/7/docs/api"
+
+      }
+
+}
+
 javadoc {
     options.encoding = 'UTF-8'
     options.addStringOption("charset", "UTF-8")
@@ -91,4 +109,4 @@ dependencies {
 //    compileOnly 'org.springframework.boot:spring-boot-autoconfigure'
 
 }
-//apply from: 'bintray.gradle'
+apply from: 'bintray.gradle'

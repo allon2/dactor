@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,7 +98,11 @@ public AsyncServletFilter asyncServletFilter() {
         view.setContentType(contenttype);
         return view;
      }
-
+//    @Bean(name="multipartResolver")
+//    @ConditionalOnMissingBean(name="multipartResolver")
+//    public StandardServletMultipartResolver createStandardServletMultipartResolver(){
+//        return new StandardServletMultipartResolver();
+//    }
     @Override
     public void afterPropertiesSet() throws Exception {
         if(transportResponseViewActor==null){

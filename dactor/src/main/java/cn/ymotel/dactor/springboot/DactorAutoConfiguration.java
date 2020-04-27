@@ -50,22 +50,22 @@ public class DactorAutoConfiguration {
     }
 
     @Bean(name="beginActor")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="beginActor")
     public BeginActor getBeginActor(){
         return new BeginActor();
     }
     @Bean(name="FinishActor")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "FinishActor")
     public FinishActor getFinishActor(){
         return new FinishActor();
     }
     @Bean(name="endActor")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="endActor")
     public EndActor getEndActor(){
         return new EndActor();
     }
     @Bean(name="placeholderActor")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="placeholderActor")
     public PlaceholderActor getPlaceholderActor(){
         return new PlaceholderActor();
     }

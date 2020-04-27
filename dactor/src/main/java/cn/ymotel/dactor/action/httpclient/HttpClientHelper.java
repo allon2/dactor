@@ -13,8 +13,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.*;
 import org.apache.http.cookie.*;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.*;
@@ -35,6 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 
 
 /**
@@ -191,10 +191,25 @@ public class HttpClientHelper implements InitializingBean {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setCookieSpec("easy")
                 .build();
+
+//        TrustStrategy acceptingTrustStrategy = new TrustStrategy() {
+//            public boolean isTrusted(X509Certificate[] certificate, String authType) {
+//                return true;
+//            }
+//        };
+//
+//        SSLContext sslContext = null;
+//        try {
+//            sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
+//        } catch (Exception e) {
+//            // Handle error
+//        }
         HttpAsyncClientBuilder builder = HttpAsyncClients.custom()
                 .setDefaultCookieStore(cookieStore)
                 .setDefaultCookieSpecRegistry(r)
                 .setDefaultRequestConfig(requestConfig)
+                .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+//                .setSSLContext(sslContext)
                 .setConnectionManager(cm).setSSLStrategy(SSLIOSessionStrategy.getDefaultStrategy());
 
 

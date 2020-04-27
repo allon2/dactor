@@ -2,15 +2,25 @@ package cn.ymotel.dactor.async.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartResolver;
 
 import javax.servlet.AsyncEvent;
 import javax.servlet.AsyncListener;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 public class DActorAsyncListener implements AsyncListener {
+    private MultipartResolver multipartResolver;
+    public DActorAsyncListener() {
+    }
+    public DActorAsyncListener(MultipartResolver multipartResolver) {
+        this.multipartResolver = multipartResolver;
+    }
+
     /**
      * Logger for this class
      */
@@ -18,11 +28,20 @@ public class DActorAsyncListener implements AsyncListener {
 
     @Override
     public void onComplete(AsyncEvent asyncEvent) throws IOException {
-
+        clean((HttpServletRequest) asyncEvent.getAsyncContext().getRequest());
     }
+    private void clean(HttpServletRequest processedRequest){
+        if(multipartResolver==null){
+            return ;
+        }
+        if (processedRequest instanceof MultipartHttpServletRequest) {
 
+            multipartResolver.cleanupMultipart((MultipartHttpServletRequest) processedRequest);
+        }
+    }
     @Override
     public void onError(AsyncEvent asyncEvent) throws IOException {
+        clean((HttpServletRequest) asyncEvent.getAsyncContext().getRequest());
 
         HttpServletResponse response = null;
         try {
@@ -49,7 +68,7 @@ public class DActorAsyncListener implements AsyncListener {
 
     @Override
     public void onTimeout(AsyncEvent asyncEvent) throws IOException {
-
+        clean((HttpServletRequest) asyncEvent.getAsyncContext().getRequest());
 
         HttpServletResponse response =(HttpServletResponse)asyncEvent.getSuppliedResponse();;
         response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT);

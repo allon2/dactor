@@ -26,7 +26,7 @@ import java.util.Map;
 public interface Message {
     /**
      * 在Message准备执行时注入，在Message执行完毕后，清空
-     * @return
+     * @return 返回属性
      */
     public Map getAttributes() ;
 

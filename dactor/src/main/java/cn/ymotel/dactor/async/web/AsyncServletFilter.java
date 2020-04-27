@@ -14,6 +14,8 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.support.JstlUtils;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -34,6 +36,7 @@ import static cn.ymotel.dactor.core.UrlMapping.getDynamicMapping;
 public class AsyncServletFilter implements Filter {
     private static final Log logger = LogFactory.getLog(AsyncServletFilter.class);
     private WebApplicationContext applicationContext;
+    private final MultipartResolver defaultMultipartResolver = new StandardServletMultipartResolver();
 
     public WebApplicationContext getApplicationContext() {
         return applicationContext;
@@ -42,8 +45,52 @@ public class AsyncServletFilter implements Filter {
     public void setApplicationContext(WebApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
+    private ServletContext servletContext;
+    public static final String DEFAULT_MULTIPART_RESOLVER_BEAN_NAME = "filterMultipartResolver";
+    private String multipartResolverBeanName = DEFAULT_MULTIPART_RESOLVER_BEAN_NAME;
 
-    private long timeout = 1000l * 60 * 15;
+    /**
+     * Set the bean name of the MultipartResolver to fetch from Spring's
+     * root application context. Default is "filterMultipartResolver".
+     */
+    public void setMultipartResolverBeanName(String multipartResolverBeanName) {
+        this.multipartResolverBeanName = multipartResolverBeanName;
+    }
+
+    /**
+     * Return the bean name of the MultipartResolver to fetch from Spring's
+     * root application context.
+     */
+    protected String getMultipartResolverBeanName() {
+        return this.multipartResolverBeanName;
+    }
+    protected ServletContext getServletContext() {
+
+          if (this.servletContext != null) {
+            return this.servletContext;
+        }
+        else {
+            throw new IllegalStateException("No ServletContext");
+        }
+    }
+    protected MultipartResolver lookupMultipartResolver() {
+        WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+        String beanName = getMultipartResolverBeanName();
+        if (wac != null && wac.containsBean(beanName)) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Using MultipartResolver '" + beanName + "' for MultipartFilter");
+            }
+            return wac.getBean(beanName, MultipartResolver.class);
+        }
+        else {
+            return this.defaultMultipartResolver;
+        }
+    }
+
+    /**
+     * 毫秒数,默认30秒
+     */
+    private long timeout =30000 ;
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
     private DefaultResolveMessage defaultResolveMessage = null;
     public static String messageSourceId = "messageSource";
@@ -56,6 +103,7 @@ public class AsyncServletFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         init(filterConfig.getServletContext(), filterConfig.getInitParameter("errcode"));
+        antPathMatcher.setCaseSensitive(false);
     }
 
     public void init(ServletContext servletContext, String errcode) {
@@ -75,6 +123,7 @@ public class AsyncServletFilter implements Filter {
         if (defaultResolveMessage == null) {
             defaultResolveMessage = new DefaultResolveMessage();
         }
+        this.servletContext=servletContext;
     }
 
     @Override
@@ -145,6 +194,14 @@ public class AsyncServletFilter implements Filter {
     }
 
     public void HandleAsyncContext(HttpServletRequest request, HttpServletResponse response, ActorTransactionCfg cfg, String UrlPath,String matternPattern) throws IOException {
+
+        MultipartResolver multipartResolver = lookupMultipartResolver();
+        if (multipartResolver.isMultipart(request)) {
+            request = multipartResolver.resolveMultipart(request);
+        }
+
+
+
         String suffix = null;
         if (UrlPath.lastIndexOf(".") >= 0) {
             suffix = UrlPath.substring(UrlPath.lastIndexOf(".") + 1);
@@ -152,7 +209,7 @@ public class AsyncServletFilter implements Filter {
 
         AsyncContext asyncContext = request.startAsync(request, response);
 
-        asyncContext.addListener(new DActorAsyncListener());
+        asyncContext.addListener(new DActorAsyncListener(multipartResolver));
         if(cfg.getTimeout()>0){
             asyncContext.setTimeout(cfg.getTimeout());
 
@@ -160,6 +217,7 @@ public class AsyncServletFilter implements Filter {
         }else {
             asyncContext.setTimeout(timeout);
         }
+
 
         Message message = defaultResolveMessage.resolveContext(asyncContext, request, response);
 
@@ -303,6 +361,7 @@ public class AsyncServletFilter implements Filter {
     }
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
+
 
     public Map getUrlmap(String urlPath, ActorTransactionCfg cfg, String matternPattern) {
         if(matternPattern!=null){

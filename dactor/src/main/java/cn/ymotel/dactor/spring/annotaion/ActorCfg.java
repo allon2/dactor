@@ -25,6 +25,11 @@ public @interface ActorCfg {
     String  domain() default "";
     String  data()  default "";
     String eval() default "";
+
+    /**
+     *
+     * @return 毫秒数 ，默认时间30s
+     */
     long timeout() default  -1;
     Class<? extends DyanmicUrlPattern>[] urlPatternClass() default {};
 }
