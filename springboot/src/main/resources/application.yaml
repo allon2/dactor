@@ -1,0 +1,16 @@
+server:
+  port: 8089
+spring:
+  cloud:
+    consul:
+      discovery:
+        service-name: frac
+        health-check-path: /health
+  application:
+    name: frac
+#日志
+logging:
+  level:
+
+    root: info
+#  path: ./logs
