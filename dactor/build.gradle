@@ -92,7 +92,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.5.RELEASE'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '3.0.3', ext: 'pom'
-    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.28'
+    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
     compile group: 'org.springframework', name: 'spring-websocket', version:'5.2.5.RELEASE'
     compile group: 'org.apache.commons', name: 'commons-csv', version: '1.8'
     compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
