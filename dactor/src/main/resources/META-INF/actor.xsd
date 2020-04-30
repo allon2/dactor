@@ -77,9 +77,11 @@
             <xs:attribute name="beginBeanId" type="xs:string"/>
             <xs:attribute name="endBeanId" type="xs:string"/>
             <xs:attribute name="urlPattern" type="xs:string"/>
+            <xs:attribute name="excludeUrlPattern" type="xs:string" />
             <xs:attribute name="handleException" type="xs:string"/>
-            <xs:attribute name="domain" type="xs:string"/>
+            <xs:attribute name="domains" type="xs:string"/>
             <xs:attribute name="timeout" type="xs:string"/>
+            <xs:attribute name="methods" type="xs:string"/>
 
         </xs:complexType>
     </xs:element>

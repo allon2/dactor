@@ -31,7 +31,7 @@ public interface Actor<T extends  Message> {
      * @return 返回NuLL值，会一直等待异步返回，并做处理
      * @throws Exception
      */
-    default  public Object HandleMessage(T message) throws java.lang.Throwable{
+    default  public <E> E  HandleMessage(T message) throws java.lang.Throwable{
         try {
             Object obj = Execute(message);
             if (obj != null) {
@@ -43,15 +43,14 @@ public interface Actor<T extends  Message> {
 
             message.setException(e);
         }
-        return message;
+        return (E) message;
     };
 
 
 
-    default  public Object Execute(T message) throws java.lang.Throwable{
+    default  public <E> E  Execute(T message) throws java.lang.Throwable{
         return null;
     }
-
 
 
 }

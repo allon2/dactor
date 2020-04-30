@@ -102,6 +102,7 @@ dependencies {
     compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
     testCompile group: 'org.springframework', name: 'spring-test', version: '5.2.5.RELEASE'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compileOnly group: 'com.google.code.findbugs', name: 'annotations', version: '3.0.1'
 
     compileOnly group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.2.5.RELEASE'
 //    compileOnly group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.2.5.RELEASE'

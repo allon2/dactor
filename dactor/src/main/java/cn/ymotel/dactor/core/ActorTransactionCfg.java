@@ -6,6 +6,7 @@
  */
 package cn.ymotel.dactor.core;
 
+import cn.ymotel.dactor.pattern.PatternMatcher;
 import javafx.application.Application;
 import ognl.Node;
 import ognl.Ognl;
@@ -173,6 +174,15 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
         this.endBeanId = endBeanId;
     }
 
+    private  String[] excludeUrlPattern;
+
+    public String[] getExcludeUrlPattern() {
+        return excludeUrlPattern;
+    }
+
+    public void setExcludeUrlPattern(String[] excludeUrlPattern) {
+        this.excludeUrlPattern = excludeUrlPattern;
+    }
 
     public String[] getUrlPattern() {
         return urlPattern;
@@ -224,18 +234,27 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
     public void setAsyncSteps(Map asyncSteps) {
         this.asyncSteps = asyncSteps;
     }
+    private String[] methods;
+
+    public String[] getMethods() {
+        return methods;
+    }
+
+    public void setMethods(String[] methods) {
+        this.methods = methods;
+    }
 
     /**
      * 域名，用来解决多域名，相同路径，但处理代码不同的情况
      */
-    private String domain=null;
+    private String[] domains=null;
 
-    public String getDomain() {
-        return domain;
+    public String[] getDomains() {
+        return domains;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public void setDomains(String[] domains) {
+        this.domains = domains;
     }
 
     private List dyanmicUrlPatterns=new ArrayList<>();
@@ -257,22 +276,37 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
         if(actorGlobalCfg!=null){
             this.setGlobal(actorGlobalCfg);
         }
-        {
-            //去除空字符串
-            List urlPatternList = new ArrayList();
-            if(getUrlPattern()!=null) {
-                for (int i = 0; i < getUrlPattern().length; i++) {
-                    String pattern = getUrlPattern()[i];
-                    if (pattern == null || pattern.trim().equals("")) {
-                        continue;
-                    }
 
-                    urlPatternList.add(pattern.trim());
-                }
-                this.setUrlPattern((String[]) urlPatternList.toArray(new String[0]));
-            }
-            UrlMapping.addMapping(this.getUrlPattern(),this);
-        }
+        UrlMapping.addPatternMapping(getUrlPattern(),getExcludeUrlPattern(),methods,domains,this);
+//        {
+//            //去除空字符串
+//            List urlPatternList = new ArrayList();
+//            if(getUrlPattern()!=null) {
+//                for (int i = 0; i < getUrlPattern().length; i++) {
+//                    String pattern = getUrlPattern()[i];
+//                    if (pattern == null || pattern.trim().equals("")) {
+//                        continue;
+//                    }
+//
+//                    urlPatternList.add(pattern.trim());
+//                }
+//                this.setUrlPattern((String[]) urlPatternList.toArray(new String[0]));
+//            }
+//            List excludeUrlPatternList=new ArrayList();
+//            if(getExcludeUrlPattern()!=null){
+//                for(int i=0;i<getExcludeUrlPattern().length;i++){
+//                    String pattern=getExcludeUrlPattern()[i];
+//                    if(pattern==null||pattern.trim().equals("")){
+//                        continue;
+//                    }
+//                    excludeUrlPatternList.add(pattern);
+//                }
+//            }
+////            PatternMatcher matcher=new PatternMatcher(urlPatternList,excludeUrlPatternList,this);
+////            UrlMapping.addMapping(matcher,this);
+//
+////            UrlMapping.addMapping(this.getUrlPattern(),this);
+//        }
         if(dyanmicUrlPatterns!=null) {
             for (int i = 0; i < dyanmicUrlPatterns.size(); i++) {
                 Object obj = dyanmicUrlPatterns.get(i);

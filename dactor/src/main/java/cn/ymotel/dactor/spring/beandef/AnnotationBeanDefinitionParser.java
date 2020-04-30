@@ -6,7 +6,6 @@ package cn.ymotel.dactor.spring.beandef;
 import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.spring.annotaion.ActorCfg;
 import cn.ymotel.dactor.spring.annotaion.ActorCfgBeanFactoryPostProcessor;
-import cn.ymotel.dactor.spring.annotaion.AnnotationBean;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;

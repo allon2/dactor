@@ -200,8 +200,8 @@ public class DefaultMessage implements Message {
     }
 
     private Object user;
-    public Object getUser(){
-        return user;
+    public <T> T getUser(){
+        return (T)user;
     };
     public void setUser(Object user){
         this.user=user;

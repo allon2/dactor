@@ -22,6 +22,31 @@ import cn.ymotel.dactor.message.Message;
  * @since 1.0
  */
 public abstract class AbstractView implements HttpView {
+
+    protected String urlSuffix;
+    protected  String viewName;
+
+    @Override
+    public String getViewName() {
+        return viewName;
+    }
+//    @Override
+    public void setViewName(String viewName) {
+        this.viewName = viewName;
+    }
+
+    @Override
+    public String getUrlSuffix() {
+        return urlSuffix;
+    }
+
+//    @Override
+    public void setUrlSuffix(String urlSuffix) {
+        this.urlSuffix = urlSuffix;
+    }
+
+
+
     private String ContentType = null;
 
     /**

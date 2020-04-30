@@ -28,6 +28,8 @@ import java.io.*;
  * @since 1.0
  */
 public class StreamView extends AbstractView {
+
+
     /**
      * Logger for this class
      */

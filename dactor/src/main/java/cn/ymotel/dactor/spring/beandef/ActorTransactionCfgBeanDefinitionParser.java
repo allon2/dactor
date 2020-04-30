@@ -85,6 +85,10 @@ public class ActorTransactionCfgBeanDefinitionParser extends
             builder.addPropertyValue("urlPattern",urlpatterns );
 
         }
+        if (StringUtils.hasText(element.getAttribute("excludeUrlPattern"))) {
+            String[] urlpatterns=element.getAttribute("excludeUrlPattern").split(",");
+            builder.addPropertyValue("excludeUrlPattern",urlpatterns );
+        }
 
         if (StringUtils.hasText(element.getAttribute("handleException"))) {
             builder.addPropertyValue("handleException", element.getAttribute("handleException"));
@@ -103,16 +107,15 @@ public class ActorTransactionCfgBeanDefinitionParser extends
             builder.addPropertyReference("parent", element.getAttribute("parent"));
         }
 
-
-
-        ;
-        {
-            String domain = getDomain(element);
-            if (StringUtils.hasText(domain)) {
-                builder.addPropertyReference("domain", domain);
-
-            }
+        if (StringUtils.hasText(element.getAttribute("domains"))) {
+            String[] urlpatterns=element.getAttribute("domains").split(",");
+            builder.addPropertyValue("domains",urlpatterns );
         }
+        if (StringUtils.hasText(element.getAttribute("methods"))) {
+            String[] urlpatterns=element.getAttribute("methods").split(",");
+            builder.addPropertyValue("methods",urlpatterns );
+        }
+
 
         if (StringUtils.hasText(element.getAttribute("timeout"))) {
             builder.addPropertyValue("timeout", element.getAttribute("timeout"));
@@ -145,8 +148,8 @@ public class ActorTransactionCfgBeanDefinitionParser extends
             }
             if (parserContext.getDelegate().getLocalName(node).equals(results)) {
                 Element el = (Element) node;
-                Map ls = getResults(el, parserContext);
-                builder.addPropertyValue("results", ls);
+                Map views = getResults(el, parserContext);
+                builder.addPropertyValue("results", views);
             }
 
             if (parserContext.getDelegate().getLocalName(node).equals("overrides")) {

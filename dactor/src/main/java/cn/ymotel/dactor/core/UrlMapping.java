@@ -1,11 +1,13 @@
 package cn.ymotel.dactor.core;
 
 import cn.ymotel.dactor.async.web.StaticResourceRequestHandler;
+import cn.ymotel.dactor.pattern.PatternMatcher;
 
 import java.util.Map;
 
 public class UrlMapping {
     private static java.util.Map<String,Object> Urlmapping =new java.util.concurrent.ConcurrentHashMap<>();
+    private static java.util.Map<PatternMatcher,ActorTransactionCfg> Patternmapping =new java.util.concurrent.ConcurrentHashMap<>();
     private static java.util.Map<DyanmicUrlPattern,ActorTransactionCfg> DyanmicUrlmapping =new java.util.concurrent.ConcurrentHashMap<>();
 
 //    static{
@@ -19,17 +21,27 @@ public class UrlMapping {
     }
         DyanmicUrlmapping.put(urlpattern,cfg);
     }
-
-    public static void addMapping(String[] urlpattern ,ActorTransactionCfg cfg){
+    public static void addPatternMapping(String[] includes,String[] excludes,ActorTransactionCfg bean){
+        PatternMatcher matcher=new PatternMatcher(includes,excludes,bean);
+        Patternmapping.put(matcher,bean);
+    }
+    public static void addPatternMapping(String[] includes,String[] excludes,String[] methods,String[] serverNames,ActorTransactionCfg bean){
+        PatternMatcher matcher=new PatternMatcher(includes,excludes,methods,serverNames,bean);
+        Patternmapping.put(matcher,bean);
+    }
+    public static Map<PatternMatcher,ActorTransactionCfg> getPatternMapping(){
+            return Patternmapping;
+    }
+    public static void addMapping(String[] urlpattern , ActorTransactionCfg cfg){
         if(urlpattern==null||urlpattern.length==0){
             return ;
         }
 //        System.out.println("add Mapping---"+urlpattern);
-        for(int i=0;i<urlpattern.length;i++){
-            if(urlpattern[i]==null||urlpattern[i].trim().equals("")){
+        for(int i=0;i<urlpattern.length;i++) {
+            if (urlpattern[i] == null || urlpattern[i].trim().equals("")) {
                 continue;
             }
-            Urlmapping.put(urlpattern[i].trim(),cfg);
+//            Urlmapping.put(matcher,cfg);
 
         }
     }

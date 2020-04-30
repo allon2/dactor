@@ -8,8 +8,12 @@ import cn.ymotel.dactor.core.UrlMapping;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.ActorUtils;
+import cn.ymotel.dactor.pattern.MatchPair;
+import cn.ymotel.dactor.pattern.PatternLookUpMatch;
+import cn.ymotel.dactor.pattern.PatternMatcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.context.WebApplicationContext;
@@ -94,8 +98,8 @@ public class AsyncServletFilter implements Filter {
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
     private DefaultResolveMessage defaultResolveMessage = null;
     public static String messageSourceId = "messageSource";
-    private int errorcode = 429;//请求数量太多
-
+    private int errorcode = HttpStatus.TOO_MANY_REQUESTS.value();//请求数量太多
+    private HttpStatus errstatus= HttpStatus.TOO_MANY_REQUESTS;
     public UrlPathHelper getUrlPathHelper() {
         return urlPathHelper;
     }
@@ -113,6 +117,7 @@ public class AsyncServletFilter implements Filter {
         } else {
             try {
                 errorcode = Integer.parseInt(serrcode);
+                errstatus=HttpStatus.resolve(errorcode);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -168,23 +173,22 @@ public class AsyncServletFilter implements Filter {
             return true;
 
         } else if (requestHandler instanceof ActorTransactionCfg) {
-            ActorTransactionCfg cfg = null;
-            cfg = (ActorTransactionCfg) requestHandler;
+            ActorTransactionCfg  cfg = (ActorTransactionCfg) requestHandler;
             HandleAsyncContext(request, response, cfg, UrlPath,null);
             return true;
         } else if(requestHandler instanceof  MatchPair){
              MatchPair pair=(MatchPair)requestHandler;
 
-            if (pair.getValue() instanceof HttpRequestHandler) {
+            if (pair.getBean() instanceof HttpRequestHandler) {
 
-                ((HttpRequestHandler) pair.getValue()).handleRequest(request, response);
+                ((HttpRequestHandler) pair.getBean()).handleRequest(request, response);
                 return true;
 
             }
-            if (pair.getValue() instanceof ActorTransactionCfg) {
+            if (pair.getBean() instanceof ActorTransactionCfg) {
                 ActorTransactionCfg cfg = null;
-                cfg = (ActorTransactionCfg) ((MatchPair) requestHandler).getValue();
-                HandleAsyncContext(request, response, cfg, UrlPath,pair.getPattern());
+                cfg = (ActorTransactionCfg) ((MatchPair) requestHandler).getBean();
+                HandleAsyncContext(request, response, cfg, UrlPath,pair.getMatchPattern());
                 return true;
             }
 
@@ -213,7 +217,6 @@ public class AsyncServletFilter implements Filter {
         if(cfg.getTimeout()>0){
             asyncContext.setTimeout(cfg.getTimeout());
 
-
         }else {
             asyncContext.setTimeout(timeout);
         }
@@ -230,8 +233,12 @@ public class AsyncServletFilter implements Filter {
         try {
             boolean b = getDispatcher(request.getServletContext()).startMessage(message, cfg, false);
             if (!b) {
-                //队列满
-                ((HttpServletResponse) asyncContext.getResponse()).sendError(errorcode);
+                if(errstatus!=null){
+                    ((HttpServletResponse) asyncContext.getResponse()).sendError(errstatus.value(),errstatus.getReasonPhrase());
+                }else {
+                    //队列满
+                    ((HttpServletResponse) asyncContext.getResponse()).sendError(errorcode);
+                }
 //                asyncContext.complete();
 
                 return;
@@ -281,77 +288,71 @@ public class AsyncServletFilter implements Filter {
     private MatchPair UrlPatternHandler(String UrlPath, HttpServletRequest request) {
         //使用UrlPattern进行查找
 //        Map.Entry matchentry = null;
-        Map mapping = UrlMapping.getMapping();
-        String serverName = request.getServerName();
-        Comparator comparator= antPathMatcher.getPatternComparator(UrlPath);
-        MatchPair pair=null;
-        for (java.util.Iterator iter = mapping.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            if (!matchDomain(entry, serverName)) {
-                continue;
-            }
-            if (antPathMatcher.match((String) entry.getKey(), UrlPath)) {
-                    if (pair == null) {
-                        pair=new MatchPair();
-                        pair.setPattern((String)entry.getKey());
-                        pair.setValue(entry.getValue());
-                    } else {
-                        //路由优先级
-                        int i=comparator.compare(entry.getKey(),pair.getPattern());
-                        if(i<0){
-                            pair=new MatchPair();
-                            pair.setPattern((String)entry.getKey());
-                            pair.setValue(entry.getValue());
-                        }
-                }
+//        String serverName = request.getServerName();
 
-            }
-            ;
+
+        PatternLookUpMatch lookUpMatch=new PatternLookUpMatch();
+
+//        Comparator comparator= antPathMatcher.getPatternComparator(UrlPath);
+
+        {
+            //patternMapping
+            Map<PatternMatcher,ActorTransactionCfg> patternMap=UrlMapping.getPatternMapping();
+            patternMap.forEach((matcher, cfg) -> {
+//                if(!matchDomain(cfg,serverName)){
+//                   return ;
+//                };
+                lookUpMatch.add(matcher);
+            });
         }
-
-        for(java.util.Iterator iter=UrlMapping.getDynamicMapping().entrySet().iterator();iter.hasNext();){
-            Map.Entry entry=(Map.Entry)iter.next();
-            if(!matchDomain((ActorTransactionCfg)entry.getValue(),serverName)){
-                continue;
-            };
-           String[] patterns= ((DyanmicUrlPattern)entry.getKey()).getPatterns();
-            for(int i=0;i<patterns.length;i++){
-                if(antPathMatcher.match(patterns[i], UrlPath)){
-                    if (pair == null) {
-                        pair=new MatchPair();
-                        pair.setPattern(patterns[i]);
-                        pair.setValue(entry.getValue());
-                    }
-                    int j=comparator.compare(patterns[i],pair.getPattern());
-                    if(j<0){
-                        pair=new MatchPair();
-                        pair.setPattern(patterns[i]);
-                        pair.setValue(entry.getValue());
-                    }
-                };
-            }
-
+        {
+            Map<String,Object> mapping = UrlMapping.getMapping();
+            mapping.forEach((key, value) -> {
+                PatternMatcher patternMatcher = new PatternMatcher(new String[]{key}, null, value);
+                lookUpMatch.add(patternMatcher);
+            });
+//            for (java.util.Iterator iter = mapping.entrySet().iterator(); iter.hasNext(); ) {
+//                Map.Entry entry = (Map.Entry) iter.next();
+//                if (!matchDomain(entry, serverName)) {
+//                    continue;
+//                }
+//                PatternMatcher patternMatcher = new PatternMatcher(new String[]{(String) entry.getKey()}, null, entry.getValue());
+//                lookUpMatch.add(patternMatcher);
+//            }
         }
+        UrlMapping.getDynamicMapping().forEach((dyanmicUrlPattern, actorTransactionCfg) -> {
+            String[] patterns= dyanmicUrlPattern.getPatterns();
+            PatternMatcher patternMatcher=new PatternMatcher(patterns,dyanmicUrlPattern.getExcludePatterns(),actorTransactionCfg);
+            lookUpMatch.add(patternMatcher);
+        });
+//        for(java.util.Iterator iter=UrlMapping.getDynamicMapping().entrySet().iterator();iter.hasNext();){
+//            Map.Entry entry=(Map.Entry)iter.next();
+//            if(!matchDomain((ActorTransactionCfg)entry.getValue(),serverName)){
+//                continue;
+//            };
+//           String[] patterns= ((DyanmicUrlPattern)entry.getKey()).getPatterns();
+//            PatternMatcher patternMatcher=new PatternMatcher(patterns,((DyanmicUrlPattern)entry.getKey()).getExcludePatterns(),entry.getValue());
+//            lookUpMatch.add(patternMatcher);
+//
+//        }
+       MatchPair matchPair= lookUpMatch.lookupMatchPair(UrlPath,request.getMethod(),request.getServerName());
+        return matchPair;
 
-        if (pair == null) {
-            return null;
-        }
-        return pair;
     }
-    private boolean matchDomain(Map.Entry  entry, String serverName) {
-        if(entry.getValue() instanceof  ActorTransactionCfg) {
-
-            ActorTransactionCfg cfg = (ActorTransactionCfg) entry.getValue();
-            return matchDomain(cfg, serverName);
-        }
-        return true;
-    }
+//    private boolean matchDomain(Map.Entry  entry, String serverName) {
+//        if(entry.getValue() instanceof  ActorTransactionCfg) {
+//
+//            ActorTransactionCfg cfg = (ActorTransactionCfg) entry.getValue();
+//            return matchDomain(cfg, serverName);
+//        }
+//        return true;
+//    }
 
     private boolean matchDomain(ActorTransactionCfg cfg, String serverName) {
-         if (cfg.getDomain() == null||cfg.getDomain().trim().equals("")) {
+         if (cfg.getDomains() == null) {
             return true;
         }
-        String[] domains = cfg.getDomain().split(",");
+        String[] domains = cfg.getDomains();
         for (int i = 0; i < domains.length; i++) {
             if (domains[i].equals(serverName)) {
                 return true;
@@ -425,26 +426,26 @@ public class AsyncServletFilter implements Filter {
 
 
     }
-    public  class MatchPair{
-        private String pattern;
-        private Object value;
-
-        public String getPattern() {
-            return pattern;
-        }
-
-        public void setPattern(String pattern) {
-            this.pattern = pattern;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public void setValue(Object value) {
-            this.value = value;
-        }
-    }
+//    public  class MatchPair{
+//        private String pattern;
+//        private Object value;
+//
+//        public String getPattern() {
+//            return pattern;
+//        }
+//
+//        public void setPattern(String pattern) {
+//            this.pattern = pattern;
+//        }
+//
+//        public Object getValue() {
+//            return value;
+//        }
+//
+//        public void setValue(Object value) {
+//            this.value = value;
+//        }
+//    }
     @Override
     public void destroy() {
 

@@ -32,6 +32,10 @@ import java.util.Map;
  * @since 1.0
  */
 public class JsonView extends StreamView {
+    public JsonView() {
+        super.urlSuffix="json";
+    }
+
     /**
      * Logger for this class
      */

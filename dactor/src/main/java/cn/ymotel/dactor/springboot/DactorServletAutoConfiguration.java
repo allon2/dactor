@@ -3,6 +3,7 @@ package cn.ymotel.dactor.springboot;
 import cn.ymotel.dactor.action.ViewResolveActor;
 import cn.ymotel.dactor.async.web.AsyncServletFilter;
 import cn.ymotel.dactor.async.web.view.*;
+import cn.ymotel.dactor.response.ResponseViewType;
 import cn.ymotel.dactor.response.TransportResponseViewActor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -10,7 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,31 +41,37 @@ public AsyncServletFilter asyncServletFilter() {
     AsyncServletFilter filter=new AsyncServletFilter();
     return filter;
 }
-//    @Bean
-//    @ConditionalOnMissingBean
-//    public ViewResolveActor getViewResolveActor(){
-//        ViewResolveActor actor=new ViewResolveActor();
-//        Map viewMap=new HashMap<>();
-//        actor.setViewMap(viewMap);
-//        viewMap.put("default",getDefaultView());
-//        viewMap.put("forward",getForwardView());
-//        viewMap.put("htmlstream",getStreamView("text/html; charset=utf-8"));
-//        viewMap.put("xmlstream",getStreamView("text/xml; charset=utf-8"));
-//        viewMap.put("pdfstream",getStreamView("application/pdf; charset=utf-8"));
-//        viewMap.put("json",getJsonView());
-//        viewMap.put("download",getDownLoadView());
-//        viewMap.put("stream",new StreamView());
-//        viewMap.put("csv",new cn.ymotel.dactor.async.web.view.CsvView());
-//        viewMap.put("img",getStreamView("images/*"));
-//
-//        Map suffixViewMap=new HashMap();
-//        suffixViewMap.put("json",getJsonView());
-//        suffixViewMap.put("xml",getStreamView("text/xml; charset=utf-8"));
-//        suffixViewMap.put("html",getStreamView("text/html; charset=utf-8"));
-//        actor.setSuffixMap(suffixViewMap);
-//        transportResponseViewActor.getTransportMap().put("http_servlet",actor);
-//        return actor;
-//    }
+    @Bean
+    @ConditionalOnMissingBean
+    public ViewResolveActor getViewResolveActor() {
+        ViewResolveActor actor = new ViewResolveActor();
+        Map viewMap = new HashMap<>();
+        actor.setViewMap(viewMap);
+        viewMap.put(ResponseViewType.HTTP_DEFAULT, getDefaultView());
+        viewMap.put(ResponseViewType.HTTP_FORWARD, getForwardView());
+        viewMap.put(ResponseViewType.HTTP_HTML_STREAM, getStreamView("text/html; charset=utf-8"));
+        viewMap.put(ResponseViewType.HTTP_XML_STREAM, getStreamView("text/xml; charset=utf-8"));
+        viewMap.put(ResponseViewType.HTTP_PDF_STREAM, getStreamView("application/pdf; charset=utf-8"));
+        viewMap.put(ResponseViewType.HTTP_JSON, getJsonView());
+        viewMap.put(ResponseViewType.HTTP_DOWNLOAD, getDownLoadView());
+        viewMap.put(ResponseViewType.HTTP_STREAM, new StreamView());
+        viewMap.put(ResponseViewType.HTTP_CSV, new cn.ymotel.dactor.async.web.view.CsvView());
+        viewMap.put(ResponseViewType.HTTP_IMG, getStreamView("images/*"));
+        viewMap.put(ResponseViewType.HTTP_ZIP, getZipView());
+
+        Map urlsuffixViewMap = new HashMap();
+        urlsuffixViewMap.put("json", getJsonView());
+        urlsuffixViewMap.put("xml", getStreamView("text/xml; charset=utf-8"));
+        urlsuffixViewMap.put("html", getStreamView("text/html; charset=utf-8"));
+        actor.setUrlSuffixMap(urlsuffixViewMap);
+
+        if (transportResponseViewActor != null) {
+
+               transportResponseViewActor.getTransportMap().put("http_servlet", actor);
+            }
+
+        return actor;
+    }
     private DownloadView getDownLoadView(){
         DownloadView view=new DownloadView();
         return view;
@@ -105,29 +111,6 @@ public AsyncServletFilter asyncServletFilter() {
 //    }
     @Override
     public void afterPropertiesSet() throws Exception {
-        if(transportResponseViewActor==null){
-            return ;
-        }
-        ViewResolveActor actor=new ViewResolveActor();
-        Map viewMap=new HashMap<>();
-        actor.setViewMap(viewMap);
-        viewMap.put("default",getDefaultView());
-        viewMap.put("forward",getForwardView());
-        viewMap.put("htmlstream",getStreamView("text/html; charset=utf-8"));
-        viewMap.put("xmlstream",getStreamView("text/xml; charset=utf-8"));
-        viewMap.put("pdfstream",getStreamView("application/pdf; charset=utf-8"));
-        viewMap.put("json",getJsonView());
-        viewMap.put("download",getDownLoadView());
-        viewMap.put("stream",new StreamView());
-        viewMap.put("csv",new cn.ymotel.dactor.async.web.view.CsvView());
-        viewMap.put("img",getStreamView("images/*"));
-        viewMap.put("zip",getZipView());
 
-        Map suffixViewMap=new HashMap();
-        suffixViewMap.put("json",getJsonView());
-        suffixViewMap.put("xml",getStreamView("text/xml; charset=utf-8"));
-        suffixViewMap.put("html",getStreamView("text/html; charset=utf-8"));
-        actor.setSuffixMap(suffixViewMap);
-        transportResponseViewActor.getTransportMap().put("http_servlet",actor);
     }
 }

@@ -2,6 +2,7 @@ package cn.ymotel.dactor.async.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 
@@ -47,7 +48,8 @@ public class DActorAsyncListener implements AsyncListener {
         try {
             asyncEvent.getThrowable().printStackTrace();
             response = (HttpServletResponse)asyncEvent.getSuppliedResponse();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+//            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,8 +72,10 @@ public class DActorAsyncListener implements AsyncListener {
     public void onTimeout(AsyncEvent asyncEvent) throws IOException {
         clean((HttpServletRequest) asyncEvent.getAsyncContext().getRequest());
 
-        HttpServletResponse response =(HttpServletResponse)asyncEvent.getSuppliedResponse();;
-        response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT);
+        HttpServletResponse response =(HttpServletResponse)asyncEvent.getSuppliedResponse();
+        response.sendError(HttpStatus.REQUEST_TIMEOUT.value(),HttpStatus.REQUEST_TIMEOUT.getReasonPhrase());
+
+//        response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT);
 //        asyncEvent.getAsyncContext().complete();
 
     }

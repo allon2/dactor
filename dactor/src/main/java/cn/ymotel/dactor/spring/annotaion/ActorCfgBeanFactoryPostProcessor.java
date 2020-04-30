@@ -10,7 +10,9 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ActorCfgBeanFactoryPostProcessor implements BeanDefinitionRegistryPostProcessor {
     private BeanDefinitionRegistry registry;
@@ -42,6 +44,17 @@ public class ActorCfgBeanFactoryPostProcessor implements BeanDefinitionRegistryP
         if(actorCfg.urlPatterns()!=null&&actorCfg.urlPatterns().length!=0) {
             builder.addPropertyValue("urlPattern", actorCfg.urlPatterns());
         }
+        if(actorCfg.methods()!=null&&actorCfg.methods().length!=0) {
+            String[] methods=new String[actorCfg.methods().length];
+            for(int i=0;i<actorCfg.methods().length;i++){
+                methods[i]=actorCfg.methods()[i].name();
+            }
+
+            builder.addPropertyValue("methods", methods);
+        }
+        if(actorCfg.excludeUrlPatterns()!=null&&actorCfg.excludeUrlPatterns().length!=0) {
+            builder.addPropertyValue("excludeUrlPattern", actorCfg.excludeUrlPatterns());
+        }
         if(StringUtils.hasText(actorCfg.chain())) {
 
             builder.addPropertyReference("chain", actorCfg.chain());
@@ -50,6 +63,11 @@ public class ActorCfgBeanFactoryPostProcessor implements BeanDefinitionRegistryP
 
             builder.addPropertyReference("parent", actorCfg.parent());
         }
+        if(StringUtils.hasText(actorCfg.view())) {
+            Map viewmap=new HashMap();
+            viewmap.put("success",actorCfg.view());
+            builder.addPropertyValue("results", viewmap);
+        }
 //        builder.addPropertyReference("global", "ActorGlobal");
         String cfgid=null;
         if(actorCfg.id()==null|| actorCfg.id().equals("")){
@@ -57,7 +75,7 @@ public class ActorCfgBeanFactoryPostProcessor implements BeanDefinitionRegistryP
         }else{
             cfgid= actorCfg.id();
         }
-        builder.addPropertyValue("domain", actorCfg.domain());
+        builder.addPropertyValue("domains", actorCfg.domains());
 
         builder.addPropertyValue("id", cfgid);
 

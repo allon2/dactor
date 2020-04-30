@@ -102,7 +102,7 @@ public interface Message {
 
     public void setChildCount(int childCount);
 
-    public Object getUser();
+    public <T> T getUser();
     public void setUser(Object user);
 
     /**

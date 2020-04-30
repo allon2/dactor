@@ -8,6 +8,8 @@ package cn.ymotel.dactor.async.web.view;
 
 import cn.ymotel.dactor.message.Message;
 
+import java.util.List;
+
 /**
  * {type specification, must edit}
  *
@@ -21,16 +23,28 @@ import cn.ymotel.dactor.message.Message;
  * @since 1.0
  */
 public interface HttpView<T extends  Message> {
-    public void render(T message, String viewName);
+    /**
+     * 以后使用 successRender 和 exceptionRender方法
+     * @param message
+     * @param viewName
+     */
+    @Deprecated
+    public default  void render(T message, String viewName){};
+    public default void successRender(T message,String viewName){
+        render(message,viewName);
+    }
+    public default  void exceptionRender(T message,String viewName){
+        render(message,viewName);
+    }
     /**
      * @return the contentType
      */
-    public String getContentType();
+    public default String getContentType(){return null;};
 
     /**
      * @param contentType the contentType to set
      */
-    public void setContentType(String contentType);
+    public default void setContentType(String contentType){};
     public default String getSuffix() {
         return null;
     }
@@ -39,4 +53,20 @@ public interface HttpView<T extends  Message> {
      * @param suffix the suffix to set
      */
     public default void setSuffix(String suffix){};
+
+
+//    public default  void setUrlSuffix(String urlSuffix){}
+    /**
+     *
+     * @return    URL后缀,例如 a.do ,b.json,通过定制此，可覆盖默认选项
+     */
+    public default  String getUrlSuffix(){return null;}
+//    public default  void setViewName(String viewName){}
+    public default  String getViewName(){return null;}
+
+    public default List<String> getUrlPatterns(){return null;};
+    public default String getUrlPattern(){return null;};
+    public default String getExcludeUrlPattern(){return null;}
+    public default List<String> getExcludeUrlPatterns(){return null;};
+
 }
