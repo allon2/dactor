@@ -7,6 +7,15 @@ import java.util.Map;
 public class MatchPair<T> {
     private List<String> matchPatterns;
     private String matchPattern;
+    private Map extractMap;
+
+    public Map getExtractMap() {
+        return extractMap;
+    }
+
+    public void setExtractMap(Map extractMap) {
+        this.extractMap = extractMap;
+    }
 
     private  boolean completeMatch=false;
 

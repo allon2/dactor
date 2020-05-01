@@ -186,9 +186,9 @@ public class AsyncServletFilter implements Filter {
 
             }
             if (pair.getBean() instanceof ActorTransactionCfg) {
-                ActorTransactionCfg cfg = null;
-                cfg = (ActorTransactionCfg) ((MatchPair) requestHandler).getBean();
-                HandleAsyncContext(request, response, cfg, UrlPath,pair.getMatchPattern());
+                ActorTransactionCfg cfg = (ActorTransactionCfg) ((MatchPair) requestHandler).getBean();
+
+                HandleAsyncContext(request, response, cfg, UrlPath,((MatchPair) requestHandler).getExtractMap());
                 return true;
             }
 
@@ -197,7 +197,7 @@ public class AsyncServletFilter implements Filter {
         return false;
     }
 
-    public void HandleAsyncContext(HttpServletRequest request, HttpServletResponse response, ActorTransactionCfg cfg, String UrlPath,String matternPattern) throws IOException {
+    public void HandleAsyncContext(HttpServletRequest request, HttpServletResponse response, ActorTransactionCfg cfg, String UrlPath,Map extractMap) throws IOException {
 
         MultipartResolver multipartResolver = lookupMultipartResolver();
         if (multipartResolver.isMultipart(request)) {
@@ -224,9 +224,13 @@ public class AsyncServletFilter implements Filter {
 
         Message message = defaultResolveMessage.resolveContext(asyncContext, request, response);
 
-        Map params = getUrlmap(UrlPath, cfg,matternPattern);
-
-        message.getContext().putAll(params);
+//        Map params = getUrlmap(UrlPath, cfg,matternPattern);
+        /**
+         * 兼容，后面会泛起，全部放入ControlData中
+         */
+         message.getContext().putAll(extractMap);
+        message.getControlData().putAll(extractMap);
+//        message.getContext().putAll(params);
         message.getContext().put(Constants.METHOD, request.getMethod());
         message.getContext().put(Constants.SUFFIX, suffix);
         addTransPort(message);

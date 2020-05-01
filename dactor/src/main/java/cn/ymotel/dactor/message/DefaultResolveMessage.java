@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -85,6 +86,7 @@ public class DefaultResolveMessage {
         if (request.getContentType() != null && request.getContentType().toLowerCase().startsWith("application/json")) {
 
             Map rtnMap = null;
+            List array=null;
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
                 StringBuffer sb = new StringBuffer("");
@@ -93,7 +95,12 @@ public class DefaultResolveMessage {
                     sb.append(temp);
                 }
                 br.close();
-                rtnMap = (Map) JSON.parse(sb.toString());
+                Object jsonobj=JSON.parse(sb.toString());
+                if(jsonobj instanceof Map) {
+                    rtnMap = (Map)jsonobj;
+                }else if(jsonobj instanceof  List){
+                    array=(List)jsonobj;
+                }
             } catch (UnsupportedEncodingException e) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("init(Message, HttpServletRequest, HttpServletResponse)"); //$NON-NLS-1$
@@ -105,6 +112,9 @@ public class DefaultResolveMessage {
             }
             if(rtnMap!=null) {
                 parameterMap.putAll(rtnMap);
+            }
+            if(array!=null){
+                message.setContextList(array);
             }
         }
 

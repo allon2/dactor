@@ -1,5 +1,11 @@
 package cn.ymotel.dactor.async.web;
 
+import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +25,31 @@ public class ContentTypeUtil {
     public static String getContentType(String ext) {
         return contentType.get(ext);
     }
+    public static MediaType getMediaType(HttpServletRequest request, String urlpath){
+        MediaType mediaType = null;
+        ServletContext servletContext=request.getServletContext();
+        {
+            String mimeType = servletContext.getMimeType(urlpath);
+            if (StringUtils.hasText(mimeType)) {
+                mediaType = MediaType.parseMediaType(mimeType);
+            }
+        }
 
+        if (mediaType == null|| MediaType.APPLICATION_OCTET_STREAM.equals(mediaType)) {
+            mediaType = MediaTypeFactory.getMediaType(urlpath).orElse(null);
+        }
+
+        if(mediaType!=null){
+            return mediaType;
+        }
+
+        mediaType= MediaType.parseMediaType(ContentTypeUtil.getContentType(StringUtils.getFilenameExtension(urlpath)));
+        if(mediaType!=null){
+            return mediaType;
+        }
+        mediaType=MediaType.parseMediaType(request.getContentType());
+        return mediaType;
+    }
     static {
         contentType.put("load", "text/html");
         contentType.put("123", "application/vnd.lotus-1-2-3");

@@ -111,4 +111,4 @@ dependencies {
 //    compileOnly 'org.springframework.boot:spring-boot-autoconfigure'
 
 }
-//apply from: 'bintray.gradle'
+apply from: 'bintray.gradle'

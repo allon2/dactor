@@ -1,5 +1,6 @@
 package cn.ymotel.dactor.pattern;
 
+import cn.ymotel.dactor.Constants;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
@@ -43,18 +44,32 @@ public class PatternLookUpMatch<T> {
         if(rtnList.size()==0){
             return null;
         }
+        String matchPattern=null;
         if(rtnList.size()==1){
             MatchPair pair=new MatchPair();
-            pair.setBean(params.get(rtnList.get(0)));
-            pair.setMatchPattern((String)rtnList.get(0));
+            matchPattern=(String)rtnList.get(0);
+            pair.setBean(params.get(matchPattern));
+            pair.setMatchPattern(matchPattern);
+
+
+
+            pair.setExtractMap(extractVariables(matchPattern,UrlPath));
             return pair ;
         }
         rtnList.sort(comparator);
         MatchPair pair=new MatchPair();
-        pair.setBean(params.get(rtnList.get(0)));
-        pair.setMatchPattern((String)rtnList.get(0));
+        matchPattern=(String)rtnList.get(0);
+        pair.setBean(params.get(matchPattern));
+        pair.setMatchPattern(matchPattern);
+        pair.setExtractMap(extractVariables(matchPattern,UrlPath));
         return pair ;
 
 
+    }
+    public Map extractVariables(String MatchPattern,String urlPath){
+       Map map= pathMatcher.extractUriTemplateVariables(MatchPattern,urlPath);
+       String path= pathMatcher.extractPathWithinPattern(MatchPattern,urlPath);
+       map.put(Constants.EXTRACTPATH,path);
+       return map;
     }
 }

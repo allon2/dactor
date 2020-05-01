@@ -10,5 +10,6 @@ public interface Constants {
     public static String JSONHEAD="_JSONHEAD";
     public static String CONTENT="_Content";
     public static String EXPARAMETER="_ExParameter";
+    public static String EXTRACTPATH="_ExtractPath";
 
 }

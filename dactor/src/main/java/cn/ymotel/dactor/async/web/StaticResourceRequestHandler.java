@@ -43,9 +43,9 @@ public class StaticResourceRequestHandler implements HttpRequestHandler {
             return ;
         }
 
-        String mediaType = getMediaType(request, UrlPath);
+        MediaType mediaType = ContentTypeUtil.getMediaType(request, UrlPath);
         if(mediaType!=null){
-            response.setContentType(mediaType);
+            response.setContentType(mediaType.toString());
         }
         response.getOutputStream().write(out);
         response.getOutputStream().flush();
@@ -75,26 +75,6 @@ public class StaticResourceRequestHandler implements HttpRequestHandler {
         }
         return false;
     }
-    public String getMediaType(HttpServletRequest request,String urlpath){
-        MediaType mediaType = null;
-        ServletContext servletContext=request.getServletContext();
-        String mimeType = servletContext.getMimeType(urlpath);
-        if (StringUtils.hasText(mimeType)) {
-            mediaType = MediaType.parseMediaType(mimeType);
-            return mediaType.toString();
-        }
 
-
-        if (mediaType == null) {
-            mediaType = MediaTypeFactory.getMediaType(urlpath).orElse(null);
-        }
-        if (StringUtils.hasText(mimeType)) {
-
-            return mediaType.toString();
-        }
-
-        return ContentTypeUtil.getContentType(StringUtils.getFilenameExtension(urlpath));
-
-    }
 
 }

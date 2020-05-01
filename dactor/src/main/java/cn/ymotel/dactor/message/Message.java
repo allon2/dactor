@@ -112,9 +112,13 @@ public interface Message {
     public Map getControlData();
     public <T> T getControlData(Object obj);
 
-
     /**
      * @return 得到忽略大小写的Map
      */
     public Map getCaseInsensitivegetControlData();
+
+    public default List getContextList(){
+        return  null;
+    };
+    public default void setContextList(List ls){}
 }

@@ -8,10 +8,7 @@ package cn.ymotel.dactor.message;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -76,6 +73,7 @@ public class DefaultMessage implements Message {
     }
 
     private Map context = new HashMap();
+    private List contextList=new ArrayList();
 
     /* (non-Javadoc)
      * @see com.ymotel.util.actor.Message#getContext()
@@ -87,6 +85,10 @@ public class DefaultMessage implements Message {
 
     @Override
     public <T> T getContextData(Object key) {
+        Object obj =context.get(key);
+        if( obj instanceof  (T)){
+
+        }
         return (T) context.get(key);
     }
 
@@ -98,7 +100,12 @@ public class DefaultMessage implements Message {
     public void setContext(Map context) {
         this.context = context;
     }
-
+    public List getContextList(){
+        return contextList;
+    }
+    public void setContextList(List ls){
+        this.contextList=ls;
+    }
     private SpringControlMessage cMsg;
 
     /* (non-Javadoc)
