@@ -94,6 +94,9 @@ public class DefaultMessage implements Message {
     @Override
     public <T> T getContextData(Object obj, T defaultValue) {
             T value= (T) context.getOrDefault(obj,defaultValue);
+            if(value ==null){
+                return null;
+            }
             if(defaultValue instanceof  Long){
                 return (T)new Long(value.toString());
             }
