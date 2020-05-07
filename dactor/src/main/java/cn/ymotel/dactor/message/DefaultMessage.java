@@ -85,10 +85,8 @@ public class DefaultMessage implements Message {
 
     @Override
     public <T> T getContextData(Object key) {
-        Object obj =context.get(key);
-        if( obj instanceof  (T)){
+//        Object obj =context.get(key);
 
-        }
         return (T) context.get(key);
     }
 
