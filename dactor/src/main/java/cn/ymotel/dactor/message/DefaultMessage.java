@@ -8,6 +8,7 @@ package cn.ymotel.dactor.message;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 
@@ -92,7 +93,29 @@ public class DefaultMessage implements Message {
 
     @Override
     public <T> T getContextData(Object obj, T defaultValue) {
-            return (T) context.getOrDefault(obj,defaultValue);
+            T value= (T) context.getOrDefault(obj,defaultValue);
+            if(defaultValue instanceof  Long){
+                return (T)new Long(value.toString());
+            }
+            if(defaultValue instanceof  Short){
+                return (T) new Short(value.toString());
+            }
+            if(defaultValue instanceof  Integer){
+                return (T)new Integer(value.toString());
+            }
+            if(defaultValue instanceof BigDecimal){
+                return (T)new BigDecimal(value.toString());
+            }
+            if(defaultValue instanceof String){
+                return (T) value.toString();
+            }
+            if(defaultValue instanceof  Double){
+                return (T) new Double(value.toString());
+            }
+            if(defaultValue instanceof  Float){
+                return (T)new Float(value.toString());
+            }
+            return value;
     }
 
     public void setContext(Map context) {
