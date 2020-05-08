@@ -3,6 +3,7 @@ package cn.ymotel.dactor.paginate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class PageUtil {
     public static int getFirstResult(int pageNumber, int pageSize) {
         if (pageSize <= 0) {

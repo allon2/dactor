@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
  * @version 1.0
  * @since 1.0
  */
+@Deprecated
 public abstract class AbstractSupportActor implements Actor {
     /**
      * Logger for this class

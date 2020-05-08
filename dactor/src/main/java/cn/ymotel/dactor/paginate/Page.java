@@ -2,7 +2,7 @@ package cn.ymotel.dactor.paginate;
 
 import java.io.Serializable;
 import java.util.List;
-
+@Deprecated
 public class Page<T> implements Serializable {
     private List<T> list;				// list result of this page
     private int pageNumber;				// page number
