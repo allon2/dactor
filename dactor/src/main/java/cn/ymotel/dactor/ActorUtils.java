@@ -3,6 +3,7 @@ package cn.ymotel.dactor;
 import cn.ymotel.dactor.message.Message;
 import org.springframework.context.ApplicationContext;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,5 +69,35 @@ public class ActorUtils {
         return (String)stempMap.get("data");
     }
 
+    public static <T> T ConvertData(Object value,Class<T> clazz){
+        if(value ==null){
+            return null;
+        }
+        if(Long.class.isAssignableFrom(clazz)){
+            return (T) new Long(value.toString());
+        }
+        if(Short.class.isAssignableFrom(clazz)){
+            return (T) new Short(value.toString());
+        }
+        if(Integer.class.isAssignableFrom(clazz)){
+            return (T) new Integer(value.toString());
+        }
+        if(BigDecimal.class.isAssignableFrom(clazz)){
+            return (T) new BigDecimal(value.toString());
+        }
+        if(String.class.isAssignableFrom(clazz)){
+            return (T)  value.toString();
+        }
+        if(Double.class.isAssignableFrom(clazz)){
+            return (T) new Double(value.toString());
+        }
+        if(Float.class.isAssignableFrom(clazz)){
+            return (T) new Float(value.toString());
+        }
+        if(Enum.class.isAssignableFrom(clazz)){
+            return  (T) Enum.valueOf((Class<? extends Enum>)clazz,value.toString());
+        }
+        return (T) value;
+    }
 
 }

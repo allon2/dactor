@@ -27,13 +27,13 @@ public class SqlUpdateActor implements Actor {
     }
 
     /**
-     * 返回成功执行的条数
+     *
      * @param message
-     * @return
+     * @return 返回成功执行的条数
      * @throws Exception
      */
     @Override
-    public Object Execute(Message message) throws Exception {
+    public Object Execute(Message message) throws Throwable {
 
         return this.getSqlSession().update(sql,getParams(message));
     }

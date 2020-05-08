@@ -66,7 +66,7 @@ public interface Message {
 
     public <T> T getContextData(Object obj);
     public <T> T getContextData(Object obj,T defaultValue);
-
+    public <T> T getContextData(Object key,Class<T> clazz) ;
     /**
      * @return 得到忽略大小写的Map
      */

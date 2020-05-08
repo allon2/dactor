@@ -6,6 +6,7 @@
  */
 package cn.ymotel.dactor.message;
 
+import cn.ymotel.dactor.ActorUtils;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
 import java.math.BigDecimal;
@@ -90,35 +91,50 @@ public class DefaultMessage implements Message {
 
         return (T) context.get(key);
     }
+    @Override
+    public <T> T getContextData(Object key,Class<T> clazz) {
+        Object value=  context.get(key);
+       return  ActorUtils.ConvertData(value,clazz);
+    }
+
 
     @Override
     public <T> T getContextData(Object obj, T defaultValue) {
-            T value= (T) context.getOrDefault(obj,defaultValue);
-            if(value ==null){
-                return null;
-            }
-            if(defaultValue instanceof  Long){
-                return (T)new Long(value.toString());
-            }
-            if(defaultValue instanceof  Short){
-                return (T) new Short(value.toString());
-            }
-            if(defaultValue instanceof  Integer){
-                return (T)new Integer(value.toString());
-            }
-            if(defaultValue instanceof BigDecimal){
-                return (T)new BigDecimal(value.toString());
-            }
-            if(defaultValue instanceof String){
-                return (T) value.toString();
-            }
-            if(defaultValue instanceof  Double){
-                return (T) new Double(value.toString());
-            }
-            if(defaultValue instanceof  Float){
-                return (T)new Float(value.toString());
-            }
-            return value;
+            Object value=  context.getOrDefault(obj,defaultValue);
+
+       return (T) ActorUtils.ConvertData(value,defaultValue.getClass());
+
+//            if(value ==null){
+//                return null;
+//            }
+//        getContextData()
+//
+//
+//            if(defaultValue instanceof  Long){
+//                return (T)new Long(value.toString());
+//            }
+//            if(defaultValue instanceof  Short){
+//                return (T) new Short(value.toString());
+//            }
+//            if(defaultValue instanceof  Integer){
+//                return (T)new Integer(value.toString());
+//            }
+//            if(defaultValue instanceof BigDecimal){
+//                return (T)new BigDecimal(value.toString());
+//            }
+//            if(defaultValue instanceof String){
+//                return (T) value.toString();
+//            }
+//            if(defaultValue instanceof  Double){
+//                return (T) new Double(value.toString());
+//            }
+//            if(defaultValue instanceof  Float){
+//                return (T)new Float(value.toString());
+//            }
+//            if(defaultValue instanceof  Enum){
+//                return (T) Enum.valueOf(((Enum)defaultValue).getClass(),value.toString());
+//            }
+//            return value;
     }
 
     public void setContext(Map context) {
