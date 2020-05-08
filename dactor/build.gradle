@@ -109,8 +109,9 @@ dependencies {
 //    compileOnly group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.2.6.RELEASE'
     compileOnly group: 'org.springframework.boot', name: 'spring-boot-autoconfigure-processor', version: '2.2.6.RELEASE'
     compile group: 'org.springframework.data', name: 'spring-data-commons', version: '2.2.7.RELEASE'
-// https://mvnrepository.com/artifact/org.mybatis/mybatis
     compileOnly group: 'org.mybatis', name: 'mybatis', version: '3.5.4'
-
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    compile group: 'taglibs', name: 'standard', version:'1.1.2'
+    compile group: 'jstl', name: 'jstl', version:'1.2'
 }
 apply from: 'bintray.gradle'
