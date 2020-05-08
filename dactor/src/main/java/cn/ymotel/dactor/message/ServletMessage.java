@@ -6,6 +6,8 @@
  */
 package cn.ymotel.dactor.message;
 
+import cn.ymotel.dactor.ActorUtils;
+import cn.ymotel.dactor.Constants;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -15,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -83,12 +86,12 @@ public class ServletMessage extends DefaultMessage {
 
     @Override
     public Object getUser() {
-         return request.getSession(true).getAttribute("_USER");
+         return request.getSession(true).getAttribute(Constants.USER);
     }
 
     @Override
     public void setUser(Object user) {
-        request.getSession(true).setAttribute("_USER", user);
+        request.getSession(true).setAttribute(Constants.USER, user);
     }
 
     public byte[] getFileBytes(String fileName) throws IOException {
@@ -114,5 +117,25 @@ public class ServletMessage extends DefaultMessage {
     public InputStream getFileStream(String fileName) throws IOException {
         MultipartFile file= ((MultipartHttpServletRequest)AsyncContext.getRequest()).getFile(fileName);
         return file.getInputStream();
+    }
+    public String getClientIp(){
+       return  ActorUtils.getClientIP((HttpServletRequest)AsyncContext.getRequest());
+    }
+    public String getHeaderIgnoreCase(String nameIgnoreCase){
+        HttpServletRequest request= (HttpServletRequest)AsyncContext.getRequest();
+        final Enumeration<String> names = request.getHeaderNames();
+        String name;
+        while (names.hasMoreElements()) {
+            name = names.nextElement();
+            if (name != null && name.equalsIgnoreCase(nameIgnoreCase)) {
+                return request.getHeader(name);
+            }
+        }
+
+        return null;
+    }
+    public String getHeader(String name){
+        HttpServletRequest request= (HttpServletRequest)AsyncContext.getRequest();
+         return request.getHeader(name);
     }
 }

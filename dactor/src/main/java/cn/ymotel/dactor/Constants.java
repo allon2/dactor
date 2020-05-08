@@ -11,5 +11,6 @@ public interface Constants {
     public static String CONTENT="_Content";
     public static String EXPARAMETER="_ExParameter";
     public static String EXTRACTPATH="_ExtractPath";
+    public static String USER="_USER";
 
 }
