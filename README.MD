@@ -39,6 +39,15 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note  
+1.1.0版本  
+    1:SpringBoot依赖版本升级为2.2.7.RELEASE,其他依赖升级为最新版本  	
+​    2:增加MessageSourceFilter,并从AsyncServletFilter中移除相关代码 
+​    3:增加DyanmicUrlPattern接口，可在系统中动态修改Pattern   
+    4:Page,PageUtil,AsyncServlet标记为过期   
+	5:增加雪花算法IdWorker,可直接使用IdWorker.getInstance().nextId()获得流水号  
+	6：ServletMessage 增加 getFileBytes,getFileNames,getFiles,getFile,getFileStream,getClientIp,getHeaderIgnoreCase,getHeader等方法  
+	7:注解ActorCfg增加excludeUrlPatterns,domains,view,timeout,methods等参数  
+	8:Message方法中getContextData等修改为泛型,不再需要强转,增加getContextList直接获得客户端提交的列表参数
 1.0.18版本  
     1:支持SpringBoot,只需要引用jar包，即可在springboot中自动启用，进一步简化代码配置    
 ​    2:服务可优雅停止  
@@ -107,13 +116,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.0.18</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.0.18'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.1.0'
 
 ```
 
