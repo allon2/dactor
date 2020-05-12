@@ -15,6 +15,6 @@ rootProject.name = 'dactor-root'
 include 'dactor'
 include 'example'
 include 'springboot'
-include 'springcloud'
+//include 'springcloud'
 include 'springbootexample'
 
