@@ -157,8 +157,11 @@ public class AsyncServletFilter implements Filter {
      */
     public boolean doService(HttpServletRequest request,
                              HttpServletResponse response) throws IOException, ServletException {
-        org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource) ActorUtils.getCacheBean(this.getApplicationContext(), messageSourceId);
-        JstlUtils.exposeLocalizationContext(request, messageSource);
+        /**
+         * 通过加Filter支持JSP访问MessageSource
+         */
+//        org.springframework.context.MessageSource messageSource = (org.springframework.context.MessageSource) ActorUtils.getCacheBean(this.getApplicationContext(), messageSourceId);
+//        JstlUtils.exposeLocalizationContext(request, messageSource);
 
         String UrlPath = urlPathHelper.getLookupPathForRequest(request);
 

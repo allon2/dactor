@@ -22,6 +22,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -226,6 +227,7 @@ public class MessageEventHandler implements EventHandler<MessageEvent>, WorkHand
         if (struc.getFromBeanId() == null || struc.getFromBeanId().trim().equals("")) {
             return;
         }
+
                 Actor actor = (Actor) ActorUtils.getCacheBean(appcontext,struc.getFromBeanId());
 
         handleEvent(struc, message,actor);

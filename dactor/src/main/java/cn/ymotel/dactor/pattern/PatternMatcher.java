@@ -5,10 +5,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.PathMatcher;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PatternMatcher<T> {
     @Nullable
@@ -94,7 +91,7 @@ public class PatternMatcher<T> {
      * @return {@code true} if the interceptor applies to the given request path
      */
     public MatchPair matchePatterns(String lookupPath, PathMatcher pathMatcher) {
-        return matchePatterns(lookupPath,pathMatcher,null,null);
+        return matchePatterns(lookupPath,pathMatcher,null,null,null);
 //        PathMatcher pathMatcherToUse = (pathMatcher == null ? this.pathMatcher : pathMatcher);
 //        if (!ObjectUtils.isEmpty(this.excludePatterns)) {
 //            for (String pattern : this.excludePatterns) {
@@ -129,7 +126,7 @@ public class PatternMatcher<T> {
      * @param lookupPath the current request path
      * @return {@code true} if the interceptor applies to the given request path
      */
-    public MatchPair matchePatterns(String lookupPath, PathMatcher pathMatcher,String method,String serverName) {
+    public MatchPair matchePatterns(String lookupPath, PathMatcher pathMatcher,String method,String serverName,Comparator comparator) {
         if(serverName!=null&&(!this.serverNames.isEmpty())){
             if(serverNames.contains(serverName)){}else{
                 return null;
@@ -140,22 +137,7 @@ public class PatternMatcher<T> {
                 return null;
             }
         }
-//        if(this.serverNames!=null&&serverName!=null){
-//            for(int i=0;i<serverNames.length;i++){
-//                if(serverNames[i].equals(serverName)){
-//                }else{
-//                    return null;
-//                }
-//            }
-//        }
-//        if(this.methods!=null&&method!=null){
-//            for(int i=0;i<serverNames.length;i++){
-//                if(methods[i].equals(method)){
-//                }else{
-//                    return null;
-//                }
-//            }
-//        }
+
         PathMatcher pathMatcherToUse = (pathMatcher == null ? this.pathMatcher : pathMatcher);
         if (!ObjectUtils.isEmpty(this.excludePatterns)) {
             for (String pattern : this.excludePatterns) {
@@ -171,17 +153,27 @@ public class PatternMatcher<T> {
 
         List rtnList=new ArrayList();
         for (String pattern : this.includePatterns) {
-            if(pattern.equals(lookupPath)){
-                pair.setCompleteMatch(true);
-                rtnList.clear();
-                rtnList.add(pattern);
-                break;
-            }
             if (pathMatcherToUse.match(pattern, lookupPath)) {
                 rtnList.add(pattern);
             }
         }
+        if(rtnList.isEmpty()){
+            return null;
+        }
+
+        if(!methods.isEmpty()){
+            pair.setMethod(method);
+        }
+        if(!serverNames.isEmpty()){
+            pair.setServerName(serverName);
+        }
         pair.setBean(this.bean);
+        if(comparator!=null) {
+            if (rtnList.size() > 1) {
+                rtnList.sort(comparator);
+            }
+        }
+        pair.setMatchPattern((String)rtnList.get(0));
         pair.setMatchPatterns(rtnList);
         return pair;
     }

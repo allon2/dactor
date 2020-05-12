@@ -5,6 +5,8 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class PatternLookUpMatch<T> {
     private PathMatcher pathMatcher=new AntPathMatcher();
@@ -25,43 +27,59 @@ public class PatternLookUpMatch<T> {
         if(patterns.isEmpty()){
             return  null;
         }
-        Comparator comparator= pathMatcher.getPatternComparator(UrlPath);
-        List rtnList=new ArrayList();
-        Map params=new HashMap();
-        for(int i=0;i<patterns.size();i++){
-            PatternMatcher patternMatcher=patterns.get(i);
-            MatchPair pair=patternMatcher.matchePatterns(UrlPath,pathMatcher,method,serverName);
+        Comparator patterncomparator=pathMatcher.getPatternComparator(UrlPath);
+        List<MatchPair> rtnList=Collections.synchronizedList(new ArrayList());
+//        Map params=new ConcurrentHashMap();
+//        Map treeMap=Collections.synchronizedSortedMap(new TreeMap<>(comparator));
+        patterns.forEach(matcher -> {
+            MatchPair pair=matcher.matchePatterns(UrlPath,pathMatcher,method,serverName,patterncomparator);
             if(pair==null){
-                continue;
+               return;
             }
-            params.putAll(pair.convert2PatternMap());
-            rtnList.addAll(pair.getMatchPatterns());
-            if(pair.isCompleteMatch()){
-                break;
-            }
-        }
+            rtnList.add(pair);
+//            params.putAll(pair.convert2PatternMap());
+//            rtnList.addAll(pair.getMatchPatterns());
+//                if(pair.isCompleteMatch()){
+//                    return;
+//                }
+        });
+//        for(int i=0;i<patterns.size();i++){
+//            PatternMatcher patternMatcher=patterns.get(i);
+//            MatchPair pair=patternMatcher.matchePatterns(UrlPath,pathMatcher,method,serverName);
+//            if(pair==null){
+//                continue;
+//            }
+//            params.putAll(pair.convert2PatternMap());
+//            rtnList.addAll(pair.getMatchPatterns());
+//            if(pair.isCompleteMatch()){
+//                break;
+//            }
+//        }
 
         if(rtnList.size()==0){
             return null;
         }
-        String matchPattern=null;
         if(rtnList.size()==1){
-            MatchPair pair=new MatchPair();
-            matchPattern=(String)rtnList.get(0);
-            pair.setBean(params.get(matchPattern));
-            pair.setMatchPattern(matchPattern);
+            MatchPair pair=rtnList.get(0);
+//            pair.setMatchPattern((String)pair.getMatchPatterns().get(0));
+//            MatchPair pair=new MatchPair();
+//            matchPattern=(String)rtnList.get(0);
+//            pair.setBean(params.get(matchPattern));
+//            pair.setMatchPattern(matchPattern);
 
 
 
-            pair.setExtractMap(extractVariables(matchPattern,UrlPath));
+            pair.setExtractMap(extractVariables(pair.getMatchPattern(),UrlPath));
             return pair ;
         }
+        Comparator comparator= new PatternComparator(patterncomparator);
         rtnList.sort(comparator);
-        MatchPair pair=new MatchPair();
-        matchPattern=(String)rtnList.get(0);
-        pair.setBean(params.get(matchPattern));
-        pair.setMatchPattern(matchPattern);
-        pair.setExtractMap(extractVariables(matchPattern,UrlPath));
+        MatchPair pair=rtnList.get(0);
+//        MatchPair pair=new MatchPair();
+//        matchPattern=(String)rtnList.get(0);
+//        pair.setBean(params.get(matchPattern));
+//        pair.setMatchPattern(matchPattern);
+        pair.setExtractMap(extractVariables(pair.getMatchPattern(),UrlPath));
         return pair ;
 
 

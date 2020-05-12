@@ -7,6 +7,25 @@ import java.util.Map;
 public class MatchPair<T> {
     private List<String> matchPatterns;
     private String matchPattern;
+    private String method;
+    private String serverName;
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
     private Map extractMap;
 
     public Map getExtractMap() {
@@ -17,15 +36,15 @@ public class MatchPair<T> {
         this.extractMap = extractMap;
     }
 
-    private  boolean completeMatch=false;
-
-    public boolean isCompleteMatch() {
-        return completeMatch;
-    }
-
-    public void setCompleteMatch(boolean completeMatch) {
-        this.completeMatch = completeMatch;
-    }
+//    private  boolean completeMatch=false;
+//
+//    public boolean isCompleteMatch() {
+//        return completeMatch;
+//    }
+//
+//    public void setCompleteMatch(boolean completeMatch) {
+//        this.completeMatch = completeMatch;
+//    }
 
     public String getMatchPattern() {
         return matchPattern;
@@ -52,14 +71,20 @@ public class MatchPair<T> {
     public void setBean(T bean) {
         this.bean = bean;
     }
+    private Map patternMap=null;
     public Map convert2PatternMap(){
+        if(patternMap!=null){
+            return patternMap;
+        }
         Map rtnMap=new HashMap();
         if(matchPatterns ==null){
+            patternMap=rtnMap;
             return rtnMap;
         }
         for(int i = 0; i< matchPatterns.size(); i++){
             rtnMap.put(matchPatterns.get(i),bean);
         }
+        patternMap=rtnMap;
         return rtnMap;
     }
 
