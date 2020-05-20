@@ -1,18 +1,34 @@
 package cn.ymotel.dactor;
 
+import cn.ymotel.dactor.core.ActorChainCfg;
+import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.message.Message;
+import cn.ymotel.dactor.spring.annotaion.AfterChain;
+import cn.ymotel.dactor.spring.annotaion.BaseChain;
+import cn.ymotel.dactor.spring.annotaion.BeforeChain;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ActorUtils {
     private static java.util.concurrent.ConcurrentHashMap cachedBean=new java.util.concurrent.ConcurrentHashMap();
 
+    public static Map<String, Object> getAnnotations(ApplicationContext applicationContext,Class<? extends Annotation> annotationType){
+        Map map=applicationContext.getBeansWithAnnotation(annotationType);
+        Map<String,  Object> rtnMap=new HashMap();
+        for(java.util.Iterator iter=map.entrySet().iterator();iter.hasNext();){
+            Map.Entry entry=(Map.Entry)iter.next();
+            rtnMap.put((String)entry.getKey(),entry.getValue());
+        }
+        return  rtnMap;
+    }
     /**
      * 避免Spring getBean的锁
      * @param applicationContext application对象
@@ -187,8 +203,95 @@ public class ActorUtils {
         }
         return ip;
     }
+    public static ActorTransactionCfg createDefaultChainActor(ApplicationContext applicationContext, String defaultchain,String endBeanId) {
+        ActorTransactionCfg cfg=new ActorTransactionCfg();
+        cfg.setHandleException(true);
+        if(endBeanId!=null) {
+            cfg.setEndBeanId(endBeanId);
+        }
+        cfg.setApplicationContext(applicationContext);
+//        cfg.setEndBeanId("TransportResponseViewActor");
+//        cfg.setId("chainactor");
+        Map map=new HashMap<>();
+        map.putAll(createChainActor("beginActor","placeholderActor",defaultchain, BeforeChain.class,applicationContext));
+        map.putAll(createChainActor("placeholderActor",null,defaultchain, AfterChain.class,applicationContext));
+        cfg.setSteps(map);
+        return cfg;
+    }
+    private static TreeMap shortChain(Class<? extends Annotation> annotationType,ApplicationContext applicationContext){
+        Map<String,Object> annotationMap=(Map)ActorUtils.getAnnotations(applicationContext,annotationType);
+        TreeMap treeMap=new TreeMap(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                Order order1 = AnnotatedElementUtils.findMergedAnnotation(annotationMap.get(o1).getClass(), Order.class);
+                ;
+                Order order2=AnnotatedElementUtils.findMergedAnnotation(annotationMap.get(o2).getClass(), Order.class);
+                if(order1.value()>=order2.value()){
+                    return  -1;
+                }else{
+                    return  1;
+                }
 
+            }
+        });
+        treeMap.putAll(annotationMap);
+        return treeMap;
+    }
+    private static Map createChainActor(String preBeanId, String endBeanId, String chainid,Class<? extends Annotation> annotationType,ApplicationContext applicationContext){
 
+        Map<String,Object> annotationMap=shortChain(annotationType,applicationContext);
+        Map rtnMap=new HashMap();
+        for(java.util.Iterator iter=annotationMap.entrySet().iterator();iter.hasNext();){
+            Map.Entry entry=(Map.Entry)iter.next();
+            String key=(String)entry.getKey();
+            Object value=entry.getValue();
+            BaseChain baseChain= AnnotatedElementUtils.findMergedAnnotation(value.getClass(), BaseChain.class);
+            String[] chains=baseChain.chain();
+            if(chains!=null&&chains.length>0){
+                Set set=new HashSet();
+                for(int i=0;i<chains.length;i++){
+                    set.add(chains[i]);
+                }
+                if(!set.contains(chainid)){
+                    continue;
+                }
+            }
+
+            List list=new ArrayList<>();
+            Map property = new HashMap();
+            property.put("fromBeanId",preBeanId);
+            property.put("toBeanId",key);
+            property.put("conditon","");
+            list.add(property);
+            rtnMap.put(preBeanId,list);
+            preBeanId=key;
+        }
+        if(endBeanId!=null) {
+            List list = new ArrayList<>();
+            Map property = new HashMap();
+            property.put("fromBeanId", preBeanId);
+            property.put("toBeanId", endBeanId);
+            property.put("conditon", "");
+            list.add(property);
+            rtnMap.put(preBeanId, list);
+        }
+        return rtnMap;
+    }
+    public static ActorChainCfg creatDefaultChain(ApplicationContext applicationContext,String beanId,String endBeanId){
+        ActorChainCfg cfg=new ActorChainCfg();
+        cfg.setId(beanId);
+        List ls=new ArrayList();
+        ActorTransactionCfg cfg1=  createDefaultChainActor(applicationContext,beanId,endBeanId);
+        cfg1.setApplicationContext(applicationContext);
+        try {
+            cfg1.afterPropertiesSet();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ls.add(cfg1);
+        cfg.setChain(ls);
+        return cfg;
+    }
 
 
 }

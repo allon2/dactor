@@ -4,6 +4,7 @@ public class ResponseViewType {
 
     final public static String HTTP_DEFAULT="default";
     final public static String HTTP_FORWARD="forward";
+    final public static String HTTP_REDIRECT="redirect";
     final public static String HTTP_HTML_STREAM="htmlstream";
     final public static String HTTP_XML_STREAM="xmlstream";
     final public static String HTTP_PDF_STREAM="pdfstream";

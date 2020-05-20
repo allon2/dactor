@@ -50,7 +50,7 @@ public class DActorAsyncListener implements AsyncListener {
             response = (HttpServletResponse)asyncEvent.getSuppliedResponse();
             response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 //            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
+        } catch (java.lang.Throwable e) {
             e.printStackTrace();
         }
 //        asyncEvent.getAsyncContext().complete();

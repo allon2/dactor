@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 public class DayNamicPattern implements DyanmicUrlPattern , InitializingBean {
     @Override
-    public String[] getPatterns() {
+    public String[] getPatterns(Object request) {
         String[] ss=new String[1];
         ss[0]="/c.json";
         return ss;

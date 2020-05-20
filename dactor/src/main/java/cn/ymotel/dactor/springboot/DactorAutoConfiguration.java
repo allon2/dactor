@@ -1,5 +1,6 @@
 package cn.ymotel.dactor.springboot;
 
+import cn.ymotel.dactor.ActorUtils;
 import cn.ymotel.dactor.action.BeginActor;
 import cn.ymotel.dactor.action.EndActor;
 import cn.ymotel.dactor.action.FinishActor;
@@ -13,6 +14,9 @@ import cn.ymotel.dactor.core.disruptor.RingBufferMonitorThread;
 import cn.ymotel.dactor.message.DefaultResolveMessage;
 import cn.ymotel.dactor.response.TransportResponseViewActor;
 import cn.ymotel.dactor.spring.annotaion.ActorCfgBeanFactoryPostProcessor;
+import cn.ymotel.dactor.spring.annotaion.AfterChain;
+import cn.ymotel.dactor.spring.annotaion.BaseChain;
+import cn.ymotel.dactor.spring.annotaion.BeforeChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,11 +25,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.core.annotation.Order;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.util.*;
+import java.util.function.Function;
 
 @Configuration
 @ConditionalOnClass(MessageDispatcher.class)
@@ -91,38 +97,31 @@ public class DactorAutoConfiguration {
     }
 //    @Bean(name="chainactor")
 //    @ConditionalOnMissingBean(name = "chainactor")
-    public ActorTransactionCfg createDefaultChainActor() {
-        ActorTransactionCfg cfg=new ActorTransactionCfg();
-        cfg.setHandleException(true);
-        cfg.setEndBeanId("TransportResponseViewActor");
-        cfg.setId("chainactor");
-        Map map=new HashMap<>();
-        List list=new ArrayList<>();
-        Map property = new HashMap();
-        property.put("fromBeanId","beginActor");
-        property.put("toBeanId","placeholderActor");
-        property.put("conditon","");
-        list.add(property);
-        map.put("beginActor",list);
-        cfg.setSteps(map);
-        return cfg;
-    }
+
+
+
+
+
+
+
+
     @Bean(name="defaultchain")
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name="defaultchain")
     public ActorChainCfg creatDefaultChain(){
-        ActorChainCfg cfg=new ActorChainCfg();
-        cfg.setId("defaultchain");
-        List ls=new ArrayList();
-        ActorTransactionCfg cfg1=  createDefaultChainActor();
-        cfg1.setApplicationContext(this.applicationContext);
-        try {
-            cfg1.afterPropertiesSet();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        ls.add(cfg1);
-        cfg.setChain(ls);
-        return cfg;
+       return  ActorUtils.creatDefaultChain(this.applicationContext,"defaultchain","TransportResponseViewActor");
+//        ActorChainCfg cfg=new ActorChainCfg();
+//        cfg.setId("defaultchain");
+//        List ls=new ArrayList();
+//        ActorTransactionCfg cfg1=  ActorUtils.createDefaultChainActor(applicationContext,"defaultchain","TransportResponseViewActor");
+//        cfg1.setApplicationContext(this.applicationContext);
+//        try {
+//            cfg1.afterPropertiesSet();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        ls.add(cfg1);
+//        cfg.setChain(ls);
+//        return cfg;
     }
     @Bean(name="DefaultResolveMessage")
     @ConditionalOnMissingBean

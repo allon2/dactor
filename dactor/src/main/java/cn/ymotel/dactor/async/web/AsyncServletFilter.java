@@ -328,8 +328,8 @@ public class AsyncServletFilter implements Filter {
 //            }
         }
         UrlMapping.getDynamicMapping().forEach((dyanmicUrlPattern, actorTransactionCfg) -> {
-            String[] patterns= dyanmicUrlPattern.getPatterns();
-            PatternMatcher patternMatcher=new PatternMatcher(patterns,dyanmicUrlPattern.getExcludePatterns(),actorTransactionCfg);
+            String[] patterns= dyanmicUrlPattern.getPatterns(request);
+            PatternMatcher patternMatcher=new PatternMatcher(patterns,dyanmicUrlPattern.getExcludePatterns(request),actorTransactionCfg);
             lookUpMatch.add(patternMatcher);
         });
 //        for(java.util.Iterator iter=UrlMapping.getDynamicMapping().entrySet().iterator();iter.hasNext();){

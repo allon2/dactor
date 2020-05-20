@@ -70,7 +70,7 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
     public Message  HandleMessage(ServletMessage message) throws Exception {
 
         if (message instanceof ServletMessage) {
-            ServletMessage servletMessage=(ServletMessage)message;
+            ServletMessage servletMessage=message;
             if (servletMessage.getAsyncContext().getResponse().isCommitted()) {
                 return  message;
             } else {
@@ -85,43 +85,22 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
                 }
             }
         }
+        if(UrlPathViewExecute(message)){
+            return message;
+        }
+        if(viewExecute(message)){
+            return message;
+        };
+        if(SuffixViewExecute(message)){
+            return message;
+        }
 
-        viewExecute(message);
 
 
-//        String result=renderResultView(message);
-//        if(result==null){
-//            //
-//            String suffix=(String)message.getContext().get(Constants.SUFFIX);
-//            //优先使用后缀模式
-//            if(suffix!=null) {
-//                HttpView view = suffixMap.get(suffix);
-//                if (view != null) {
-//                    view.render(message, null);
-//                    return message;
-//                }
-//            }
-//        }
-//        String[] resolverNames = getResolverNames(result);
-//        HttpView view = this.getViewMap().get(resolverNames[0]);
-//        if (view == null) {
-//
-//            ((ServletMessage)message).getAsyncContext().complete();
-//
-//            System.err.println("can't find view");
-//            return message;
-//        }
-//        try {
-//            view.render(message, resolverNames[1]);
-//        } catch (Exception e) {
-//           e.printStackTrace();
-//        }
+        System.err.println("can't find httpview");
         return message;
     }
-    private AntPathMatcher antPathMatcher = new AntPathMatcher();
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
-//    private List<HttpView> urlPatternView=new ArrayList<>();
-    private Map<String,HttpView> urlPatternViewMap=new HashMap<>();
 
     /**
      *
@@ -129,9 +108,7 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
      * @return 执行返回true，不执行 返回false
       */
     public boolean UrlPathViewExecute(ServletMessage message){
-//        if(urlPatternViewMap==null||urlPatternViewMap.isEmpty()){
-//            return false;
-//        }
+
         String UrlPath = urlPathHelper.getLookupPathForRequest(message.getRequest());
 
         HttpView httpView=  patternLookUpMatch.lookupMatchBean(UrlPath,message.getRequest().getMethod(),message.getRequest().getServerName());
@@ -143,34 +120,6 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
         }else{
             httpView.exceptionRender(message,null);
         }
-//        Comparator comparator= antPathMatcher.getPatternComparator(UrlPath);
-//
-////        HttpView matchview=null;
-////        String matchUrlPattern=null;
-//        Map.Entry matchEntry=null;
-//        for(java.util.Iterator iter=urlPatternViewMap.entrySet().iterator();iter.hasNext();){
-//            Map.Entry entry=(Map.Entry)iter.next();
-//            if(antPathMatcher.match((String)entry.getKey(), UrlPath)){
-//                if(matchEntry==null){
-//                    matchEntry=entry;
-//                    continue;
-//                }
-//                //路由优先级
-//                int compare=comparator.compare((String)entry.getKey(),(String)matchEntry.getKey());
-//                if(compare<0) {
-//                    matchEntry=entry;
-//                }
-//            }
-//        }
-//
-//        if(matchEntry==null){
-//            return false;
-//        }
-//        if(message.getException()==null){
-//            ((HttpView)matchEntry.getValue()).successRender(message,null);
-//        }else{
-//            ((HttpView)matchEntry.getValue()).exceptionRender(message,null);
-//        }
         return true;
 
     }
@@ -193,56 +142,52 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
 
 
     }
-    public void viewExecute(ServletMessage message){
+    public boolean viewExecute(ServletMessage message){
         java.lang.Throwable exception=message.getException();
         String result=renderResultView(message);
         if(result==null){
-            //
-            if(SuffixViewExecute(message)){
-                return ;
-            }
-            if(UrlPathViewExecute(message)){
-                return;
-            };
-
-            message.getAsyncContext().complete();
-
-            System.err.println("can't find view");
-            return ;
-//            String suffix=(String)message.getContext().get(Constants.SUFFIX);
-//            //优先使用后缀模式
-//            if(suffix!=null) {
-//                HttpView view = urlSuffixMap.get(suffix);
-//                if (view != null) {
-//                    if(exception==null){
-//                        view.successRender(message,null);
-//                    }else{
-//                        view.exceptionRender(message,null);
-//                    }
-//                    return ;
-//                }
-//            }
+            return false;
         }
         String[] resolverNames = getResolverNames(result);
         HttpView view = this.getViewMap().get(resolverNames[0]);
         if (view == null) {
-
-            message.getAsyncContext().complete();
-
-            System.err.println("can't find view");
-            return ;
+            return false;
         }
         try {
+            ReplaceVariable(message, resolverNames);
             if(exception==null){
-                view.successRender(message,null);
+                view.successRender(message,resolverNames[1]);
             }else{
-                view.exceptionRender(message,null);
+                view.exceptionRender(message,resolverNames[1]);
             }
         } catch (java.lang.Throwable e) {
             e.printStackTrace();
             message.getAsyncContext().complete();
         }
-        return ;
+        return true;
+    }
+
+    private void ReplaceVariable(ServletMessage message, String[] resolverNames) {
+        if(resolverNames[1].indexOf("{")>=0) {
+        }else{
+            return;
+        }
+            Object obj = message.getContextData(Constants.CONTENT);
+        if(obj instanceof  Map){
+
+        }else{
+            return ;
+        }
+        Map tMap = (Map) obj;
+        for (Object s : tMap.keySet()) {
+            if (resolverNames[1].indexOf("{") >= 0) {
+                resolverNames[1] = resolverNames[1].replaceAll("\\{".concat(s.toString()).concat("\\}"), tMap.get(s.toString()).toString());
+            } else {
+                break;
+            }
+        }
+
+
     }
 
     private String[] getResolverNames(String result) {
@@ -253,13 +198,12 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
                 resolverNames[0] = views[0];
                 resolverNames[1] = null;
             } else {
-
                 resolverNames[0] = "default";
                 resolverNames[1] = views[0];
             }
-        } else if (views.length == 2) {
+        } else if (views.length >= 2) {
             resolverNames[0] = views[0];
-            resolverNames[1] = views[1];
+            resolverNames[1] = result.substring((views[0]+":").length());
         }
         return resolverNames;
     }
@@ -268,6 +212,12 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
         return false;
     }
     private String  renderResultView(Message message){
+        {
+            Object content = message.getContextData(Constants.CONTENT);
+            if(content!=null&&content instanceof  String){
+                return (String) content;
+            }
+        }
         String result = null;
 
 
@@ -292,14 +242,6 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
                 this.viewMap.put(view.getViewName(),view);
             }
             RegisterPattern(view);
-//            if(view.getUrlPattern()!=null){
-//                this.urlPatternViewMap.put(view.getUrlPattern(),view);
-//            }
-//            if(view.getUrlPatterns()!=null&&view.getUrlPatterns().size()>0){
-//                for(int i=0;i<view.getUrlPatterns().size();i++){
-//                    this.urlPatternViewMap.put((String)view.getUrlPatterns().get(i),view);
-//                }
-//            }
         }
 
     }

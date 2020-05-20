@@ -85,8 +85,8 @@ public class ServletMessage extends DefaultMessage {
     }
 
     @Override
-    public Object getUser() {
-         return request.getSession(true).getAttribute(Constants.USER);
+    public <T> T getUser() {
+         return (T) request.getSession(true).getAttribute(Constants.USER);
     }
 
     @Override
@@ -97,6 +97,12 @@ public class ServletMessage extends DefaultMessage {
     public byte[] getFileBytes(String fileName) throws IOException {
         MultipartFile file= ((MultipartHttpServletRequest)AsyncContext.getRequest()).getFile(fileName);
         return file.getBytes();
+    }
+    public String getFileString(String fileName,String charset) throws IOException {
+        return new String(getFileBytes(fileName),charset);
+    }
+    public String getFileString(String fileName,java.nio.charset.Charset charset) throws IOException {
+        return new String(getFileBytes(fileName),charset);
     }
     public List getFileNames(){
         List ls=new ArrayList();

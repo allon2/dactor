@@ -23,7 +23,7 @@ public class DaynmicPaternActor implements Actor, DyanmicUrlPattern {
     }
 
     @Override
-    public String[] getPatterns() {
+    public String[] getPatterns(Object request) {
         String[] ss=new String[1];
         ss[0]="/b.json";
         return ss;

@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public interface Actor<T extends  Message> {
     /**
-     *
+     * 需要使用异步交易请覆盖此方案
      * @param message
      * @return 返回NuLL值，会一直等待异步返回，并做处理
      * @throws Exception
@@ -47,7 +47,13 @@ public interface Actor<T extends  Message> {
     };
 
 
-
+    /**
+     * 一般同步交易请覆盖此方法
+     * @param message
+     * @param <E>
+     * @return 返回对象
+     * @throws java.lang.Throwable
+     */
     default  public <E> E  Execute(T message) throws java.lang.Throwable{
         return null;
     }

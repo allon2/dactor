@@ -22,7 +22,7 @@ public class SqlQueryPageListActor implements Actor {
         int ipage=message.getContextData("page",0);
         int isize=message.getContextData("size",size);
         Pageable pageable= PageRequest
-                .of(ipage>= 1 ? ipage - 1 : ipage, isize);
+                .of(ipage, isize);
         Map map =getParams(message,pageable);
         Page page=new PageImpl(getPageData(map),pageable,getTotal(map));
         return page;

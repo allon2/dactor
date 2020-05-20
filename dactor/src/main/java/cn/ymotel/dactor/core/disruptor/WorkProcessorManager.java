@@ -32,7 +32,7 @@ public class WorkProcessorManager {
      * 初始化 end
      */
 
-    private List<WorkProcessorExt> processorList=new ArrayList();
+    private List<WorkProcessorExt> processorList=Collections.synchronizedList(new ArrayList());
 //    private Map<WorkProcessorExt,MessageEventHandler> workHandlerMap=new HashMap();
     private final Sequence workSequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
     private WorkProcessorExt<MessageEvent> createProcessor(RingBuffer<MessageEvent> ringBuffer, WorkHandler workHandler) {

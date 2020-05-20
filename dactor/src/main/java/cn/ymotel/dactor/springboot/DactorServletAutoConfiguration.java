@@ -56,6 +56,7 @@ public AsyncServletFilter asyncServletFilter() {
         Map viewMap = new HashMap<>();
         actor.setViewMap(viewMap);
         viewMap.put(ResponseViewType.HTTP_DEFAULT, getDefaultView());
+        viewMap.put(ResponseViewType.HTTP_REDIRECT, new RedirectView());
         viewMap.put(ResponseViewType.HTTP_FORWARD, getForwardView());
         viewMap.put(ResponseViewType.HTTP_HTML_STREAM, getStreamView("text/html; charset=utf-8"));
         viewMap.put(ResponseViewType.HTTP_XML_STREAM, getStreamView("text/xml; charset=utf-8"));

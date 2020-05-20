@@ -1,8 +1,9 @@
 package cn.ymotel.dactor.springboot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-//@Component
+@Component
 @ConfigurationProperties(prefix ="dactor")
 public class DactorProperties {
     private boolean enabled = true;

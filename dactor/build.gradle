@@ -108,11 +108,15 @@ dependencies {
 
     compileOnly group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.2.7.RELEASE'
 //    compileOnly group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.2.7.RELEASE'
-    compileOnly group: 'org.springframework.boot', name: 'spring-boot-autoconfigure-processor', version: '2.2.7.RELEASE'
+    annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '2.2.7.RELEASE'
+//    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
     compile group: 'org.springframework.data', name: 'spring-data-commons', version: '2.2.7.RELEASE'
     compileOnly group: 'org.mybatis', name: 'mybatis', version: '3.5.4'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
     compileOnly group: 'taglibs', name: 'standard', version:'1.1.2'
     compileOnly group: 'jstl', name: 'jstl', version:'1.2'
 }
-//apply from: 'bintray.gradle'
+compileJava.inputs.files(processResources)
+
+apply from: 'bintray.gradle'
