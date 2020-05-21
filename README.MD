@@ -112,7 +112,7 @@ DActor框架基于协程思想设计，可同时支持同步和异步代码，�
    http://localhost:8080/example/np.randomTxt2.json为使用命名空间的例子,相关配置在conf/namespace.xml中。  
 
    启动后，可在控制台看到内部调用结果  
-   ![Image text](https://gitee.com/handyun/dactor/raw/master/1.png)
+   ![Yqpdqx.png](https://s1.ax1x.com/2020/05/21/Yqpdqx.png)
 
 
 ### Maven dependency
