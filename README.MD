@@ -112,7 +112,7 @@ DActor框架基于协程思想设计，可同时支持同步和异步代码，�
    http://localhost:8080/example/np.randomTxt2.json为使用命名空间的例子,相关配置在conf/namespace.xml中。  
 
    启动后，可在控制台看到内部调用结果  
-   ![Image text](1.png)
+   ![Image text](https://gitee.com/handyun/dactor/raw/master/1.png)
 
 
 ### Maven dependency
@@ -380,5 +380,5 @@ cn.ymotel.dactor.action.netty.aysnsocket.TcpClientActor 提供的异步调用net
      </actor>
  ```
  以上交易的交易流程图如下
- ![Image text](randomTxt2.png)
+ ![Image text](https://gitee.com/handyun/dactor/raw/master/randomTxt2.png)
 以上的完整例子都可在example中得到
