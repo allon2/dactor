@@ -1,3 +1,4 @@
+![](https://img.shields.io/github/release/allon2/dactor.svg) 
 # **DActor**  
 ## Introduction
 DActor框架基于协程思想设计，可同时支持同步和异步代码，简化在线异步代码的开发，用同步代码的思维来开发异步代码，兼顾异步代码的高并发、无阻塞和同步代码的易读性，可维护性。
@@ -93,8 +94,7 @@ DActor框架基于协程思想设计，可同时支持同步和异步代码，�
 1.0.3版本  
 &emsp;Message增加setUser和getUser对象  
 1.0.2版本
-
-- 初始化版本
+&emsp;初始化版本
 ## Getting Started
   example是J2EE程序,下载后，可直接运行,其中集成了若干例子  
     默认使用.do提交相关交易，但如果是.json将会返回json数据
