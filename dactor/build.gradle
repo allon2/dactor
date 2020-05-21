@@ -119,4 +119,4 @@ dependencies {
 }
 compileJava.inputs.files(processResources)
 
-apply from: 'bintray.gradle'
+//apply from: 'bintray.gradle'
