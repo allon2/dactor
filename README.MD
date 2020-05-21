@@ -44,6 +44,7 @@ DActor框架基于协程思想设计，可同时支持同步和异步代码，�
 &emsp;2:优化相关代码    
 &emsp;3:更改DyanmicUrlPattern接口，增加参数        
 &emsp;4:将创建责任链方法单独抽取       
+&emsp;5:yml文件支持属性自动提示       
 1.1.0版本  
 &emsp;1:SpringBoot依赖版本升级为2.2.7.RELEASE,其他依赖升级为最新版本  	
 &emsp;2:增加MessageSourceFilter,并从AsyncServletFilter中移除相关代码 
