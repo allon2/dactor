@@ -1,7 +1,6 @@
 # **DActor**  
 ## Introduction
-DActor框架可同时支持同步和异步代码，简化在线异步代码的开发，用同步代码的思维来开发异步代码，兼顾异步代码的高并发、无阻塞和同步代码的易读性，可维护性。
-基于协程思想设计
+DActor框架基于协程思想设计，可同时支持同步和异步代码，简化在线异步代码的开发，用同步代码的思维来开发异步代码，兼顾异步代码的高并发、无阻塞和同步代码的易读性，可维护性。
 最大程度的降低阻塞，提高单个线程的处理能力，并可有效的降低线程数。
 ## 项目地址
  GitHub:https://github.com/allon2/dactor  
@@ -39,6 +38,11 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
  注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note  
+1.1.1版本  
+    1:增加AfterChain和BeforeChain注解  	
+    2:优化相关代码 
+    3:更改DyanmicUrlPattern接口，增加参数   
+    4:将创建责任链方法单独抽取   
 1.1.0版本  
     1:SpringBoot依赖版本升级为2.2.7.RELEASE,其他依赖升级为最新版本  	
 ​    2:增加MessageSourceFilter,并从AsyncServletFilter中移除相关代码 
@@ -116,13 +120,13 @@ DActor框架可同时支持同步和异步代码，简化在线异步代码的�
 <dependency>
     <groupId>cn.ymotel</groupId>
     <artifactId>dactor</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 ### Gradle dependency
 
 ```
-compile group: 'cn.ymotel', name: 'dactor', version:'1.1.0'
+compile group: 'cn.ymotel', name: 'dactor', version:'1.1.1'
 
 ```
 
