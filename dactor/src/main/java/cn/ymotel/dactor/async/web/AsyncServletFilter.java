@@ -328,9 +328,18 @@ public class AsyncServletFilter implements Filter {
 //            }
         }
         UrlMapping.getDynamicMapping().forEach((dyanmicUrlPattern, actorTransactionCfg) -> {
-            String[] patterns= dyanmicUrlPattern.getPatterns(request);
+            String[] patterns= null;
+            try {
+                patterns= dyanmicUrlPattern.getPatterns(request);
+
+            if(patterns==null||patterns.length==0){
+                return;
+            }
             PatternMatcher patternMatcher=new PatternMatcher(patterns,dyanmicUrlPattern.getExcludePatterns(request),actorTransactionCfg);
             lookUpMatch.add(patternMatcher);
+            } catch (java.lang.Throwable e) {
+                //忽略
+            }
         });
 //        for(java.util.Iterator iter=UrlMapping.getDynamicMapping().entrySet().iterator();iter.hasNext();){
 //            Map.Entry entry=(Map.Entry)iter.next();
