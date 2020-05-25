@@ -55,6 +55,17 @@ public class ActorCfgBeanFactoryPostProcessor implements BeanDefinitionRegistryP
         if(actorCfg.excludeUrlPatterns()!=null&&actorCfg.excludeUrlPatterns().length!=0) {
             builder.addPropertyValue("excludeUrlPattern", actorCfg.excludeUrlPatterns());
         }
+        if(actorCfg.httpStatus()!=null&&actorCfg.httpStatus().length!=0){
+            builder.addPropertyValue("httpStatus", actorCfg.httpStatus());
+        }
+        if(actorCfg.dispatcherType()!=null&&actorCfg.dispatcherType().length!=0){
+            String[] dispatcherTypes=new String[actorCfg.dispatcherType().length];
+            for(int i=0;i<actorCfg.dispatcherType().length;i++) {
+                dispatcherTypes[i]=actorCfg.dispatcherType()[i].name();
+            }
+            builder.addPropertyValue("dispatcherTypes", dispatcherTypes);
+
+        }
         if(StringUtils.hasText(actorCfg.chain())) {
 
             builder.addPropertyReference("chain", actorCfg.chain());

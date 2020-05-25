@@ -1,5 +1,6 @@
 package cn.ymotel.dactor.pattern;
 
+import javax.servlet.DispatcherType;
 import java.util.Comparator;
 
 public class PatternComparator implements Comparator<MatchPair> {
@@ -17,9 +18,27 @@ public class PatternComparator implements Comparator<MatchPair> {
      */
     @Override
     public int compare(MatchPair pair1, MatchPair pair2) {
+
+
+        if(DispatcherType.ERROR.name().equals(pair1.getDispatcherType())&&DispatcherType.ERROR.name().equals(pair2.getDispatcherType())){
+            if(pair1.getHttpStatus()!=null){
+                return -1;
+            }
+            if(pair2.getHttpStatus()!=null){
+                return 1;
+            }
+            return -1;
+        }
+        if(DispatcherType.ERROR.name().equals(pair1.getDispatcherType())&&DispatcherType.REQUEST.name().equals(pair2.getDispatcherType())) {
+            return  -1;
+        }
+        if(DispatcherType.REQUEST.name().equals(pair1.getDispatcherType())&&DispatcherType.ERROR.name().equals(pair2.getDispatcherType())) {
+            return  1;
+        }
         if(pair1.getMatchPattern().equals(pair2.getMatchPattern())){
             return compareServerNameAndMethod(pair1, pair2);
         }
+
         int i=comparator.compare(pair1.getMatchPattern(),pair2.getMatchPattern());
         if(i==0){
             return compareServerNameAndMethod(pair1, pair2);
@@ -34,6 +53,18 @@ public class PatternComparator implements Comparator<MatchPair> {
             left++;
         }
         if (pair2.getServerName() != null) {
+            right++;
+        }
+        if (pair1.getDispatcherType()== null) {
+            left++;
+        }
+        if (pair2.getDispatcherType() != null) {
+            right++;
+        }
+        if (pair1.getHttpStatus()== null) {
+            left++;
+        }
+        if (pair2.getHttpStatus() != null) {
             right++;
         }
 

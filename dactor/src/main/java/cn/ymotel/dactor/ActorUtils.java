@@ -292,6 +292,10 @@ public class ActorUtils {
         cfg.setChain(ls);
         return cfg;
     }
+    public static Integer getHttpErrorStatus(HttpServletRequest request) {
+        Integer statusCode = (Integer)request.getAttribute("javax.servlet.error.status_code");
+        return statusCode;
 
+    }
 
 }

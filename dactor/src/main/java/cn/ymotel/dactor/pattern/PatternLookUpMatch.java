@@ -1,9 +1,12 @@
 package cn.ymotel.dactor.pattern;
 
+import cn.ymotel.dactor.ActorUtils;
 import cn.ymotel.dactor.Constants;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -15,15 +18,15 @@ public class PatternLookUpMatch<T> {
     public void add(PatternMatcher<T> matcher){
         patterns.add(matcher);
     }
-    public  T lookupMatchBean(String UrlPath,String method,String serverName){
-        MatchPair pair= lookupMatchPair(UrlPath,method,serverName);
+    public  T lookupMatchBean(String UrlPath, String method, String serverName, HttpServletRequest request){
+        MatchPair pair= lookupMatchPair(UrlPath,method,serverName,request);
         if(pair==null){
             return null;
         }
         return  (T)pair.getBean();
     }
 
-    public  MatchPair lookupMatchPair(String UrlPath,String method,String serverName){
+    public  MatchPair lookupMatchPair(String UrlPath, String method, String serverName, HttpServletRequest request){
         if(patterns.isEmpty()){
             return  null;
         }
@@ -32,7 +35,7 @@ public class PatternLookUpMatch<T> {
 //        Map params=new ConcurrentHashMap();
 //        Map treeMap=Collections.synchronizedSortedMap(new TreeMap<>(comparator));
         patterns.forEach(matcher -> {
-            MatchPair pair=matcher.matchePatterns(UrlPath,pathMatcher,method,serverName,patterncomparator);
+            MatchPair pair=matcher.matchePatterns(UrlPath,pathMatcher,method,serverName,request.getDispatcherType().name(), ActorUtils.getHttpErrorStatus(request),patterncomparator);
             if(pair==null){
                return;
             }
@@ -85,6 +88,9 @@ public class PatternLookUpMatch<T> {
 
     }
     public Map extractVariables(String MatchPattern,String urlPath){
+        if(MatchPattern==null){
+            return new HashMap();
+        }
        Map map= pathMatcher.extractUriTemplateVariables(MatchPattern,urlPath);
        String path= pathMatcher.extractPathWithinPattern(MatchPattern,urlPath);
        map.put(Constants.EXTRACTPATH,path);

@@ -136,6 +136,12 @@ public class AsyncServletFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) request1;
         HttpServletResponse response = (HttpServletResponse) response1;
+
+//        if(request.getDispatcherType().equals(DispatcherType.ERROR)){
+//            if(!doErrorService(request,response)){
+//                chain.doFilter(request1, response1);
+//            };
+//        }else
         if (doService(request, response)) {
 
         } else {
@@ -147,6 +153,22 @@ public class AsyncServletFilter implements Filter {
 
 
     }
+    protected Integer getStatus(HttpServletRequest request) {
+        Integer statusCode = (Integer)request.getAttribute("javax.servlet.error.status_code");
+        return statusCode;
+//        if (statusCode == null) {
+//            return HttpStatus.INTERNAL_SERVER_ERROR;
+//        } else {
+//            try {
+//                return HttpStatus.valueOf(statusCode);
+//            } catch (Exception var4) {
+//                return HttpStatus.INTERNAL_SERVER_ERROR;
+//            }
+//        }
+    }
+//    private boolean doErrorService(HttpServletRequest request, HttpServletResponse response) {
+//        HttpStatus status=getStatus(request);
+//    }
 
     /**
      * @param request  HttpServletRequest
@@ -351,7 +373,7 @@ public class AsyncServletFilter implements Filter {
 //            lookUpMatch.add(patternMatcher);
 //
 //        }
-       MatchPair matchPair= lookUpMatch.lookupMatchPair(UrlPath,request.getMethod(),request.getServerName());
+       MatchPair matchPair= lookUpMatch.lookupMatchPair(UrlPath,request.getMethod(),request.getServerName(),request);
         return matchPair;
 
     }

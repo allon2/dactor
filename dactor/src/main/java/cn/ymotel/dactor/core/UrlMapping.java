@@ -2,7 +2,9 @@ package cn.ymotel.dactor.core;
 
 import cn.ymotel.dactor.async.web.StaticResourceRequestHandler;
 import cn.ymotel.dactor.pattern.PatternMatcher;
+import org.springframework.http.HttpStatus;
 
+import javax.servlet.DispatcherType;
 import java.util.Map;
 
 public class UrlMapping {
@@ -25,8 +27,8 @@ public class UrlMapping {
         PatternMatcher matcher=new PatternMatcher(includes,excludes,bean);
         Patternmapping.put(matcher,bean);
     }
-    public static void addPatternMapping(String[] includes,String[] excludes,String[] methods,String[] serverNames,ActorTransactionCfg bean){
-        PatternMatcher matcher=new PatternMatcher(includes,excludes,methods,serverNames,bean);
+    public static void addPatternMapping(String[] includes, String[] excludes, String[] methods, String[] serverNames, String[] dispatcherTypes, Integer[] httpStatuses,ActorTransactionCfg bean){
+        PatternMatcher matcher=new PatternMatcher(includes,excludes,methods,serverNames,dispatcherTypes,httpStatuses,bean);
         Patternmapping.put(matcher,bean);
     }
     public static Map<PatternMatcher,ActorTransactionCfg> getPatternMapping(){

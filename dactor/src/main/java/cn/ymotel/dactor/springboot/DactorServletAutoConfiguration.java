@@ -11,9 +11,13 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.web.servlet.ConditionalOnMissingFilterBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,19 +34,22 @@ public class DactorServletAutoConfiguration implements InitializingBean {
 //    @ConditionalOnMissingBean(value = AsyncServletFilter.class)
 //    @ConditionalOnMissingFilterBean(AsyncServletFilter.class)
 ////    @ConditionalOnBean(value = AsyncServletFilter.class)
-//    public FilterRegistrationBean AsyncServletFilterRegistration() {
-//        FilterRegistrationBean bean = new FilterRegistrationBean();
-//        bean.setFilter(new AsyncServletFilter());
-//        bean.addUrlPatterns("/*");
-//        return bean;
-//
-//    }
-@Bean
-@ConditionalOnMissingBean
-public AsyncServletFilter asyncServletFilter() {
-    AsyncServletFilter filter=new AsyncServletFilter();
-    return filter;
-}
+    @Bean
+    @ConditionalOnMissingFilterBean(AsyncServletFilter.class)
+    public FilterRegistrationBean AsyncServletFilterRegistration() {
+        FilterRegistrationBean bean = new FilterRegistrationBean();
+        bean.setFilter(new AsyncServletFilter());
+        bean.addUrlPatterns("/*");
+        bean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST,DispatcherType.ERROR));
+        return bean;
+
+    }
+//@Bean
+//@ConditionalOnMissingBean
+//public AsyncServletFilter asyncServletFilter() {
+//    AsyncServletFilter filter=new AsyncServletFilter();
+//    return filter;
+//}
     @Bean
     @ConditionalOnClass(javax.servlet.jsp.jstl.core.Config.class)
     public MessageSourceFilter MessageSourceFilter() {

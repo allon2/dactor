@@ -17,7 +17,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.http.HttpStatus;
 
+import javax.servlet.DispatcherType;
 import java.util.*;
 
 /**
@@ -267,6 +269,25 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
         this.dyanmicUrlPatterns = dyanmicUrlPatterns;
     }
 
+    private String[] dispatcherTypes;
+    private Integer[] httpStatus;
+
+    public String[] getDispatcherTypes() {
+        return dispatcherTypes;
+    }
+
+    public void setDispatcherTypes(String[] dispatcherTypes) {
+        this.dispatcherTypes = dispatcherTypes;
+    }
+
+    public Integer[] getHttpStatus() {
+        return httpStatus;
+    }
+
+    public void setHttpStatus(Integer[] httpStatus) {
+        this.httpStatus = httpStatus;
+    }
+
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
@@ -276,8 +297,9 @@ public class ActorTransactionCfg implements InitializingBean, ApplicationContext
         if(actorGlobalCfg!=null){
             this.setGlobal(actorGlobalCfg);
         }
-
-        UrlMapping.addPatternMapping(getUrlPattern(),getExcludeUrlPattern(),methods,domains,this);
+        {
+            UrlMapping.addPatternMapping(getUrlPattern(), getExcludeUrlPattern(), methods, domains, dispatcherTypes, httpStatus, this);
+        }
 //        {
 //            //去除空字符串
 //            List urlPatternList = new ArrayList();

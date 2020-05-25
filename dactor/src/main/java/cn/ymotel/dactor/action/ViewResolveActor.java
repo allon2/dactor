@@ -111,7 +111,7 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
 
         String UrlPath = urlPathHelper.getLookupPathForRequest(message.getRequest());
 
-        HttpView httpView=  patternLookUpMatch.lookupMatchBean(UrlPath,message.getRequest().getMethod(),message.getRequest().getServerName());
+        HttpView httpView=  patternLookUpMatch.lookupMatchBean(UrlPath,message.getRequest().getMethod(),message.getRequest().getServerName(),message.getRequest());
         if(httpView==null){
             return false;
         }

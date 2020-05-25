@@ -2,9 +2,11 @@ package cn.ymotel.dactor.spring.annotaion;
 
 import cn.ymotel.dactor.core.DyanmicUrlPattern;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.DispatcherType;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -50,4 +52,6 @@ public @interface ActorCfg {
      */
     long timeout() default  -1;
     Class<? extends DyanmicUrlPattern>[] urlPatternClass() default {};
+    DispatcherType[] dispatcherType()  default {DispatcherType.REQUEST};
+    int[] httpStatus() default {};
 }

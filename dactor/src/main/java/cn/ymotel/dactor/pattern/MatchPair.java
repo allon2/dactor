@@ -1,5 +1,6 @@
 package cn.ymotel.dactor.pattern;
 
+import javax.servlet.DispatcherType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,24 @@ public class MatchPair<T> {
     private String matchPattern;
     private String method;
     private String serverName;
+    private String dispatcherType;
+    private  Integer httpStatus;
+
+    public String getDispatcherType() {
+        return dispatcherType;
+    }
+
+    public void setDispatcherType(String dispatcherType) {
+        this.dispatcherType = dispatcherType;
+    }
+
+    public Integer getHttpStatus() {
+        return httpStatus;
+    }
+
+    public void setHttpStatus(Integer httpStatus) {
+        this.httpStatus = httpStatus;
+    }
 
     public String getServerName() {
         return serverName;
