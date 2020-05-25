@@ -34,22 +34,22 @@ public class DactorServletAutoConfiguration implements InitializingBean {
 //    @ConditionalOnMissingBean(value = AsyncServletFilter.class)
 //    @ConditionalOnMissingFilterBean(AsyncServletFilter.class)
 ////    @ConditionalOnBean(value = AsyncServletFilter.class)
+//    @Bean
+//    @ConditionalOnMissingFilterBean(AsyncServletFilter.class)
+//    public FilterRegistrationBean AsyncServletFilterRegistration() {
+//        FilterRegistrationBean bean = new FilterRegistrationBean();
+//        bean.setFilter(new AsyncServletFilter());
+//        bean.addUrlPatterns("/*");
+//        bean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST,DispatcherType.ERROR));
+//        return bean;
+//
+//    }
     @Bean
-    @ConditionalOnMissingFilterBean(AsyncServletFilter.class)
-    public FilterRegistrationBean AsyncServletFilterRegistration() {
-        FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new AsyncServletFilter());
-        bean.addUrlPatterns("/*");
-        bean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST,DispatcherType.ERROR));
-        return bean;
-
+    @ConditionalOnMissingBean
+    public AsyncServletFilter asyncServletFilter() {
+        AsyncServletFilter filter=new AsyncServletFilter();
+        return filter;
     }
-//@Bean
-//@ConditionalOnMissingBean
-//public AsyncServletFilter asyncServletFilter() {
-//    AsyncServletFilter filter=new AsyncServletFilter();
-//    return filter;
-//}
     @Bean
     @ConditionalOnClass(javax.servlet.jsp.jstl.core.Config.class)
     public MessageSourceFilter MessageSourceFilter() {
