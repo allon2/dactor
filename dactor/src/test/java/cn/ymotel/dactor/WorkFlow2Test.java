@@ -19,7 +19,7 @@ public class WorkFlow2Test extends AbstractJUnit4SpringContextTests {
     /**
      * 测试Step中的beginBeanId是Actor标签
      */
-    @Test
+//    @Test
     public void test1(){
         MessageDispatcher dispatcher= (MessageDispatcher)this.applicationContext.getBean("MessageRingBufferDispatcher");
         DefaultMessage defaultMessage=new DefaultMessage();
@@ -44,7 +44,7 @@ public class WorkFlow2Test extends AbstractJUnit4SpringContextTests {
     /**
      * 测试Step中的endBeanId是Actor标签
      */
-    @Test
+//    @Test
     public void test2(){
         MessageDispatcher dispatcher= (MessageDispatcher)this.applicationContext.getBean("MessageRingBufferDispatcher");
         DefaultMessage defaultMessage=new DefaultMessage();
