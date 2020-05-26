@@ -7,6 +7,7 @@
 package cn.ymotel.dactor.action;
 
 import cn.ymotel.dactor.Constants;
+import cn.ymotel.dactor.async.web.AsyncContextWrapper;
 import cn.ymotel.dactor.async.web.view.CustomHttpView;
 import cn.ymotel.dactor.async.web.view.HttpView;
 import cn.ymotel.dactor.message.ServletMessage;
@@ -71,6 +72,11 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
 
         if (message instanceof ServletMessage) {
             ServletMessage servletMessage=message;
+            if(servletMessage.getAsyncContext() instanceof AsyncContextWrapper){
+                if(((AsyncContextWrapper)(servletMessage.getAsyncContext())).isComplete()){
+                    return null;
+                }
+            }
             if (servletMessage.getAsyncContext().getResponse().isCommitted()) {
                 return  message;
             } else {
@@ -98,6 +104,7 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
 
 
         System.err.println("can't find httpview");
+        message.getAsyncContext().complete();
         return message;
     }
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
@@ -168,6 +175,16 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
     }
 
     private void ReplaceVariable(ServletMessage message, String[] resolverNames) {
+        if(resolverNames==null){
+            return ;
+        }
+        if(resolverNames.length<=1){
+            return ;
+        }
+
+        if(resolverNames[1]==null){
+            return ;
+        }
         if(resolverNames[1].indexOf("{")>=0) {
         }else{
             return;

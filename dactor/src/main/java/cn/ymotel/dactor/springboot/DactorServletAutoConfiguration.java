@@ -10,6 +10,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.servlet.ConditionalOnMissingFilterBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -25,6 +26,7 @@ import java.util.Map;
 //@ConditionalOnClass(Servlet.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @AutoConfigureAfter({DactorAutoConfiguration.class})
+@ConditionalOnProperty(name = "dactor.enabled", matchIfMissing = true)
 public class DactorServletAutoConfiguration implements InitializingBean {
     private TransportResponseViewActor transportResponseViewActor=null;
     public DactorServletAutoConfiguration( TransportResponseViewActor transportResponseViewActor) {
@@ -40,7 +42,7 @@ public class DactorServletAutoConfiguration implements InitializingBean {
 //        FilterRegistrationBean bean = new FilterRegistrationBean();
 //        bean.setFilter(new AsyncServletFilter());
 //        bean.addUrlPatterns("/*");
-//        bean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST,DispatcherType.ERROR));
+//        bean.setDispatcherTypes(EnumSet.of(DispatcherType.REQUEST));
 //        return bean;
 //
 //    }

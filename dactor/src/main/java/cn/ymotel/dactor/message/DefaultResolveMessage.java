@@ -7,6 +7,7 @@
 package cn.ymotel.dactor.message;
 
 import cn.ymotel.dactor.Constants;
+import cn.ymotel.dactor.async.web.AsyncContextWrapper;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +45,7 @@ public class DefaultResolveMessage {
     public Message resolveContext(AsyncContext context, HttpServletRequest request, HttpServletResponse response) {
         ServletMessage message = new ServletMessage();
 //		  message
-        message.setAsyncContext(context);
+        message.setAsyncContext(new AsyncContextWrapper(context));
         message.setRequest(request);
         message.setResponse(response);
         init(message, request, response);
