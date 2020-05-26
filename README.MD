@@ -1,4 +1,4 @@
-[![GitHub release](https://img.shields.io/github/release/allon2/dactor.svg)](https://github.com/allon2/dactor/releases)![JDK](https://img.shields.io/badge/JDK-1.8-green.svg)![Gradle](https://img.shields.io/badge/Gradle-6.2.2-green.svg)![SpringBoot](https://img.shields.io/badge/SpringBoot-2.2.7.RELEASE-green.svg)![Spring](https://img.shields.io/badge/Spring-5.2.6.RELEASE-green.svg)![Servlet](https://img.shields.io/badge/Servlet-3.0-green.svg)
+[![GitHub release](https://img.shields.io/github/release/allon2/dactor.svg)](https://github.com/allon2/dactor/releases)  ![JDK](https://img.shields.io/badge/JDK-1.8-green.svg)  ![Gradle](https://img.shields.io/badge/Gradle-6.2.2-green.svg)  ![SpringBoot](https://img.shields.io/badge/SpringBoot-2.2.7.RELEASE-green.svg)  ![Spring](https://img.shields.io/badge/Spring-5.2.6.RELEASE-green.svg)  ![Servlet](https://img.shields.io/badge/Servlet-3.0-green.svg)
 # **DActor**  
 ## Introduction
 DActor框架基于协程思想设计，可同时支持同步和异步代码，简化在线异步代码的开发，用同步代码的思维来开发异步代码，兼顾异步代码的高并发、无阻塞和同步代码的易读性，可维护性。
