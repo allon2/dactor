@@ -13,8 +13,8 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/ringbuffer.xml","classpath:/workflow/workflow2.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"classpath:/ringbuffer.xml","classpath:/workflow/workflow2.xml"})
 public class WorkFlow2Test extends AbstractJUnit4SpringContextTests {
     /**
      * 测试Step中的beginBeanId是Actor标签

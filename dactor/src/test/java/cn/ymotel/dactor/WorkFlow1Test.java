@@ -17,8 +17,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/ringbuffer.xml","classpath:/workflow/workflow1.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"classpath:/ringbuffer.xml","classpath:/workflow/workflow1.xml"})
 public class WorkFlow1Test extends AbstractJUnit4SpringContextTests {
 //    @Test
     public void test1(){
