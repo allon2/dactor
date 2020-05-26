@@ -32,11 +32,12 @@ DActor框架基于协程思想设计，可同时支持同步和异步代码，�
 - 5、支持责任链模式  
 - 6、J2EE支持json,csv,pdf,xml,html格式输出
 - 7、J2EE支持数据流输出,动态文件下载、动态图片输出、跳转和可根据配置动态输出
- 环境要求  
-  JDK 1.8  
-  Spring FrameWork 5.2.4.RELEASE +  
-  Servlet 3.0+(因为需要使用Servlet的异步功能)  
- 注意事项  
+- 8、同时支持SpringBoot和Spring
+## 环境要求  
+-   JDK 1.8  
+-   Spring FrameWork 5.2.4.RELEASE +  或者 Spring Boot 2.2.7.RELEASE  +
+-   Servlet 3.0+(因为需要使用Servlet的异步功能) 
+### 注意事项  
   请求的完整逻辑是分散在不同的线程中执行的，所以尽量避免使用ThreadLocal
 ## Release Note  
 1.1.1版本  
