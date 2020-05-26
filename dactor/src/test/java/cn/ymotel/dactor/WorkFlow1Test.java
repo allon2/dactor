@@ -21,25 +21,25 @@ import static org.junit.Assert.assertTrue;
 //@ContextConfiguration(locations = {"classpath:/ringbuffer.xml","classpath:/workflow/workflow1.xml"})
 public class WorkFlow1Test extends AbstractJUnit4SpringContextTests {
 //    @Test
-    public void test1(){
-        MessageDispatcher dispatcher= (MessageDispatcher)this.applicationContext.getBean("MessageRingBufferDispatcher");
-        DefaultMessage defaultMessage=new DefaultMessage();
-        CountDownLatch lock=new CountDownLatch(1);
-
-        defaultMessage.getContext().put("lock",lock);
-        try {
-            dispatcher.startMessage(defaultMessage,(ActorTransactionCfg)this.applicationContext.getBean("randomTxt1"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            assert false;
-        }
-
-        try {
-            lock.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertTrue(defaultMessage.getContext().get("111").equals("222"));
-    }
+//    public void test1(){
+//        MessageDispatcher dispatcher= (MessageDispatcher)this.applicationContext.getBean("MessageRingBufferDispatcher");
+//        DefaultMessage defaultMessage=new DefaultMessage();
+//        CountDownLatch lock=new CountDownLatch(1);
+//
+//        defaultMessage.getContext().put("lock",lock);
+//        try {
+//            dispatcher.startMessage(defaultMessage,(ActorTransactionCfg)this.applicationContext.getBean("randomTxt1"));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            assert false;
+//        }
+//
+//        try {
+//            lock.await();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        assertTrue(defaultMessage.getContext().get("111").equals("222"));
+//    }
 
 }
