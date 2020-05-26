@@ -5,17 +5,17 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:actorCfg="http://www.ymotel.cn/schema/dactor"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd">
 
-    <bean id="FinishActor2" class="cn.ymotel.dactor.actorCfg.FinishActor"></bean>
+    <bean id="FinishActor2" class="cn.ymotel.dactor.action.FinishActor"></bean>
 
-    <actorCfg:actorCfg id="actorhttpcore" handleException="true"  endBeanId="FinishActor2" >
+    <actorCfg:actor id="actorhttpcore" handleException="true"  endBeanId="FinishActor2" >
         <actorCfg:steps>
             <actorCfg:step xpoint="" ypont="" fromBeanId="beginActor"  conditon="" toBeanId="placeholderActor"/>
         </actorCfg:steps>
 
-    </actorCfg:actorCfg>
-    <bean id="randomTxtActor" class="cn.ymotel.dactor.actorCfg.RandomTxtActor"></bean>
+    </actorCfg:actor>
+    <bean id="randomTxtActor" class="cn.ymotel.dactor.actor.RandomTxtActor"></bean>
 
-    <actorCfg:actorCfg id="randomTxt1" parent="actorhttpcore" beginBeanId="randomTxtActor">
-    </actorCfg:actorCfg>
+    <actorCfg:actor id="randomTxt1" parent="actorhttpcore" beginBeanId="randomTxtActor">
+    </actorCfg:actor>
 
 </beans>

@@ -4,7 +4,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:actorCfg="http://www.ymotel.cn/schema/dactor"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.ymotel.cn/schema/dactor http://www.ymotel.cn/schema/dactor.xsd">
-    <bean id="FinishActor2" class="cn.ymotel.dactor.actorCfg.FinishActor"></bean>
+    <bean id="FinishActor2" class="cn.ymotel.dactor.action.FinishActor"></bean>
 
     <bean id="TcpServer" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpServer" destroy-method="close">
         <property name="tcpServerhandler"  ref="TcpServerHandler"></property>
@@ -12,28 +12,28 @@
     <bean id="TcpServerHandler" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpServerHandler">
         <property name="messageDispatcher" ref="MessageRingBufferDispatcher"/>
     </bean>
-    <actorCfg:actorCfg id="server1"   parent="actorhttpcore"  beginBeanId="ServerTestActor">
+    <actorCfg:actor id="server1"   parent="actorhttpcore"  beginBeanId="ServerTestActor">
         <actorCfg:steps>
             <actorCfg:step fromBeanId="ServerTestActor" toBeanId="TcpServerActor"/>
         </actorCfg:steps>
-    </actorCfg:actorCfg>
+    </actorCfg:actor>
     <bean id="ServerTestActor" class="cn.ymotel.dactor.action.netty.aysnsocket.ServerTestActor">
 
     </bean>
     <bean id="TcpServerActor" class="cn.ymotel.dactor.action.netty.aysnsocket.TcpServerActor">
     </bean>
-    <actorCfg:actorCfg id="actorhttpcore" handleException="true"  endBeanId="FinishActor2" >
+    <actorCfg:actor id="actorhttpcore" handleException="true"  endBeanId="FinishActor2" >
         <actorCfg:steps>
             <actorCfg:step xpoint="" ypont="" fromBeanId="beginActor"  conditon="" toBeanId="placeholderActor"/>
         </actorCfg:steps>
 
-    </actorCfg:actorCfg>
+    </actorCfg:actor>
 
-    <actorCfg:actorCfg id="client"  parent="actorhttpcore"  beginBeanId="TcpClientActor">
+    <actorCfg:actor id="client"  parent="actorhttpcore"  beginBeanId="TcpClientActor">
         <actorCfg:steps>
             <actorCfg:step fromBeanId="TcpClientActor" toBeanId="ClientReciverActor"/>
         </actorCfg:steps>
-    </actorCfg:actorCfg>
+    </actorCfg:actor>
     <bean id="ClientReciverActor" class="cn.ymotel.dactor.action.netty.aysnsocket.ClientReciverActor">
 
     </bean>
