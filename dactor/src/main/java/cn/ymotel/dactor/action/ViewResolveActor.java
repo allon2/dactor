@@ -117,8 +117,8 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
     public boolean UrlPathViewExecute(ServletMessage message){
 
         String UrlPath = urlPathHelper.getLookupPathForRequest(message.getRequest());
-
-        HttpView httpView=  patternLookUpMatch.lookupMatchBean(UrlPath,message.getRequest().getMethod(),message.getRequest().getServerName(),message.getRequest());
+        String chain=message.getControlMessage().getProcessStructure().getActorTransactionCfg().getChain().getId();
+        HttpView httpView=  patternLookUpMatch.lookupMatchBean(UrlPath,message.getRequest().getMethod(),message.getRequest().getServerName(),chain,message.getRequest());
         if(httpView==null){
             return false;
         }
@@ -278,7 +278,11 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
         if(view.getExcludeUrlPatterns()!=null&&view.getExcludeUrlPatterns().size()>0){
             excludePattern.addAll(view.getExcludeUrlPatterns());
         }
-        patternLookUpMatch.add(new PatternMatcher<HttpView>(includePattern,excludePattern,view));
+        String[] chains=null;
+        if(view.getChains()!=null&&view.getChains().length>0){
+            chains=view.getChains();
+        }
+        patternLookUpMatch.add(new PatternMatcher((String[])includePattern.toArray(new String[0]),(String[])excludePattern.toArray(new String[0]),chains,view));
     }
     private ApplicationContext applicationContext;
     @Override

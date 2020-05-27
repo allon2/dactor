@@ -23,36 +23,36 @@ public class UrlMapping {
     }
         DyanmicUrlmapping.put(urlpattern,cfg);
     }
-    public static void addPatternMapping(String[] includes,String[] excludes,ActorTransactionCfg bean){
-        PatternMatcher matcher=new PatternMatcher(includes,excludes,bean);
-        Patternmapping.put(matcher,bean);
-    }
+//    public static void addPatternMapping(String[] includes,String[] excludes,ActorTransactionCfg bean){
+//        PatternMatcher matcher=new PatternMatcher(includes,excludes,null,bean);
+//        Patternmapping.put(matcher,bean);
+//    }
     public static void addPatternMapping(String[] includes, String[] excludes, String[] methods, String[] serverNames, String[] dispatcherTypes, Integer[] httpStatuses,ActorTransactionCfg bean){
-        PatternMatcher matcher=new PatternMatcher(includes,excludes,methods,serverNames,dispatcherTypes,httpStatuses,bean);
+        PatternMatcher matcher=new PatternMatcher(includes,excludes,methods,serverNames,dispatcherTypes,httpStatuses,null,bean);
         Patternmapping.put(matcher,bean);
     }
     public static Map<PatternMatcher,ActorTransactionCfg> getPatternMapping(){
             return Patternmapping;
     }
-    public static void addMapping(String[] urlpattern , ActorTransactionCfg cfg){
-        if(urlpattern==null||urlpattern.length==0){
-            return ;
-        }
-//        System.out.println("add Mapping---"+urlpattern);
-        for(int i=0;i<urlpattern.length;i++) {
-            if (urlpattern[i] == null || urlpattern[i].trim().equals("")) {
-                continue;
-            }
-//            Urlmapping.put(matcher,cfg);
-
-        }
-    }
+//    public static void addMapping(String[] urlpattern , ActorTransactionCfg cfg){
+//        if(urlpattern==null||urlpattern.length==0){
+//            return ;
+//        }
+////        System.out.println("add Mapping---"+urlpattern);
+//        for(int i=0;i<urlpattern.length;i++) {
+//            if (urlpattern[i] == null || urlpattern[i].trim().equals("")) {
+//                continue;
+//            }
+////            Urlmapping.put(matcher,cfg);
+//
+//        }
+//    }
     public static Map<DyanmicUrlPattern,ActorTransactionCfg> getDynamicMapping(){
         return  DyanmicUrlmapping;
     }
-    public static Object getMapping(String urlpattern){
-       return  Urlmapping.get(urlpattern);
-    }
+//    public static Object getMapping(String urlpattern){
+//       return  Urlmapping.get(urlpattern);
+//    }
     public static Map getMapping(){
         return Urlmapping;
     }

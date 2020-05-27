@@ -337,7 +337,7 @@ public class AsyncServletFilter implements Filter {
         {
             Map<String,Object> mapping = UrlMapping.getMapping();
             mapping.forEach((key, value) -> {
-                PatternMatcher patternMatcher = new PatternMatcher(new String[]{key}, null, value);
+                PatternMatcher patternMatcher = new PatternMatcher(new String[]{key}, null,null, value);
                 lookUpMatch.add(patternMatcher);
             });
 //            for (java.util.Iterator iter = mapping.entrySet().iterator(); iter.hasNext(); ) {
@@ -357,7 +357,7 @@ public class AsyncServletFilter implements Filter {
             if(patterns==null||patterns.length==0){
                 return;
             }
-            PatternMatcher patternMatcher=new PatternMatcher(patterns,dyanmicUrlPattern.getExcludePatterns(request),actorTransactionCfg);
+            PatternMatcher patternMatcher=new PatternMatcher(patterns,dyanmicUrlPattern.getExcludePatterns(request),new String[]{actorTransactionCfg.getChain().getId()},actorTransactionCfg);
             lookUpMatch.add(patternMatcher);
             } catch (java.lang.Throwable e) {
                 //忽略
@@ -373,7 +373,7 @@ public class AsyncServletFilter implements Filter {
 //            lookUpMatch.add(patternMatcher);
 //
 //        }
-       MatchPair matchPair= lookUpMatch.lookupMatchPair(UrlPath,request.getMethod(),request.getServerName(),request);
+       MatchPair matchPair= lookUpMatch.lookupMatchPair(UrlPath,request.getMethod(),request.getServerName(),null,request);
         return matchPair;
 
     }

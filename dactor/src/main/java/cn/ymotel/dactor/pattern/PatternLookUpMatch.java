@@ -18,15 +18,15 @@ public class PatternLookUpMatch<T> {
     public void add(PatternMatcher<T> matcher){
         patterns.add(matcher);
     }
-    public  T lookupMatchBean(String UrlPath, String method, String serverName, HttpServletRequest request){
-        MatchPair pair= lookupMatchPair(UrlPath,method,serverName,request);
+    public  T lookupMatchBean(String UrlPath, String method, String serverName,String chain, HttpServletRequest request){
+        MatchPair pair= lookupMatchPair(UrlPath,method,serverName,chain,request);
         if(pair==null){
             return null;
         }
         return  (T)pair.getBean();
     }
 
-    public  MatchPair lookupMatchPair(String UrlPath, String method, String serverName, HttpServletRequest request){
+    public  MatchPair lookupMatchPair(String UrlPath, String method, String serverName,String chain, HttpServletRequest request){
         if(patterns.isEmpty()){
             return  null;
         }
@@ -35,7 +35,7 @@ public class PatternLookUpMatch<T> {
 //        Map params=new ConcurrentHashMap();
 //        Map treeMap=Collections.synchronizedSortedMap(new TreeMap<>(comparator));
         patterns.forEach(matcher -> {
-            MatchPair pair=matcher.matchePatterns(UrlPath,pathMatcher,method,serverName,request.getDispatcherType().name(), ActorUtils.getHttpErrorStatus(request),patterncomparator);
+            MatchPair pair=matcher.matchePatterns(UrlPath,pathMatcher,method,serverName,request.getDispatcherType().name(), ActorUtils.getHttpErrorStatus(request),chain,patterncomparator);
             if(pair==null){
                return;
             }

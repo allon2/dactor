@@ -12,6 +12,15 @@ public class MatchPair<T> {
     private String serverName;
     private String dispatcherType;
     private  Integer httpStatus;
+    private String chain;
+
+    public String getChain() {
+        return chain;
+    }
+
+    public void setChain(String chain) {
+        this.chain = chain;
+    }
 
     public String getDispatcherType() {
         return dispatcherType;
