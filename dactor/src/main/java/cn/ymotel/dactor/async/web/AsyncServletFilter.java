@@ -97,12 +97,11 @@ public class AsyncServletFilter implements Filter {
     private long timeout =30000 ;
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
     private DefaultResolveMessage defaultResolveMessage = null;
-    public static String messageSourceId = "messageSource";
     private int errorcode = HttpStatus.TOO_MANY_REQUESTS.value();//请求数量太多
     private HttpStatus errstatus= HttpStatus.TOO_MANY_REQUESTS;
-    public UrlPathHelper getUrlPathHelper() {
-        return urlPathHelper;
-    }
+//    public UrlPathHelper getUrlPathHelper() {
+//        return urlPathHelper;
+//    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -352,11 +351,14 @@ public class AsyncServletFilter implements Filter {
         UrlMapping.getDynamicMapping().forEach((dyanmicUrlPattern, actorTransactionCfg) -> {
             String[] patterns= null;
             try {
+                if(dyanmicUrlPattern.ignore()){
+                    return;
+                }
                 patterns= dyanmicUrlPattern.getPatterns(request);
 
-            if(patterns==null||patterns.length==0){
-                return;
-            }
+                if(patterns==null||patterns.length==0){
+                    return;
+                }
             PatternMatcher patternMatcher=new PatternMatcher(patterns,dyanmicUrlPattern.getExcludePatterns(request),new String[]{actorTransactionCfg.getChain().getId()},actorTransactionCfg);
             lookUpMatch.add(patternMatcher);
             } catch (java.lang.Throwable e) {

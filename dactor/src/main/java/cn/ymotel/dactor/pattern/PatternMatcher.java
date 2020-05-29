@@ -237,29 +237,35 @@ public class PatternMatcher<T> {
                 }
             }
         }
-
-        if(this.includePatterns!=null&&this.includePatterns.length>0){
-                List rtnList=new ArrayList();
+        /*
+            非Error，IncludePattern还是必须的
+         */
+        if(!DispatcherType.ERROR.name().equals(dispatcherType)){
+            List rtnList=new ArrayList();
+            if(this.includePatterns==null||this.includePatterns.length==0){
+                return null;
+            }
+//            if(this.includePatterns!=null&&this.includePatterns.length>0){
                 for (String pattern : this.includePatterns) {
                     if (pathMatcherToUse.match(pattern, lookupPath)) {
                         rtnList.add(pattern);
                     }
                 }
-
-                if (rtnList.isEmpty()) {
-                    return null;
+//            }
+            if (rtnList.isEmpty()) {
+                return null;
+            }
+            if(comparator!=null) {
+                if (rtnList.size() > 1) {
+                    rtnList.sort(comparator);
                 }
-                if(comparator!=null) {
-                    if (rtnList.size() > 1) {
-                        rtnList.sort(comparator);
-                    }
-                }
-                if(rtnList!=null&&rtnList.size()>0) {
-                    pair.setMatchPattern((String) rtnList.get(0));
-                }
-                pair.setMatchPatterns(rtnList);
-
+            }
+            if(rtnList!=null&&rtnList.size()>0) {
+                pair.setMatchPattern((String) rtnList.get(0));
+            }
+            pair.setMatchPatterns(rtnList);
         }
+
 //        if(!methods.isEmpty()){
 //            pair.setMethod(method);
 //        }

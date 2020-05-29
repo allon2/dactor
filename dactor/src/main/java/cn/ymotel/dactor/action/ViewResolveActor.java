@@ -10,6 +10,8 @@ import cn.ymotel.dactor.Constants;
 import cn.ymotel.dactor.async.web.AsyncContextWrapper;
 import cn.ymotel.dactor.async.web.view.CustomHttpView;
 import cn.ymotel.dactor.async.web.view.HttpView;
+import cn.ymotel.dactor.core.ActorChainCfg;
+import cn.ymotel.dactor.core.ActorTransactionCfg;
 import cn.ymotel.dactor.message.ServletMessage;
 import cn.ymotel.dactor.message.Message;
 import cn.ymotel.dactor.pattern.PatternLookUpMatch;
@@ -114,10 +116,17 @@ public class ViewResolveActor implements Actor<ServletMessage>, InitializingBean
      * @param message
      * @return 执行返回true，不执行 返回false
       */
-    public boolean UrlPathViewExecute(ServletMessage message){
+    public boolean UrlPathViewExecute(ServletMessage message) {
 
         String UrlPath = urlPathHelper.getLookupPathForRequest(message.getRequest());
-        String chain=message.getControlMessage().getProcessStructure().getActorTransactionCfg().getChain().getId();
+        String chain=null;
+        {
+            ActorTransactionCfg transactionCfg= message.getControlMessage().getProcessStructure().getActorTransactionCfg();
+            ActorChainCfg chainCfg=transactionCfg.getChain();
+            if(chain!=null) {
+                chain = chainCfg.getId();
+            }
+        }
         HttpView httpView=  patternLookUpMatch.lookupMatchBean(UrlPath,message.getRequest().getMethod(),message.getRequest().getServerName(),chain,message.getRequest());
         if(httpView==null){
             return false;

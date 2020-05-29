@@ -52,12 +52,7 @@ public class DactorServletAutoConfiguration implements InitializingBean {
         AsyncServletFilter filter=new AsyncServletFilter();
         return filter;
     }
-    @Bean
-    @ConditionalOnClass(javax.servlet.jsp.jstl.core.Config.class)
-    public MessageSourceFilter MessageSourceFilter() {
-        MessageSourceFilter filter=new MessageSourceFilter();
-        return filter;
-    }
+
     @Bean
     @ConditionalOnMissingBean
     public ViewResolveActor getViewResolveActor() {

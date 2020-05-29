@@ -35,6 +35,15 @@ public class PatternComparator implements Comparator<MatchPair> {
         if(DispatcherType.REQUEST.name().equals(pair1.getDispatcherType())&&DispatcherType.ERROR.name().equals(pair2.getDispatcherType())) {
             return  1;
         }
+        if(pair1.getMatchPattern()==null&&pair2.getMatchPattern()==null){
+            return compareServerNameAndMethod(pair1,pair2);
+        }
+        if(pair1.getMatchPattern()!=null&&pair2.getMatchPattern()==null){
+            return  -1;
+        }
+        if(pair1.getMatchPattern()==null&&pair2.getMatchPattern()!=null){
+            return  1;
+        }
         if(pair1.getMatchPattern().equals(pair2.getMatchPattern())){
             return compareServerNameAndMethod(pair1, pair2);
         }
@@ -72,6 +81,13 @@ public class PatternComparator implements Comparator<MatchPair> {
             left++;
         }
         if (pair2.getMethod() != null) {
+            right++;
+        }
+        if(pair1.getChain()!=null){
+            left++;
+        }
+
+        if(pair2.getChain()!=null){
             right++;
         }
         int rtn = right - left;
