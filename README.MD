@@ -18,6 +18,9 @@ DActor框架基于协程思想设计，可同时支持同步和异步代码，�
 
 ## QQ交流群
  783580303
+## 接入系统
+- [Dpress](https://github.com/allon2/dpress)：基于Dactor构建的多域名博客系统
+- 持续更新中。。欢迎大家自荐  
 ## Overview
 目前开发过程中的几个常见模型
  -  同步编程
