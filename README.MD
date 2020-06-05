@@ -3,11 +3,19 @@
 ## Introduction
 DActor框架基于协程思想设计，可同时支持同步和异步代码，简化在线异步代码的开发，用同步代码的思维来开发异步代码，兼顾异步代码的高并发、无阻塞和同步代码的易读性，可维护性。
 最大程度的降低阻塞，提高单个线程的处理能力，并可有效的降低线程数。
-访问[wiki](https://github.com/allon2/dactor/wiki)了解更多文档
-更新日志:[ChangeLog](https://github.com/allon2/dactor/ChangeLog)
 ## 项目地址
  GitHub:https://github.com/allon2/dactor  
- GitEE:https://gitee.com/handyun/dactor  
+ GitEE:https://gitee.com/handyun/dactor    
+## 文档
+ - 更新日志：[ChangeLog](https://github.com/allon2/dactor/wiki/ChangeLog) 
+ - 注解说明：[注解配置说明](https://github.com/allon2/dactor/wiki/%E6%B3%A8%E8%A7%A3%E8%AF%B4%E6%98%8E) 
+ - 视图配置说明:[视图配置说明](https://github.com/allon2/dactor/wiki/%E8%A7%86%E5%9B%BE%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E)   
+- SpringBoot Yml 配置说明:[Yml配置说明](https://github.com/allon2/dactor/wiki/Yml%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E) 
+- XML 配置说明:[XML配置说明](https://github.com/allon2/dactor/wiki/XML%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E) 
+- 常用类说明:[常用类说明](https://github.com/allon2/dactor/wiki/%E5%B8%B8%E7%94%A8%E7%B1%BB%E8%AF%B4%E6%98%8E) 
+- 配置和API说明:[配置和API说明](https://github.com/allon2/dactor/wiki) 
+- 更多文档详见：[WIKI](https://github.com/allon2/dactor/wiki)   
+
 ## QQ交流群
  783580303
 ## Overview
